@@ -6,6 +6,7 @@ var nunjucks = require('nunjucks');
 var path = require('path');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var routers = require('./routers');
 
 mongoose.connect('mongodb://127.0.0.1:27017/starmed');
 mongoose.connection.once('open', function () {
@@ -45,6 +46,7 @@ mongoose.connection.once('open', function () {
     app.use(bodyParser.json());
 
     app
+        .use('/patient', routers.Patient)
         .get('*', function (req, res) {
             res.render('index', {year: 1900 + new Date().getYear()});
         })

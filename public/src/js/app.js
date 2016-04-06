@@ -1,4 +1,9 @@
-angular.module('MyClinic', ['ui.router', 'ngResource'])
+angular.module('MyClinic', ['ui.router', 'ngResource', 'mgcrea.ngStrap'])
+    .run(function ($locale) {
+        // set default date formats for current locale
+        $locale.DATETIME_FORMATS.short = "dd.MM.yyyy H:mm";
+        $locale.DATETIME_FORMATS.shortDate = "dd.MM.yyyy";
+    })
     .config(function ($stateProvider, $urlRouterProvider) {
         $stateProvider
             .state('home', {
@@ -23,13 +28,52 @@ angular.module('MyClinic', ['ui.router', 'ngResource'])
             });
         $urlRouterProvider.otherwise('/');
     })
+    .service('Sex', function () {
+        this.query = function () {
+            return [
+                {_id: 'male', title: 'Мужчина'},
+                {_id: 'female', title: 'Женщина'}
+            ];
+        }
+    })
+    .factory('Patient', function ($resource) {
+        return $resource(
+            '/patient/:id', // URL to patient backend API
+            {id: '@_id'}, // obtain id from _id field of patient object
+            {
+                update: {
+                    method: 'PUT' // for .update() method use PUT request
+                }
+            }
+        );
+    })
     .controller('HomeCtrl', function ($scope) {
-        
+
     })
     .controller('PatientSearchCtrl', function ($scope) {
 
     })
-    .controller('PatientCtrl', function ($scope) {
+    .controller('PatientCtrl', function ($scope, $state, $modal, Sex, Patient) {
+        $scope.sex = Sex.query();
+        $scope.patient = new Patient();
+
+        $scope.addPatient = function () {
+            // prepare confirmation modal
+            $scope.title = 'Подтверждение';
+            $scope.content = 'Сохранить изменения?';
+            $scope.okAction = function () {
+                $scope.patient.$save(function (resp) {
+                    // close confirmation window
+                    confirmModal.hide();
+
+                    if (resp.code == 'success') {
+                        $state.go('patientList');
+                    }
+                });
+            };
+            // show=true by default, so this line will show our modal window
+            var confirmModal = $modal({scope: $scope, templateUrl: 'partials/_modal_confirmation.html'});
+        };
 
     })
     .controller('PatientsCtrl', function ($scope) {
