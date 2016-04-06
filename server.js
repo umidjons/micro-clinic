@@ -28,18 +28,10 @@ mongoose.connection.once('open', function () {
 
     // render all html files with Nunjucks
     app.use('*.html', function (req, res) {
-
-        // show original URL in the console
-        console.log('Original URL: %s', req.originalUrl);
-
         // generate path to view
         let view_path = path.join(VIEW_PATH, req.originalUrl);
-
         // replace *.html to *.njk
         view_path = view_path.replace(/\..+/, '.njk');
-
-        console.log('File to render: %s', view_path);
-
         // render template
         res.render(view_path);
     });
