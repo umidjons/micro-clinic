@@ -7,7 +7,7 @@ router
     .get('/', function (req, res) {
         models.Patient.find(function (err, patients) {
             if (err) {
-                return res.json({code: 'error', message: 'Error occured: ' + err.message, url: '/'});
+                return res.json({code: 'error', message: 'Ошибка: ' + err.message, url: '/'});
             }
 
             console.log('List of patients:', patients);
@@ -24,7 +24,7 @@ router
         newPatient.save(function (err) {
             // if there is error, send it and stop handler with return
             if (err) {
-                return res.json({code: 'error', message: 'Error occured: ' + err.message});
+                return res.json({code: 'error', message: 'Ошибка: ' + err.message});
             }
 
             // all right, show success message

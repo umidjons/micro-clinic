@@ -77,6 +77,6 @@ angular.module('MyClinic', ['ui.router', 'ngResource', 'mgcrea.ngStrap'])
         };
 
     })
-    .controller('PatientsCtrl', function ($scope) {
-
+    .controller('PatientsCtrl', function ($scope, Patient) {
+        $scope.patients = Patient.query();
     });

@@ -12,7 +12,8 @@ var PatientSchema = mongoose.Schema({
     cellPhone: {type: String, required: true, match: /^\d{5,12}$/},
     homePhone: {type: String, match: /^\d{5,12}$/},
     email: {type: mongoose.SchemaTypes.Email, maxlength: 50},
-    company: {type: String, maxlength: 200}
+    company: {type: String, maxlength: 200},
+    created: {type: Date, required: true, default: new Date()}
 });
 
 var Patient = mongoose.model('Patient', PatientSchema);

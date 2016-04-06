@@ -1,1 +1,52 @@
 <h3>Пациенты</h3>
+
+<table class="table table-bordered table-striped table-hover table-condensed">
+
+    <thead>
+    <tr>
+        <th>Фамилия</th>
+        <th>Имя</th>
+        <th>Отчество</th>
+        <th>Дата рождения</th>
+        <th>Пол</th>
+        <th>Адрес</th>
+        <th>Дата регистрации</th>
+        <th></th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr ng-repeat="pat in patients">
+        <td>{{ pat.lastName }}</td>
+        <td>{{ pat.firstName }}</td>
+        <td>{{ pat.middleName }}</td>
+        <td>{{ pat.dateOfBirth | date }}</td>
+        <td title="{{ pat.sex.title }}" class="text-center">
+            <i ng-if="pat.sex._id == 'male'" class="fa fa-fw fa-mars"></i>
+            <i ng-if="pat.sex._id == 'female'" class="fa fa-fw fa-venus"></i>
+        </td>
+        <td>{{ pat.address }}</td>
+        <td>{{ pat.created | date:'medium' }}</td>
+        <td class="text-center">
+            <div class="btn-group btn-group-xs">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-fw fa-bars"></i> <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a ui-sref="patientView(pat._id)"><i class="fa fa-fw fa-search"></i> Просмотр</a></li>
+                    <li><a ui-sref="patientEdit(pat._id)"><i class="fa fa-fw fa-edit"></i> Изменить</a></li>
+                    <li><a ui-sref="padientDelete(pat._id)"><i class="fa fa-fw fa-trash"></i> Удалить</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li>
+                        <a ui-sref="patientView(pat._id)">
+                            <i class="fa fa-fw fa-paperclip"></i> Результаты анализа
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+
+</table>
