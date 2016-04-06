@@ -4,7 +4,8 @@ angular.module('MyClinic', ['ui.router', 'ngResource', 'mgcrea.ngStrap'])
         $locale.DATETIME_FORMATS.short = "dd.MM.yyyy H:mm";
         $locale.DATETIME_FORMATS.shortDate = "dd.MM.yyyy";
     })
-    .config(function ($stateProvider, $urlRouterProvider) {
+    .config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
+        $locationProvider.html5Mode(true);
         $stateProvider
             .state('home', {
                 url: '/',
