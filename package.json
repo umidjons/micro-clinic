@@ -1,0 +1,17 @@
+{
+  "name": "myclinic",
+  "version": "1.0.0",
+  "description": "Clinic Management System",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "umidjons",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "express": "^4.13.4",
+    "mongoose": "^4.4.11",
+    "nunjucks": "^2.4.1"
+  }
+}

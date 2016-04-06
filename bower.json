@@ -1,0 +1,38 @@
+{
+  "name": "myclinic",
+  "description": "Clinic Management System",
+  "main": "server.js",
+  "authors": [
+    "umidjons"
+  ],
+  "license": "ISC",
+  "moduleType": [
+    "node"
+  ],
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/lib",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^2.2.3",
+    "angular": "angularjs#^1.5.3",
+    "angular-ui-router": "^0.2.18",
+    "angular-resource": "^1.5.3",
+    "angular-animate": "^1.5.3",
+    "bootstrap": "^3.3.6",
+    "font-awesome": "^4.5.0",
+    "angular-strap": "^2.3.8",
+    "ui-select": "angular-ui-select#^0.16.1",
+    "AngularJS-Toaster": "^1.2.0",
+    "angular-i18n": "^1.5.3",
+    "angular-loading-bar": "^0.9.0",
+    "angular-sanitize": "^1.5.3",
+    "angular-motion": "^0.4.4"
+  }
+}
