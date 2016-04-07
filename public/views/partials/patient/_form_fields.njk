@@ -1,0 +1,58 @@
+<div class="row">
+    <div class="form-group col-sm-3">
+        <label class="req">Фамилия</label>
+        <input ng-model="patient.lastName" class="form-control" maxlength="50" required>
+    </div>
+
+    <div class="form-group col-sm-3">
+        <label class="req">Имя</label>
+        <input ng-model="patient.firstName" class="form-control" maxlength="50" required>
+    </div>
+
+    <div class="form-group col-sm-3">
+        <label>Отчество</label>
+        <input ng-model="patient.middleName" class="form-control" maxlength="50">
+    </div>
+
+    <div class="form-group col-sm-3">
+        <label class="req">Дата рождения</label>
+        <input ng-model="patient.dateOfBirth" class="form-control" required
+               bs-datepicker data-min-date="01.01.1900" data-max-date="today">
+    </div>
+</div>
+
+<div class="row">
+    <div class="form-group col-sm-3">
+        <label class="req">Пол</label>
+        <select ng-model="patient.sex" class="form-control" required
+                ng-options="s.title for s in sex track by s._id">
+            <option value="">-</option>
+        </select>
+    </div>
+    <div class="form-group col-sm-9">
+        <label class="req">Адрес</label>
+        <input ng-model="patient.address" class="form-control" required maxlength="500">
+    </div>
+</div>
+
+<div class="row">
+    <div class="form-group col-sm-3">
+        <label class="req">Мобильный номер телефона</label>
+        <input ng-model="patient.cellPhone" class="form-control" pattern="\d{5,12}" maxlength="12" required>
+    </div>
+
+    <div class="form-group col-sm-3">
+        <label>Городской номер телефона</label>
+        <input ng-model="patient.homePhone" pattern="\d{5,12}" maxlength="12" class="form-control">
+    </div>
+
+    <div class="form-group col-sm-3">
+        <label>Email</label>
+        <input ng-model="patient.email" type="email" class="form-control" maxlength="50">
+    </div>
+
+    <div class="form-group col-sm-3">
+        <label>Организация</label>
+        <input ng-model="patient.company" class="form-control" maxlength="200">
+    </div>
+</div>

@@ -22,6 +22,11 @@ angular.module('MyClinic', ['ui.router', 'ngResource', 'mgcrea.ngStrap'])
                 templateUrl: 'partials/patient/create.html',
                 controller: 'PatientCtrl'
             })
+            .state('patientEdit', {
+                url: '/patient/edit/:id',
+                templateUrl: 'partials/patient/edit.html',
+                controller: 'PatientCtrl'
+            })
             .state('patientList', {
                 url: '/patient/list',
                 templateUrl: 'partials/patient/list.html',
@@ -54,23 +59,45 @@ angular.module('MyClinic', ['ui.router', 'ngResource', 'mgcrea.ngStrap'])
     .controller('PatientSearchCtrl', function ($scope) {
 
     })
-    .controller('PatientCtrl', function ($scope, $state, $modal, Sex, Patient) {
+    .controller('PatientCtrl', function ($scope, $state, $stateParams, $modal, Sex, Patient) {
         $scope.sex = Sex.query();
-        $scope.patient = new Patient();
 
-        $scope.addPatient = function () {
+        console.log('Params:', $stateParams);
+
+        if ($stateParams.id) {
+            Patient.get({id: $stateParams.id}, function (patient) {
+                $scope.patient = patient;
+            });
+        } else {
+            $scope.patient = new Patient();
+        }
+
+        $scope.savePatient = function () {
             // prepare confirmation modal
             $scope.title = 'Подтверждение';
             $scope.content = 'Сохранить изменения?';
             $scope.okAction = function () {
-                $scope.patient.$save(function (resp) {
-                    // close confirmation window
-                    confirmModal.hide();
+                if ($scope.patient._id) {
+                    $scope.patient.$update(function (resp) {
+                        console.log('Response:', resp);
+                        // close confirmation window
+                        confirmModal.hide();
 
-                    if (resp.code == 'success') {
-                        $state.go('patientList');
-                    }
-                });
+                        if (resp.code == 'success') {
+                            $state.go('patientList');
+                        }
+                    });
+                } else {
+                    $scope.patient.$save(function (resp) {
+                        console.log('Response:', resp);
+                        // close confirmation window
+                        confirmModal.hide();
+
+                        if (resp.code == 'success') {
+                            $state.go('patientList');
+                        }
+                    });
+                }
             };
             // show=true by default, so this line will show our modal window
             var confirmModal = $modal({scope: $scope, templateUrl: 'partials/_modal_confirmation.html'});
