@@ -137,6 +137,31 @@ angular.module('MyClinic', ['ngAnimate', 'ui.router', 'ngResource', 'mgcrea.ngSt
         };
 
     })
-    .controller('PatientsCtrl', function ($scope, Patient) {
-        $scope.patients = Patient.query();
+    .controller('PatientsCtrl', function ($scope, $modal, Patient) {
+        $scope.reloadPage = function () {
+            $scope.patients = Patient.query();
+        };
+
+        $scope.deletePatient = function (patient) {
+            // prepare confirmation modal
+            $scope.title = 'Подтверждение';
+            $scope.content = 'Удалить пациента?';
+            $scope.okAction = function () {
+                if (patient) {
+                    patient.$delete(function (resp) {
+                        console.log('Response:', resp);
+                        // close confirmation window
+                        confirmModal.hide();
+
+                        if (resp.code == 'success') {
+                            $scope.reloadPage();
+                        }
+                    });
+                }
+            };
+            // show=true by default, so this line will show our modal window
+            var confirmModal = $modal({scope: $scope, templateUrl: 'partials/_modal_confirmation.html'});
+        };
+
+        $scope.reloadPage();
     });

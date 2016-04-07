@@ -51,6 +51,17 @@ router
 
             Msg.sendSuccess(res, 'Данные успешно сохранены.');
         });
+    })
+    .delete('/:id', function (req, res) {
+        console.log('id:', req.params.id);
+
+        models.Patient.remove({_id: req.params.id}, function (err, removedPatient) {
+            if (err) {
+                return Msg.sendError(res, err.message);
+            }
+            
+            Msg.sendSuccess(res, 'Запись удален!');
+        });
     });
 
 module.exports = router;

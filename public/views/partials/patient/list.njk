@@ -11,7 +11,11 @@
         <th>Пол</th>
         <th>Адрес</th>
         <th>Дата регистрации</th>
-        <th></th>
+        <th>
+            <button ng-click="reloadPage()" class="btn btn-xs btn-info" title="Обновить">
+                <i class="fa fa-fw fa-refresh"></i>
+            </button>
+        </th>
     </tr>
     </thead>
 
@@ -36,7 +40,7 @@
                 <ul class="dropdown-menu dropdown-menu-right">
                     <li><a ui-sref="patientView({id:pat._id})"><i class="fa fa-fw fa-search"></i> Просмотр</a></li>
                     <li><a ui-sref="patientEdit({id:pat._id})"><i class="fa fa-fw fa-edit"></i> Изменить</a></li>
-                    <li><a ui-sref="padientDelete(pat._id)"><i class="fa fa-fw fa-trash"></i> Удалить</a></li>
+                    <li><a href ng-click="deletePatient(pat)"><i class="fa fa-fw fa-trash"></i> Удалить</a></li>
                     <li role="separator" class="divider"></li>
                     <li>
                         <a ui-sref="patientView({id:pat._id})">
