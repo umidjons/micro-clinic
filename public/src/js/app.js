@@ -1,11 +1,44 @@
-angular.module('MyClinic', ['ui.router', 'ngResource', 'mgcrea.ngStrap'])
+angular.module('MyClinic', ['ngAnimate', 'ui.router', 'ngResource', 'mgcrea.ngStrap', 'toaster'])
     .run(function ($locale) {
         // set default date formats for current locale
         $locale.DATETIME_FORMATS.short = "dd.MM.yyyy H:mm";
         $locale.DATETIME_FORMATS.shortDate = "dd.MM.yyyy";
     })
+    .config(function ($httpProvider) {
+        $httpProvider.interceptors.unshift(function ($q, toaster) {
+            return {
+                response: function (response) {
+                    var hMsg = response.headers('X-MSG');
+                    console.log('X-MSG:', decodeURI(hMsg));
+                    if (hMsg) {
+                        hMsg = decodeURI(hMsg);
+                        var xMessages = JSON.parse(hMsg);
+                        if (xMessages.length > 0)
+                            xMessages.forEach(function (xMsg) {
+                                if (xMsg.message) {
+                                    switch (xMsg.code) {
+                                        case 'success':
+                                        case 'warning':
+                                        case 'error':
+                                            toaster.pop(xMsg.code, '', xMsg.message);
+                                            break;
+                                        default:
+                                            toaster.pop('info', '', xMsg.message);
+                                            break;
+                                    }
+                                }
+                            });
+                    }
+                    return response || $q.when(response);
+                },
+                responseError: function (response) {
+                    return $q.reject(response);
+                }
+            };
+        });
+    })
     .config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
-        $locationProvider.html5Mode(true);
+        //$locationProvider.html5Mode(true);
         $stateProvider
             .state('home', {
                 url: '/',

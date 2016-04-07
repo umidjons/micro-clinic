@@ -2,28 +2,25 @@
 
 var router = require('express').Router();
 var models = require('../models');
+var Msg = require('../include/Msg');
 
 router
     .get('/:id', function (req, res) {
         models.Patient.findOne({_id: req.params.id}, function (err, patient) {
             if (err) {
-                console.error(err);
-                return res.json({code: 'error', message: 'Ошибка: ' + err.message});
+                return Msg.sendError(res, err.message);
             }
 
-            console.log('Patient:', patient);
-            res.json(patient);
+            Msg.sendSuccess(res, '', patient, 'Patient:');
         });
     })
     .get('/', function (req, res) {
         models.Patient.find(function (err, patients) {
             if (err) {
-                console.error(err);
-                return res.json({code: 'error', message: 'Ошибка: ' + err.message});
+                return Msg.sendError(res, err.message);
             }
 
-            console.log('List of patients:', patients);
-            res.json(patients);
+            Msg.sendSuccess(res, '', patients, 'List of patients:');
         });
     })
     .post('/', function (req, res) {
@@ -36,27 +33,23 @@ router
         newPatient.save(function (err) {
             // if there is error, send it and stop handler with return
             if (err) {
-                console.error(err);
-                return res.json({code: 'error', message: 'Ошибка: ' + err.message});
+                return Msg.sendError(res, err.message);
             }
 
             // all right, show success message
-            res.json({code: 'success', message: 'Данные успешно сохранены.'});
+            Msg.sendSuccess(res, 'Данные успешно сохранены.');
         });
     })
     .put('/:id', function (req, res) {
         console.log('Request body:', req.body);
         console.log('id:', req.params.id);
-        
-        models.Patient.update({_id: req.params.id}, req.body, function (err, raw) {
-            console.log('raw:', raw);
 
+        models.Patient.update({_id: req.params.id}, req.body, function (err, raw) {
             if (err) {
-                console.error(err);
-                return res.json({code: 'error', message: 'Ошибка: ' + err.message});
+                return Msg.sendError(res, err.message);
             }
 
-            res.json({code: 'success', message: 'Данные успешно сохранены.'});
+            Msg.sendSuccess(res, 'Данные успешно сохранены.');
         });
     });
 
