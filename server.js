@@ -47,6 +47,8 @@ mongoose.connection.once('open', function () {
 
     app
         .use('/patient', routers.Patient)
+        .use('/service', routers.Service)
+        .use('/service-category', routers.ServiceCategory)
         .get('*', function (req, res) {
             res.render('index', {year: 1900 + new Date().getYear()});
         })

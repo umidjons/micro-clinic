@@ -1,0 +1,16 @@
+<h3>Изменение услуги</h3>
+
+<form name="formService" novalidate>
+
+    {% include "partials/service/_form_fields.njk" %}
+
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <button ui-sref="serviceList" class="btn btn-danger">Отмена</button>
+            <button ng-click="saveService()" ng-disabled="formService.$invalid"
+                    class="btn btn-success">Сохранить
+            </button>
+        </div>
+    </div>
+
+</form>

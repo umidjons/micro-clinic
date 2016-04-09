@@ -1,8 +1,11 @@
-angular.module('MyClinic', ['ngAnimate', 'ui.router', 'ngResource', 'mgcrea.ngStrap', 'toaster'])
+angular.module('MyClinic', ['ngAnimate', 'angular-loading-bar', 'ui.router', 'ngResource', 'mgcrea.ngStrap', 'toaster'])
     .run(function ($locale) {
         // set default date formats for current locale
         $locale.DATETIME_FORMATS.short = "dd.MM.yyyy H:mm";
         $locale.DATETIME_FORMATS.shortDate = "dd.MM.yyyy";
+    })
+    .config(function (cfpLoadingBarProvider) {
+        cfpLoadingBarProvider.includeSpinner = false;
     })
     .config(function ($httpProvider) {
         $httpProvider.interceptors.unshift(function ($q, toaster) {
@@ -64,104 +67,24 @@ angular.module('MyClinic', ['ngAnimate', 'ui.router', 'ngResource', 'mgcrea.ngSt
                 url: '/patient/list',
                 templateUrl: 'partials/patient/list.html',
                 controller: 'PatientsCtrl'
+            })
+            .state('serviceList', {
+                url: '/service/list',
+                templateUrl: 'partials/service/list.html',
+                controller: 'ServicesCtrl'
+            })
+            .state('serviceCreate', {
+                url: '/service/create',
+                templateUrl: 'partials/service/create.html',
+                controller: 'ServiceCtrl'
+            })
+            .state('serviceEdit', {
+                url: '/service/edit/:id',
+                templateUrl: 'partials/service/edit.html',
+                controller: 'ServiceCtrl'
             });
         $urlRouterProvider.otherwise('/');
     })
-    .service('Sex', function () {
-        this.query = function () {
-            return [
-                {_id: 'male', title: 'Мужчина'},
-                {_id: 'female', title: 'Женщина'}
-            ];
-        }
-    })
-    .factory('Patient', function ($resource) {
-        return $resource(
-            '/patient/:id', // URL to patient backend API
-            {id: '@_id'}, // obtain id from _id field of patient object
-            {
-                update: {
-                    method: 'PUT' // for .update() method use PUT request
-                }
-            }
-        );
-    })
     .controller('HomeCtrl', function ($scope) {
 
-    })
-    .controller('PatientSearchCtrl', function ($scope) {
-
-    })
-    .controller('PatientCtrl', function ($scope, $state, $stateParams, $modal, Sex, Patient) {
-        $scope.sex = Sex.query();
-
-        console.log('Params:', $stateParams);
-
-        if ($stateParams.id) {
-            Patient.get({id: $stateParams.id}, function (patient) {
-                $scope.patient = patient;
-            });
-        } else {
-            $scope.patient = new Patient();
-        }
-
-        $scope.savePatient = function () {
-            // prepare confirmation modal
-            $scope.title = 'Подтверждение';
-            $scope.content = 'Сохранить изменения?';
-            $scope.okAction = function () {
-                if ($scope.patient._id) {
-                    $scope.patient.$update(function (resp) {
-                        console.log('Response:', resp);
-                        // close confirmation window
-                        confirmModal.hide();
-
-                        if (resp.code == 'success') {
-                            $state.go('patientList');
-                        }
-                    });
-                } else {
-                    $scope.patient.$save(function (resp) {
-                        console.log('Response:', resp);
-                        // close confirmation window
-                        confirmModal.hide();
-
-                        if (resp.code == 'success') {
-                            $state.go('patientList');
-                        }
-                    });
-                }
-            };
-            // show=true by default, so this line will show our modal window
-            var confirmModal = $modal({scope: $scope, templateUrl: 'partials/_modal_confirmation.html'});
-        };
-
-    })
-    .controller('PatientsCtrl', function ($scope, $modal, Patient) {
-        $scope.reloadPage = function () {
-            $scope.patients = Patient.query();
-        };
-
-        $scope.deletePatient = function (patient) {
-            // prepare confirmation modal
-            $scope.title = 'Подтверждение';
-            $scope.content = 'Удалить пациента?';
-            $scope.okAction = function () {
-                if (patient) {
-                    patient.$delete(function (resp) {
-                        console.log('Response:', resp);
-                        // close confirmation window
-                        confirmModal.hide();
-
-                        if (resp.code == 'success') {
-                            $scope.reloadPage();
-                        }
-                    });
-                }
-            };
-            // show=true by default, so this line will show our modal window
-            var confirmModal = $modal({scope: $scope, templateUrl: 'partials/_modal_confirmation.html'});
-        };
-
-        $scope.reloadPage();
     });

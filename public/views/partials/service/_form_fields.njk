@@ -1,0 +1,34 @@
+<div class="row">
+    <div class="form-group col-sm-4">
+        <label class="req">Категория</label>
+        <select ng-model="service.category" class="form-control" required
+                ng-options="c.title for c in serviceCategories track by c._id">
+            <option value="">-</option>
+        </select>
+    </div>
+
+    <div class="form-group col-sm-4">
+        <label class="req">Стоимость</label>
+        <input type="number" ng-model="service.price" class="form-control" min="0" max="999999999" required>
+    </div>
+
+    <div class="form-group col-sm-4">
+        <label class="req">Состояние</label>
+        <select ng-model="service.state" class="form-control" required
+                ng-options="s.title for s in states track by s._id">
+            <option value="">-</option>
+        </select>
+    </div>
+</div>
+
+<div class="row">
+    <div class="form-group col-sm-10">
+        <label class="req">Наименование</label>
+        <input ng-model="service.title" class="form-control" maxlength="150" required>
+    </div>
+
+    <div class="form-group col-sm-2">
+        <label class="req">Коротко</label>
+        <input ng-model="service.shortTitle" class="form-control" maxlength="20" required>
+    </div>
+</div>

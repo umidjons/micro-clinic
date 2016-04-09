@@ -1,0 +1,55 @@
+<h3>Услуги</h3>
+
+<button ui-sref="serviceCreate" class="btn btn-success"><i class="fa fa-fw fa-plus"></i> Новая услуга</button>
+
+<table class="table table-bordered table-striped table-hover table-condensed">
+
+    <thead>
+    <tr>
+        <th>№</th>
+        <th>Категория</th>
+        <th>Наименование</th>
+        <th>Коротко</th>
+        <th>Стоимость</th>
+        <th>Состояние</th>
+        <th>Дата создание</th>
+        <th>
+            <button ng-click="reloadPage()" class="btn btn-xs btn-info" title="Обновить">
+                <i class="fa fa-fw fa-refresh"></i>
+            </button>
+        </th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr ng-repeat="srv in services">
+        <td>{{ $index + 1 }}</td>
+        <td>{{ srv.category.title }}</td>
+        <td>{{ srv.title }}</td>
+        <td>{{ srv.shortTitle }}</td>
+        <td>{{ srv.price | number }}</td>
+        <td>{{ srv.state.title }}</td>
+        <td>{{ srv.created | date:'medium' }}</td>
+        <td class="text-center">
+            <div class="btn-group btn-group-xs">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-fw fa-bars"></i> <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a ui-sref="serviceView({id:srv._id})"><i class="fa fa-fw fa-search"></i> Просмотр</a></li>
+                    <li><a ui-sref="serviceEdit({id:srv._id})"><i class="fa fa-fw fa-edit"></i> Изменить</a></li>
+                    <li><a href ng-click="deleteService(srv)"><i class="fa fa-fw fa-trash"></i> Удалить</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li>
+                        <a ui-sref="serviceView({id:srv._id})">
+                            <i class="fa fa-fw fa-paperclip"></i> История изменения
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+
+</table>
