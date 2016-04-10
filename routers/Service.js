@@ -5,6 +5,36 @@ var models = require('../models');
 var Msg = require('../include/Msg');
 
 router
+    .get('/with-category', function (req, res) {
+        models.Service.aggregate([
+            {
+                $project: {
+                    categoryId: '$category._id',
+                    categoryTitle: '$category.title',
+                    categoryShortTitle: '$category.shortTitle',
+                    category: 1,
+                    title: 1,
+                    shortTitle: 1,
+                    userId: 1,
+                    created: 1,
+                    price: 1,
+                    __v: 1
+                }
+            },
+            {
+                $sort: {
+                    categoryTitle: 1,
+                    title: 1
+                }
+            }
+        ], function (err, services) {
+            if (err) {
+                Msg.sendError(res, err.message);
+            }
+
+            Msg.sendSuccess(res, '', services, 'Services with category');
+        });
+    })
     .get('/:id', function (req, res) {
         models.Service.findOne({_id: req.params.id}, function (err, service) {
             if (err) {
@@ -15,7 +45,7 @@ router
         });
     })
     .get('/', function (req, res) {
-        models.Service.find(function (err, services) {
+        models.Service.find().sort({'category.title': 1, title: 1}).exec(function (err, services) {
             if (err) {
                 return Msg.sendError(res, err.message);
             }

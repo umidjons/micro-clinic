@@ -33,6 +33,7 @@
     "angular-i18n": "^1.5.3",
     "angular-loading-bar": "^0.9.0",
     "angular-sanitize": "^1.5.3",
-    "angular-motion": "^0.4.4"
+    "angular-motion": "^0.4.4",
+    "underscore": "^1.8.3"
   }
 }

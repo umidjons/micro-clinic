@@ -33,6 +33,9 @@ angular.module('MyClinic')
             {
                 update: {
                     method: 'PUT'
+                },
+                categoriesWithServices: {
+                    method: 'GET', url: '/service-category/with-services', isArray: true
                 }
             }
         );
@@ -44,6 +47,9 @@ angular.module('MyClinic')
             {
                 update: {
                     method: 'PUT'
+                },
+                servicesWithCategory: {
+                    method: 'GET', url: '/service/with-category', isArray: true
                 }
             }
         );

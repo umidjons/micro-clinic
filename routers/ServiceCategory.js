@@ -5,6 +5,30 @@ var models = require('../models');
 var Msg = require('../include/Msg');
 
 router
+    .get('/with-services', function (req, res) {
+        models.Service.aggregate([
+            {
+                $project: {
+                    _id: 0,
+                    categoryTitle: '$category.title'
+                }
+            },
+            {
+                $group: {
+                    _id: '$categoryTitle'
+                }
+            },
+            {
+                $sort: {categoryTitle: 1}
+            }
+        ], function (err, categories) {
+            if (err) {
+                Msg.sendError(res, err.message);
+            }
+
+            Msg.sendSuccess(res, '', categories, 'Categories with services:');
+        });
+    })
     .get('/:id', function (req, res) {
         models.ServiceCategory.findOne({_id: req.params.id}, function (err, serviceCategory) {
             if (err) {
