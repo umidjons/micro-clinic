@@ -11,9 +11,9 @@
         <th>Наименование</th>
         <th>Коротко</th>
         <th>Стоимость</th>
-        <th>Состояние</th>
+        <th></th>
         <th>Дата создание</th>
-        <th>
+        <th class="text-center">
             <button ng-click="reloadPage()" class="btn btn-xs btn-info" title="Обновить">
                 <i class="fa fa-fw fa-refresh"></i>
             </button>
@@ -27,8 +27,12 @@
         <td>{{ srv.category.title }}</td>
         <td>{{ srv.title }}</td>
         <td>{{ srv.shortTitle }}</td>
-        <td>{{ srv.price | number }}</td>
-        <td>{{ srv.state.title }}</td>
+        <td class="text-right">{{ srv.price | number }}</td>
+        <td class="text-center" title="{{ srv.state.title }}">
+            <i class="fa fa-fw"
+               ng-class="{'fa-check text-success':srv.state._id=='active','fa-ban text-danger':srv.state._id=='blocked'}"></i>
+        </td>
+
         <td>{{ srv.created | date:'medium' }}</td>
         <td class="text-center">
             <div class="btn-group btn-group-xs">

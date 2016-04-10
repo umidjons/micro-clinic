@@ -90,6 +90,31 @@ angular.module('MyClinic', ['ngAnimate', 'angular-loading-bar', 'ui.router', 'ng
                 url: '/service/edit/:id',
                 templateUrl: 'partials/service/edit.html',
                 controller: 'ServiceCtrl'
+            })
+            .state('serviceView', {
+                url: '/service/view/:id',
+                templateUrl: 'partials/service/view.html',
+                controller: 'ServiceViewCtrl'
+            })
+            .state('partnerList', {
+                url: '/partner/list',
+                templateUrl: 'partials/partner/list.html',
+                controller: 'PartnersCtrl'
+            })
+            .state('partnerCreate', {
+                url: '/partner/create',
+                templateUrl: 'partials/partner/create.html',
+                controller: 'PartnerCtrl'
+            })
+            .state('partnerEdit', {
+                url: '/partner/edit/:id',
+                templateUrl: 'partials/partner/edit.html',
+                controller: 'PartnerCtrl'
+            })
+            .state('partnerView', {
+                url: '/partner/view/:id',
+                templateUrl: 'partials/partner/view.html',
+                controller: 'PartnerViewCtrl'
             });
         $urlRouterProvider.otherwise('/');
     })

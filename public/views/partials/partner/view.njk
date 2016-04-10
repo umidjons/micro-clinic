@@ -1,0 +1,52 @@
+<h3>
+    <button ui-sref="partnerEdit({id:partner._id})" class="btn btn-xs btn-info">
+        <i class="fa fa-fw fa-edit"></i>
+    </button>
+    {{ partner.lastName }} {{ partner.firstName }} {{ partner.middleName }}
+</h3>
+
+<table class="table table-hover">
+    <tbody>
+    <tr>
+        <th>Код</th>
+        <td>{{ partner.code }}</td>
+    </tr>
+    <tr>
+        <th>Доля (%)</th>
+        <td>{{ partner.percent | number }}</td>
+    </tr>
+    <tr>
+        <th>Адрес</th>
+        <td>{{ partner.address }}</td>
+    </tr>
+    <tr>
+        <th>Мобильный номер телефона</th>
+        <td>{{ partner.cellPhone }}</td>
+    </tr>
+    <tr>
+        <th>Городской номер телефона</th>
+        <td>{{ partner.homePhone }}</td>
+    </tr>
+    <tr>
+        <th>Email</th>
+        <td>{{ partner.email }}</td>
+    </tr>
+    <tr>
+        <th>Организация</th>
+        <td>{{ partner.company }}</td>
+    </tr>
+    <tr>
+        <th>Состояние</th>
+        <td>
+            <span class="label"
+                  ng-class="{'label-success':partner.state._id == 'active','label-danger':partner.state._id=='blocked'}">
+                {{ partner.state.title }}
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <th>Дата регистрации</th>
+        <td>{{ partner.created | date:'medium' }}</td>
+    </tr>
+    </tbody>
+</table>

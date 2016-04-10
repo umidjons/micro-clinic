@@ -72,4 +72,9 @@ angular.module('MyClinic')
             var confirmModal = $modal({scope: $scope, templateUrl: 'partials/_modal_confirmation.html'});
         };
 
+    })
+    .controller('ServiceViewCtrl', function ($scope, $state, $stateParams, Service) {
+        Service.get({id: $stateParams.id}, function (service) {
+            $scope.service = service;
+        });
     });

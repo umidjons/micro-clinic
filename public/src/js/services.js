@@ -53,4 +53,15 @@ angular.module('MyClinic')
                 }
             }
         );
+    })
+    .factory('Partner', function ($resource) {
+        return $resource(
+            '/partner/:id',
+            {id: '@_id'},
+            {
+                update: {
+                    method: 'PUT'
+                }
+            }
+        );
     });

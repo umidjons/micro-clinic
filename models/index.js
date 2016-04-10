@@ -6,3 +6,4 @@ module.exports.Patient = require('./Patient');
 module.exports.ServiceCategorySchema = require('./ServiceCategory').ServiceCategorySchema;
 module.exports.ServiceCategory = require('./ServiceCategory').ServiceCategory;
 module.exports.Service = require('./Service');
+module.exports.Partner = require('./Partner');
