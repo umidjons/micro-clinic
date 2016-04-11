@@ -18,6 +18,13 @@ var PartnerSchema = mongoose.Schema({
     userId: {type: String, required: true, default: '1'} //todo: set real user id or user schema
 });
 
+PartnerSchema.virtual('fullName').get(function () {
+    return (this.lastName + ' ' + this.firstName + ' ' + this.middleName).trim();
+});
+
+PartnerSchema.set('toJSON', {virtuals: true});
+PartnerSchema.set('toObject', {virtuals: true});
+
 var Partner = mongoose.model('Partner', PartnerSchema);
 
 module.exports = Partner;

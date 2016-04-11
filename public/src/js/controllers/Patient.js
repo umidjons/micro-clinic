@@ -77,11 +77,12 @@ angular.module('MyClinic')
 
         $scope.reloadPage();
     })
-    .controller('PatientViewCtrl', function ($scope, $state, $stateParams, Patient, Service, ServiceCategory) {
+    .controller('PatientViewCtrl', function ($scope, $state, $stateParams, Patient, Partner, Service, ServiceCategory) {
         ServiceCategory.categoriesWithServices(function (categories) {
             $scope.categories = _.pluck(categories, '_id');
         });
         $scope.services = Service.servicesWithCategory();
+        $scope.partners = Partner.query();
 
         $scope.getServicesByCategory = function (catTitle) {
             return _.where($scope.services, {categoryTitle: catTitle});
@@ -132,6 +133,19 @@ angular.module('MyClinic')
             srv.discountWindow = false;
         };
 
+        $scope.openPartner = function (srv) {
+            srv.partnerWindow = true;
+        };
+
+        $scope.closePartnerWindow = function (srv) {
+            srv.partnerWindow = false;
+        };
+
+        $scope.setPartner = function (partner, srv) {
+            srv.partner = partner;
+            srv.partnerWindow = false;
+        };
+
         $scope.calcService = function (srv) {
             srv.priceTotal = srv.quantity * srv.price;
             if (srv.discount > 0) {
@@ -143,4 +157,7 @@ angular.module('MyClinic')
             $scope.patient = patient;
             $scope.patient.services = [];
         });
+
+        //todo: output totals (quantity and price) in table footer
+        //todo: create 2 pages: 1) add new services 2) services history (оказанные услуги)
     });

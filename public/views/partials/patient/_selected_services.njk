@@ -1,0 +1,134 @@
+<div class="col-sm-9">
+    <table class="table table-bordered table-condensed">
+        <thead>
+        <tr>
+            <th>№</th>
+            <th>Категория</th>
+            <th>Услуга</th>
+            <th>Количество</th>
+            <th>Скидка (%)</th>
+            <th>Стоимость</th>
+            <th>Партнёр</th>
+            <th></th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        <tr ng-repeat-start="selSrv in patient.services">
+            <td>{{ $index + 1 }}</td>
+            <td>{{ selSrv.category.title }}</td>
+            <td>{{ selSrv.title }}</td>
+            <td class="text-right col-sm-2">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-btn">
+                        <button ng-click="selectService(selSrv,-1)" ng-disabled="selSrv.quantity<=1"
+                                class="btn btn-danger">
+                            <i class="fa fa-fw fa-minus"></i>
+                        </button>
+                    </span>
+                    <input ng-model="selSrv.quantity" type="number" class="form-control" min="1"
+                           ng-change="calcService(selSrv)">
+                    <span class="input-group-btn">
+                        <button ng-click="selectService(selSrv,1)" class="btn btn-success">
+                            <i class="fa fa-fw fa-plus"></i>
+                        </button>
+                    </span>
+                </div>
+            </td>
+            <td class="text-right" title="{{ selSrv.discountNote }}">{{ selSrv.discount || 0 | number }}</td>
+            <td class="text-right">{{ selSrv.priceTotal | number }}</td>
+            <td>{{ selSrv.partner.code }}</td>
+
+            <td class="text-right">
+                <div class="btn-group btn-group-xs">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-fw fa-bars"></i> <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li>
+                            <a href ng-click="deselectService($index)">
+                                <i class="fa fa-fw fa-minus"></i> Удалить
+                            </a>
+                        </li>
+                        <li>
+                            <a href ng-click="openDiscount(selSrv)">
+                                <i class="fa fa-fw fa-gift"></i> Скидка
+                            </a>
+                        </li>
+                        <li>
+                            <a href ng-click="openPartner(selSrv)">
+                                <i class="fa fa-fw fa-user-plus"></i> Партнёр
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </td>
+
+        </tr>
+
+        {# -----< discount window >----- #}
+        <tr>
+            <td ng-if="selSrv.discountWindow" colspan="10" ng-form="formDiscount">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label class="req">Скидка</label>
+                        <input ng-model="selSrv.discount" type="number" class="form-control" min="0" max=100 required>
+                    </div>
+                </div>
+                <div class="col-sm-9">
+                    <div class="form-group">
+                        <label ng-class="{'req':selSrv.discount>0}">Причина</label>
+                        <input ng-model="selSrv.discountNote" class="form-control" maxlength="200"
+                               ng-required="selSrv.discount>0">
+                    </div>
+                </div>
+                <div class="col-sm-12 text-right">
+                    <button ng-click="setDiscount(selSrv)" ng-disabled="formDiscount.$invalid" class="btn btn-success">
+                        <i class="fa fa-fw fa-gift"></i> Установить скидку
+                    </button>
+                </div>
+            </td>
+        </tr>
+        {# -----</ discount window >----- #}
+
+        {# -----< partner window >----- #}
+        <tr ng-repeat-end>
+            <td ng-if="selSrv.partnerWindow" colspan="10" ng-form="formPartner">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label>Партнёр</label>
+                        <div class="input-group">
+                            <ui-select ng-model="selSrv.partner" on-select="setPartner($model,selSrv)"
+                                       title="{{ part.fullName }}" allow-clear>
+                                <ui-select-match placeholder="Код партнёра...">{{$select.selected.code}}
+                                </ui-select-match>
+                                <ui-select-choices repeat="part in partners | filter:{code:$select.search}">
+                                    <span class="label label-success">{{part.code}}</span>
+                                    <span>{{ part.fullName }}</span>
+                                </ui-select-choices>
+                            </ui-select>
+                        <span class="input-group-btn">
+                            <button ng-click="setPartner(undefined,selSrv)" title="сброс"
+                                    class="btn btn-default">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </button>
+                        </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 text-right">
+                    <button ng-click="closePartnerWindow(selSrv)" class="btn btn-default">
+                        <i class="fa fa-fw fa-remove"></i> Закрыть
+                    </button>
+                </div>
+            </td>
+        </tr>
+        {# -----</ partner window >----- #}
+
+        </tbody>
+    </table>
+</div>
+
+<pre>{{ patient.services | json }}</pre>

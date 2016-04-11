@@ -1,0 +1,35 @@
+<div class="col-sm-3">
+    <input ng-model="filterCategory" class="form-control" placeholder="Фильтр по категориям...">
+
+    <div ng-repeat="catTitle in categories | filter:filterCategory" class="panel panel-default">
+
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-6">
+                    {{ catTitle }}
+                </div>
+                <div class="col-sm-6 text-right" style="padding-right: 6px;">
+                    {{ getServicesByCategoryTotal(catTitle) | number }}
+                    <button ng-click="selectAllService(catTitle)" class="btn btn-xs btn-success">
+                        <i class="fa fa-fw fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <table class="table table-condensed table-hover">
+            <tbody>
+            <tr ng-repeat="srv in getServicesByCategory(catTitle)">
+                <td>{{ srv.title }}</td>
+                <td class="text-right">{{ srv.price | number }}</td>
+                <td class="text-right">
+                    <button ng-click="selectService(srv)" class="btn btn-xs btn-info">
+                        <i class="fa fa-fw fa-plus"></i>
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+</div>

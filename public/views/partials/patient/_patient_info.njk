@@ -1,0 +1,15 @@
+<table class="table">
+    <tbody>
+    <tr>
+        <td>
+            <i title="{{ patient.sex.title }}" ng-if="patient.sex._id == 'male'" class="fa fa-fw fa-mars"></i>
+            <i title="{{ patient.sex.title }}" ng-if="patient.sex._id == 'female'" class="fa fa-fw fa-venus"></i>
+        </td>
+        <td><i class="fa fa-fw fa-calendar"></i> {{ patient.dateOfBirth | date }}</td>
+        <td><i class="fa fa-fw fa-mobile"></i> {{ patient.cellPhone }}</td>
+        <td><i class="fa fa-fw fa-phone"></i> {{ patient.homePhone }}</td>
+        <td><i class="fa fa-fw fa-envelope"></i> {{ patient.email }}</td>
+        <td><i class="fa fa-fw fa-map-marker"></i> {{ patient.address }}</td>
+    </tr>
+    </tbody>
+</table>
