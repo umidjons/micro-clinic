@@ -130,14 +130,22 @@ angular.module('MyClinic')
                     Service.recalc(srv);
                 },
                 totalPrice: function () {
-                    return _.reduce($scope.patient.services, function (memo, srv) {
-                        return memo + srv.priceTotal;
-                    }, 0);
+                    if ($scope.patient && $scope.patient.services) {
+                        return _.reduce($scope.patient.services, function (memo, srv) {
+                            return memo + srv.priceTotal;
+                        }, 0);
+                    } else {
+                        return 0;
+                    }
                 },
                 totalQuantity: function () {
-                    return _.reduce($scope.patient.services, function (memo, srv) {
-                        return memo + srv.quantity;
-                    }, 0);
+                    if ($scope.patient && $scope.patient.services) {
+                        return _.reduce($scope.patient.services, function (memo, srv) {
+                            return memo + srv.quantity;
+                        }, 0);
+                    } else {
+                        return 0;
+                    }
                 }
             },
             Marker: {
