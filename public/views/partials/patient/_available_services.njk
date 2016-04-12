@@ -1,5 +1,20 @@
 <div class="col-sm-3">
-    <input ng-model="filterCategory" class="form-control" placeholder="Фильтр по категориям...">
+    <div class="input-group">
+        <input ng-model="filterCategory" class="form-control" placeholder="Фильтр по категориям...">
+        <span class="input-group-btn">
+            <button ng-click="filterCategory=''" class="btn btn-default">
+                <i class="fa fa-fw fa-remove"></i>
+            </button>
+        </span>
+    </div>
+    <div class="input-group">
+        <input ng-model="filterService" class="form-control" placeholder="Фильтр по услугам...">
+        <span class="input-group-btn">
+            <button ng-click="filterService=''" class="btn btn-default">
+                <i class="fa fa-fw fa-remove"></i>
+            </button>
+        </span>
+    </div>
 
     <div ng-repeat="catTitle in categories | filter:filterCategory" class="panel panel-default">
 
@@ -19,7 +34,7 @@
 
         <table class="table table-condensed table-hover">
             <tbody>
-            <tr ng-repeat="srv in ServiceHelper.getByCategory(catTitle)">
+            <tr ng-repeat="srv in ServiceHelper.getByCategory(catTitle) | filter:{title:filterService}">
                 <td>{{ srv.title }}</td>
                 <td class="text-right">{{ srv.price | number }}</td>
                 <td class="text-right">

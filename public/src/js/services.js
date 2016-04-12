@@ -1,4 +1,20 @@
 angular.module('MyClinic')
+    .factory('Msg', function (toaster) {
+        return {
+            info: function (msg) {
+                toaster.pop('info', '', msg);
+            },
+            success: function (msg) {
+                toaster.pop('success', '', msg);
+            },
+            warning: function (msg) {
+                toaster.pop('warning', '', msg);
+            },
+            error: function (msg) {
+                toaster.pop('error', '', msg);
+            }
+        }
+    })
     .service('Sex', function () {
         this.query = function () {
             return [

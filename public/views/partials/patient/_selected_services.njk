@@ -93,6 +93,15 @@
         </tr>
 
         </tbody>
+
+        <tfoot>
+        <tr>
+            <th class="text-right" colspan="4">Всего:</th>
+            <th class="text-right">{{ ServiceHelper.Service.totalQuantity() | number }}</th>
+            <th></th>
+            <th class="text-right">{{ ServiceHelper.Service.totalPrice() | number }}</th>
+        </tr>
+        </tfoot>
     </table>
 </div>
 

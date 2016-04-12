@@ -73,7 +73,7 @@ angular.module('MyClinic')
         $scope.reloadPage();
     })
     .controller('PatientViewCtrl', function ($scope, $state, $stateParams, Patient, Service,
-                                             ServiceCategory, Discount, PartnerSetter) {
+                                             ServiceCategory, Discount, PartnerSetter, Msg) {
         $scope.Discount = Discount;
 
         ServiceCategory.categoriesWithServices(function (categories) {
@@ -114,9 +114,13 @@ angular.module('MyClinic')
                     }
                 },
                 remove: function (idx) {
-                    if (angular.isUndefined(idx) && $scope.ServiceHelper.Marker.getMarked(true) > 0) {
-                        var markedSrvList = $scope.ServiceHelper.Marker.getMarked();
-                        $scope.patient.services = _.difference($scope.patient.services, markedSrvList);
+                    if (angular.isUndefined(idx)) {
+                        if ($scope.ServiceHelper.Marker.getMarked(true) > 0) {
+                            var markedSrvList = $scope.ServiceHelper.Marker.getMarked();
+                            $scope.patient.services = _.difference($scope.patient.services, markedSrvList);
+                        } else {
+                            Msg.error('Услуга не выбрана!');
+                        }
                     } else {
                         $scope.patient.services.splice(idx, 1);
                     }
@@ -124,6 +128,16 @@ angular.module('MyClinic')
                 },
                 recalc: function (srv) {
                     Service.recalc(srv);
+                },
+                totalPrice: function () {
+                    return _.reduce($scope.patient.services, function (memo, srv) {
+                        return memo + srv.priceTotal;
+                    }, 0);
+                },
+                totalQuantity: function () {
+                    return _.reduce($scope.patient.services, function (memo, srv) {
+                        return memo + srv.quantity;
+                    }, 0);
                 }
             },
             Marker: {
@@ -157,11 +171,19 @@ angular.module('MyClinic')
         };
 
         $scope.openPartner = function () {
-            PartnerSetter.open($scope.ServiceHelper.Marker.getMarked);
+            if ($scope.ServiceHelper.Marker.getMarked(true) > 0) {
+                PartnerSetter.open($scope.ServiceHelper.Marker.getMarked);
+            } else {
+                Msg.error('Услуга не выбрана!');
+            }
         };
 
         $scope.openDiscount = function () {
-            Discount.open($scope.ServiceHelper.Service.recalc, $scope.ServiceHelper.Marker.getMarked);
+            if ($scope.ServiceHelper.Marker.getMarked(true) > 0) {
+                Discount.open($scope.ServiceHelper.Service.recalc, $scope.ServiceHelper.Marker.getMarked);
+            } else {
+                Msg.error('Услуга не выбрана!');
+            }
         };
 
         Patient.get({id: $stateParams.id}, function (patient) {
