@@ -56,3 +56,7 @@ input[type=checkbox].ng-invalid {
     outline: 1px solid #a94442;
     outline-offset: -1px;
 }
+
+.aside-footer {
+    clear: both;
+}

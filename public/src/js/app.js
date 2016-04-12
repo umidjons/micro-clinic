@@ -15,7 +15,6 @@ angular.module('MyClinic', ['ngAnimate', 'ngSanitize', 'angular-loading-bar', 'u
             return {
                 response: function (response) {
                     var hMsg = response.headers('X-MSG');
-                    console.log('X-MSG:', decodeURI(hMsg));
                     if (hMsg) {
                         hMsg = decodeURI(hMsg);
                         var xMessages = JSON.parse(hMsg);

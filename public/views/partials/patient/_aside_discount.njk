@@ -1,0 +1,49 @@
+<div class="aside" tabindex="-1" role="dialog" style="max-width: 50%;">
+    <div class="aside-dialog">
+        <div class="aside-content" ng-form="formDiscount">
+
+            <div class="aside-header" ng-show="title">
+                <button type="button" class="close" ng-click="$hide()">&times;</button>
+                <h4 class="aside-title" ng-bind="title"></h4>
+            </div>
+
+            <div class="aside-body">
+                <div class="col-sm-12">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="req">Скидка</label>
+                            <div class="input-group">
+                                <input ng-model="Discount.amount" type="number" class="form-control"
+                                       min="0" max=100 required>
+                                <span class="input-group-addon">
+                                    <i class="fa fa-fw fa-percent"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label ng-class="{'req':Discount.amount>0}">Причина</label>
+                            <textarea ng-model="Discount.note" class="form-control" maxlength="200"
+                                      ng-required="Discount.amount>0">
+                            </textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="aside-footer">
+                <button type="button" class="btn btn-danger" ng-click="$hide()">Отмена</button>
+                <button ng-show="Discount.allow()" ng-click="Discount.reset()"
+                        ng-disabled="formDiscount.$invalid" class="btn btn-danger">
+                    <i class="fa fa-fw fa-gift"></i>
+                    Убрать скидку с выделенных {{ Discount.selServiceCount }} услуг
+                </button>
+                <button ng-show="Discount.allow()" ng-click="Discount.set()"
+                        ng-disabled="formDiscount.$invalid" class="btn btn-success">
+                    <i class="fa fa-fw fa-gift"></i>
+                    Установить скидку выделенным {{ Discount.selServiceCount }} услугам
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

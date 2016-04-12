@@ -1,0 +1,54 @@
+<div class="aside" tabindex="-1" role="dialog" style="max-width: 50%;">
+    <div class="aside-dialog">
+        <div class="aside-content" ng-form="formPartner">
+
+            <div class="aside-header" ng-show="title">
+                <button type="button" class="close" ng-click="$hide()">&times;</button>
+                <h4 class="aside-title" ng-bind="title"></h4>
+            </div>
+
+            <div class="aside-body">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label>Партнёр</label>
+                        <div class="input-group">
+
+                            <ui-select ng-model="PartnerSetter.partner"
+                                       title="{{ part.fullName }}" allow-clear>
+                                <ui-select-match placeholder="Код партнёра...">
+                                    {{$select.selected.code}}
+                                </ui-select-match>
+                                <ui-select-choices
+                                        repeat="part in PartnerSetter.partners | filter:{code:$select.search}">
+                                    <span class="label label-success">{{part.code}}</span>
+                                    <span>{{ part.fullName }}</span>
+                                </ui-select-choices>
+                            </ui-select>
+
+                            <span class="input-group-btn">
+                                <button ng-click="PartnerSetter.resetModel()" title="сброс" class="btn btn-default">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="aside-footer">
+                <button type="button" class="btn btn-danger" ng-click="$hide()">Отмена</button>
+                <button ng-click="PartnerSetter.reset()" ng-show="PartnerSetter.allow()"
+                        ng-disabled="formPartner.$invalid" class="btn btn-danger">
+                    <i class="fa fa-fw fa-gift"></i>
+                    Удалить партнёра с выделенных {{ PartnerSetter.selServiceCount }} услуг
+                </button>
+                <button ng-click="PartnerSetter.set()" ng-show="PartnerSetter.allow()"
+                        ng-disabled="formPartner.$invalid" class="btn btn-success">
+                    <i class="fa fa-fw fa-gift"></i>
+                    Привязать партнёра к выделенным {{ PartnerSetter.selServiceCount }} услугам
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

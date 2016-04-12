@@ -9,8 +9,8 @@
                     {{ catTitle }}
                 </div>
                 <div class="col-sm-6 text-right" style="padding-right: 6px;">
-                    {{ getServicesByCategoryTotal(catTitle) | number }}
-                    <button ng-click="selectAllService(catTitle)" class="btn btn-xs btn-success">
+                    {{ ServiceHelper.totalPriceByCategory(catTitle) | number }}
+                    <button ng-click="ServiceHelper.Service.addAll(catTitle)" class="btn btn-xs btn-success">
                         <i class="fa fa-fw fa-plus"></i>
                     </button>
                 </div>
@@ -19,11 +19,11 @@
 
         <table class="table table-condensed table-hover">
             <tbody>
-            <tr ng-repeat="srv in getServicesByCategory(catTitle)">
+            <tr ng-repeat="srv in ServiceHelper.getByCategory(catTitle)">
                 <td>{{ srv.title }}</td>
                 <td class="text-right">{{ srv.price | number }}</td>
                 <td class="text-right">
-                    <button ng-click="selectService(srv)" class="btn btn-xs btn-info">
+                    <button ng-click="ServiceHelper.Service.add(srv)" class="btn btn-xs btn-info">
                         <i class="fa fa-fw fa-plus"></i>
                     </button>
                 </td>

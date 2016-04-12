@@ -7,8 +7,6 @@ angular.module('MyClinic')
     .controller('PatientCtrl', function ($scope, $state, $stateParams, $modal, Sex, Patient) {
         $scope.sex = Sex.query();
 
-        console.log('Params:', $stateParams);
-
         if ($stateParams.id) {
             Patient.get({id: $stateParams.id}, function (patient) {
                 $scope.patient = patient;
@@ -24,7 +22,6 @@ angular.module('MyClinic')
             $scope.okAction = function () {
                 if ($scope.patient._id) {
                     $scope.patient.$update(function (resp) {
-                        console.log('Response:', resp);
                         // close confirmation window
                         confirmModal.hide();
 
@@ -34,7 +31,6 @@ angular.module('MyClinic')
                     });
                 } else {
                     $scope.patient.$save(function (resp) {
-                        console.log('Response:', resp);
                         // close confirmation window
                         confirmModal.hide();
 
@@ -61,7 +57,6 @@ angular.module('MyClinic')
             $scope.okAction = function () {
                 if (patient) {
                     patient.$delete(function (resp) {
-                        console.log('Response:', resp);
                         // close confirmation window
                         confirmModal.hide();
 
@@ -77,80 +72,96 @@ angular.module('MyClinic')
 
         $scope.reloadPage();
     })
-    .controller('PatientViewCtrl', function ($scope, $state, $stateParams, Patient, Partner, Service, ServiceCategory) {
+    .controller('PatientViewCtrl', function ($scope, $state, $stateParams, Patient, Service,
+                                             ServiceCategory, Discount, PartnerSetter) {
+        $scope.Discount = Discount;
+
         ServiceCategory.categoriesWithServices(function (categories) {
+            // create array with category titles
             $scope.categories = _.pluck(categories, '_id');
         });
         $scope.services = Service.servicesWithCategory();
-        $scope.partners = Partner.query();
 
-        $scope.getServicesByCategory = function (catTitle) {
-            return _.where($scope.services, {categoryTitle: catTitle});
-        };
-        $scope.getServicesByCategoryTotal = function (catTitle) {
-            var srvList = $scope.getServicesByCategory(catTitle);
-            return _.reduce(srvList, function (memo, srv) {
-                return memo + srv.price;
-            }, 0);
-        };
+        $scope.ServiceHelper = {
+            getByCategory: function (catTitle) {
+                return _.where($scope.services, {categoryTitle: catTitle});
+            },
+            totalPriceByCategory: function (catTitle) {
+                var srvList = this.getByCategory(catTitle);
+                return _.reduce(srvList, function (memo, srv) {
+                    return memo + srv.price;
+                }, 0);
+            },
+            Service: {
+                add: function (srv, qnt) {
+                    var found = _.find($scope.patient.services, {_id: srv._id});
+                    qnt = qnt || 1;
+                    if (found) {
+                        if ((found.quantity > 1 && qnt < 0) || qnt > 0)
+                            found.quantity += qnt;
+                        this.recalc(found);
+                    } else {
+                        var service = angular.copy(srv);
+                        service.quantity = 1;
+                        this.recalc(service);
+                        $scope.patient.services.push(service);
+                    }
+                },
+                addAll: function (categoryTitle) {
+                    var srvList = $scope.ServiceHelper.getByCategory(categoryTitle);
+                    for (let srv of srvList) {
+                        this.add(srv);
+                    }
+                },
+                remove: function (idx) {
+                    if (angular.isUndefined(idx) && $scope.ServiceHelper.Marker.getMarked(true) > 0) {
+                        var markedSrvList = $scope.ServiceHelper.Marker.getMarked();
+                        $scope.patient.services = _.difference($scope.patient.services, markedSrvList);
+                    } else {
+                        $scope.patient.services.splice(idx, 1);
+                    }
+                    $scope.ServiceHelper.Marker.onChange();
+                },
+                recalc: function (srv) {
+                    Service.recalc(srv);
+                }
+            },
+            Marker: {
+                isAllMarked: false,
+                markedCount: 0,
+                toggleAll: function () {
+                    for (let srv of $scope.patient.services) {
+                        srv.marked = this.isAllMarked;
+                    }
+                    this.onChange();
+                },
+                /**
+                 * Gets marked services or its count
+                 * @param retCount truth - returns count, falsy - returns marked services
+                 * @returns {*} list of marked services or marked services count
+                 */
+                getMarked: function (retCount) {
+                    var res = _.where($scope.patient.services, {marked: 1});
+                    if (!retCount) {
+                        return res;
+                    }
+                    return res.length;
+                },
+                onChange: function () {
+                    var allSrvCount = $scope.patient.services.length;
+                    this.markedCount = this.getMarked(true);
+                    this.isAllMarked = allSrvCount > 0 && allSrvCount == this.markedCount ? 1 : 0;
 
-        $scope.selectAllService = function (categoryTitle) {
-            var srvList = $scope.getServicesByCategory(categoryTitle);
-            for (let srv of srvList) {
-                $scope.selectService(srv);
+                }
             }
         };
 
-        $scope.selectService = function (srv, qnt) {
-            var found = _.find($scope.patient.services, {_id: srv._id});
-            qnt = qnt || 1;
-            if (found) {
-                if ((found.quantity > 1 && qnt < 0) || qnt > 0)
-                    found.quantity += qnt;
-                $scope.calcService(found);
-            } else {
-                var service = angular.copy(srv);
-                service.quantity = 1;
-                $scope.calcService(service);
-                $scope.patient.services.push(service);
-            }
+        $scope.openPartner = function () {
+            PartnerSetter.open($scope.ServiceHelper.Marker.getMarked);
         };
 
-        $scope.deselectService = function (idx) {
-            $scope.patient.services.splice(idx, 1);
-        };
-
-        $scope.openDiscount = function (srv) {
-            srv.discount = srv.discount || 0;
-            srv.discountWindow = true;
-        };
-
-        $scope.setDiscount = function (srv) {
-            if (!srv.discount) {
-                srv.discountNote = '';
-            }
-            $scope.calcService(srv);
-            srv.discountWindow = false;
-        };
-
-        $scope.openPartner = function (srv) {
-            srv.partnerWindow = true;
-        };
-
-        $scope.closePartnerWindow = function (srv) {
-            srv.partnerWindow = false;
-        };
-
-        $scope.setPartner = function (partner, srv) {
-            srv.partner = partner;
-            srv.partnerWindow = false;
-        };
-
-        $scope.calcService = function (srv) {
-            srv.priceTotal = srv.quantity * srv.price;
-            if (srv.discount > 0) {
-                srv.priceTotal -= srv.priceTotal * 0.01 * srv.discount;
-            }
+        $scope.openDiscount = function () {
+            Discount.open($scope.ServiceHelper.Service.recalc, $scope.ServiceHelper.Marker.getMarked);
         };
 
         Patient.get({id: $stateParams.id}, function (patient) {
