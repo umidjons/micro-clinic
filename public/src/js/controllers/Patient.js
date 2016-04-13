@@ -4,7 +4,7 @@ angular.module('MyClinic')
     .controller('PatientSearchCtrl', function ($scope) {
 
     })
-    .controller('PatientCtrl', function ($scope, $state, $stateParams, $modal, Sex, Patient) {
+    .controller('PatientCtrl', function ($scope, $state, $stateParams, Modal, Sex, Patient) {
         $scope.sex = Sex.query();
 
         if ($stateParams.id) {
@@ -16,64 +16,59 @@ angular.module('MyClinic')
         }
 
         $scope.savePatient = function () {
-            // prepare confirmation modal
-            $scope.title = 'Подтверждение';
-            $scope.content = 'Сохранить изменения?';
-            $scope.okAction = function () {
-                if ($scope.patient._id) {
-                    $scope.patient.$update(function (resp) {
-                        // close confirmation window
-                        confirmModal.hide();
+            Modal.confirm({
+                okAction: function (modal) {
+                    if ($scope.patient._id) {
+                        $scope.patient.$update(function (resp) {
+                            // close confirmation window
+                            modal.hide();
 
-                        if (resp.code == 'success') {
-                            $state.go('patientList');
-                        }
-                    });
-                } else {
-                    $scope.patient.$save(function (resp) {
-                        // close confirmation window
-                        confirmModal.hide();
+                            if (resp.code == 'success') {
+                                $state.go('patientList');
+                            }
+                        });
+                    } else {
+                        $scope.patient.$save(function (resp) {
+                            // close confirmation window
+                            modal.hide();
 
-                        if (resp.code == 'success') {
-                            $state.go('patientList');
-                        }
-                    });
+                            if (resp.code == 'success') {
+                                $state.go('patientList');
+                            }
+                        });
+                    }
                 }
-            };
-            // show=true by default, so this line will show our modal window
-            var confirmModal = $modal({scope: $scope, templateUrl: 'partials/_modal_confirmation.html'});
+            });
         };
 
     })
-    .controller('PatientsCtrl', function ($scope, $modal, Patient) {
+    .controller('PatientsCtrl', function ($scope, Modal, Patient) {
         $scope.reloadPage = function () {
             $scope.patients = Patient.query();
         };
 
         $scope.deletePatient = function (patient) {
-            // prepare confirmation modal
-            $scope.title = 'Подтверждение';
-            $scope.content = 'Удалить пациента?';
-            $scope.okAction = function () {
-                if (patient) {
-                    patient.$delete(function (resp) {
-                        // close confirmation window
-                        confirmModal.hide();
+            Modal.confirm({
+                content: 'Удалить пациента?',
+                okAction: function (modal) {
+                    if (patient) {
+                        patient.$delete(function (resp) {
+                            // close confirmation window
+                            modal.hide();
 
-                        if (resp.code == 'success') {
-                            $scope.reloadPage();
-                        }
-                    });
+                            if (resp.code == 'success') {
+                                $scope.reloadPage();
+                            }
+                        });
+                    }
                 }
-            };
-            // show=true by default, so this line will show our modal window
-            var confirmModal = $modal({scope: $scope, templateUrl: 'partials/_modal_confirmation.html'});
+            });
         };
 
         $scope.reloadPage();
     })
-    .controller('PatientViewCtrl', function ($scope, $state, $stateParams, $modal, Patient, Service, PatientService,
-                                             ServiceCategory, Discount, PartnerSetter, Msg) {
+    .controller('PatientViewCtrl', function ($scope, $state, $stateParams, Patient, Service, PatientService,
+                                             ServiceCategory, Discount, PartnerSetter, Msg, Modal) {
         $scope.Discount = Discount;
 
         ServiceCategory.categoriesWithServices(function (categories) {
@@ -195,24 +190,21 @@ angular.module('MyClinic')
         };
 
         $scope.savePatientServices = function () {
-            // prepare confirmation modal
-            $scope.title = 'Подтверждение';
-            $scope.content = 'Сохранить изменения?';
-            $scope.okAction = function () {
-                var patientService = new PatientService();
-                patientService.services = angular.copy($scope.patient.services);
-                patientService.patientId = $scope.patient._id;
-                patientService.$save(function (resp) {
-                    // close confirmation window
-                    confirmModal.hide();
+            Modal.confirm({
+                okAction: function (modal) {
+                    var patientService = new PatientService();
+                    patientService.services = angular.copy($scope.patient.services);
+                    patientService.patientId = $scope.patient._id;
+                    patientService.$save(function (resp) {
+                        // close confirmation window
+                        modal.hide();
 
-                    if (resp.code == 'success') {
-                        $state.go('patientList');
-                    }
-                });
-            };
-            // show=true by default, so this line will show our modal window
-            var confirmModal = $modal({scope: $scope, templateUrl: 'partials/_modal_confirmation.html'});
+                        if (resp.code == 'success') {
+                            $state.go('patientList');
+                        }
+                    });
+                }
+            });
         };
 
         Patient.get({id: $stateParams.id}, function (patient) {

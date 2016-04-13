@@ -1,33 +1,31 @@
 angular.module('MyClinic')
-    .controller('ServicesCtrl', function ($scope, $modal, Service) {
+    .controller('ServicesCtrl', function ($scope, Modal, Service) {
         $scope.reloadPage = function () {
             $scope.services = Service.query();
         };
 
         $scope.deleteService = function (service) {
-            // prepare confirmation modal
-            $scope.title = 'Подтверждение';
-            $scope.content = 'Удалить услугу?';
-            $scope.okAction = function () {
-                if (service) {
-                    service.$delete(function (resp) {
-                        console.log('Response:', resp);
-                        // close confirmation window
-                        confirmModal.hide();
+            Modal.confirm({
+                content: 'Удалить услугу?',
+                okAction: function (modal) {
+                    if (service) {
+                        service.$delete(function (resp) {
+                            console.log('Response:', resp);
+                            // close confirmation window
+                            modal.hide();
 
-                        if (resp.code == 'success') {
-                            $scope.reloadPage();
-                        }
-                    });
+                            if (resp.code == 'success') {
+                                $scope.reloadPage();
+                            }
+                        });
+                    }
                 }
-            };
-            // show=true by default, so this line will show our modal window
-            var confirmModal = $modal({scope: $scope, templateUrl: 'partials/_modal_confirmation.html'});
+            });
         };
 
         $scope.reloadPage();
     })
-    .controller('ServiceCtrl', function ($scope, $state, $stateParams, $modal, State, ServiceCategory, Service) {
+    .controller('ServiceCtrl', function ($scope, $state, $stateParams, Modal, State, ServiceCategory, Service) {
         $scope.serviceCategories = ServiceCategory.query();
         $scope.states = State.query();
 
@@ -42,34 +40,31 @@ angular.module('MyClinic')
         }
 
         $scope.saveService = function () {
-            // prepare confirmation modal
-            $scope.title = 'Подтверждение';
-            $scope.content = 'Сохранить изменения?';
-            $scope.okAction = function () {
-                if ($scope.service._id) {
-                    $scope.service.$update(function (resp) {
-                        console.log('Response:', resp);
-                        // close confirmation window
-                        confirmModal.hide();
+            Modal.confirm({
+                okAction: function (modal) {
+                    if ($scope.service._id) {
+                        $scope.service.$update(function (resp) {
+                            console.log('Response:', resp);
+                            // close confirmation window
+                            modal.hide();
 
-                        if (resp.code == 'success') {
-                            $state.go('serviceList');
-                        }
-                    });
-                } else {
-                    $scope.service.$save(function (resp) {
-                        console.log('Response:', resp);
-                        // close confirmation window
-                        confirmModal.hide();
+                            if (resp.code == 'success') {
+                                $state.go('serviceList');
+                            }
+                        });
+                    } else {
+                        $scope.service.$save(function (resp) {
+                            console.log('Response:', resp);
+                            // close confirmation window
+                            modal.hide();
 
-                        if (resp.code == 'success') {
-                            $state.go('serviceList');
-                        }
-                    });
+                            if (resp.code == 'success') {
+                                $state.go('serviceList');
+                            }
+                        });
+                    }
                 }
-            };
-            // show=true by default, so this line will show our modal window
-            var confirmModal = $modal({scope: $scope, templateUrl: 'partials/_modal_confirmation.html'});
+            });
         };
 
     })

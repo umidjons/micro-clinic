@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('MyClinic')
-    .controller('PartnerCtrl', function ($scope, $state, $stateParams, $modal, Partner, State) {
+    .controller('PartnerCtrl', function ($scope, $state, $stateParams, Modal, Partner, State) {
         console.log('Params:', $stateParams);
 
         $scope.states = State.query();
@@ -16,61 +16,55 @@ angular.module('MyClinic')
         }
 
         $scope.savePartner = function () {
-            // prepare confirmation modal
-            $scope.title = 'Подтверждение';
-            $scope.content = 'Сохранить изменения?';
-            $scope.okAction = function () {
-                if ($scope.partner._id) {
-                    $scope.partner.$update(function (resp) {
-                        console.log('Response:', resp);
-                        // close confirmation window
-                        confirmModal.hide();
+            Modal.confirm({
+                okAction: function (modal) {
+                    if ($scope.partner._id) {
+                        $scope.partner.$update(function (resp) {
+                            console.log('Response:', resp);
+                            // close confirmation window
+                            modal.hide();
 
-                        if (resp.code == 'success') {
-                            $state.go('partnerList');
-                        }
-                    });
-                } else {
-                    $scope.partner.$save(function (resp) {
-                        console.log('Response:', resp);
-                        // close confirmation window
-                        confirmModal.hide();
+                            if (resp.code == 'success') {
+                                $state.go('partnerList');
+                            }
+                        });
+                    } else {
+                        $scope.partner.$save(function (resp) {
+                            console.log('Response:', resp);
+                            // close confirmation window
+                            modal.hide();
 
-                        if (resp.code == 'success') {
-                            $state.go('partnerList');
-                        }
-                    });
+                            if (resp.code == 'success') {
+                                $state.go('partnerList');
+                            }
+                        });
+                    }
                 }
-            };
-            // show=true by default, so this line will show our modal window
-            var confirmModal = $modal({scope: $scope, templateUrl: 'partials/_modal_confirmation.html'});
+            });
         };
 
     })
-    .controller('PartnersCtrl', function ($scope, $modal, Partner) {
+    .controller('PartnersCtrl', function ($scope, Modal, Partner) {
         $scope.reloadPage = function () {
             $scope.partners = Partner.query();
         };
 
         $scope.deletePartner = function (partner) {
-            // prepare confirmation modal
-            $scope.title = 'Подтверждение';
-            $scope.content = 'Удалить партнёра?';
-            $scope.okAction = function () {
-                if (partner) {
-                    partner.$delete(function (resp) {
-                        console.log('Response:', resp);
-                        // close confirmation window
-                        confirmModal.hide();
+            Modal.confirm({
+                content: 'Удалить партнёра?',
+                okAction: function (modal) {
+                    if (partner) {
+                        partner.$delete(function (resp) {
+                            // close confirmation window
+                            modal.hide();
 
-                        if (resp.code == 'success') {
-                            $scope.reloadPage();
-                        }
-                    });
+                            if (resp.code == 'success') {
+                                $scope.reloadPage();
+                            }
+                        });
+                    }
                 }
-            };
-            // show=true by default, so this line will show our modal window
-            var confirmModal = $modal({scope: $scope, templateUrl: 'partials/_modal_confirmation.html'});
+            });
         };
 
         $scope.reloadPage();

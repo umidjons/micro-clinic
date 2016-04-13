@@ -277,4 +277,39 @@ angular.module('MyClinic')
 
 
         return Discount;
+    })
+    .factory('Modal', function ($modal, $rootScope) {
+        var Modal = {};
+
+        Modal.confirm = function (options) {
+            // default options
+            var defaults = {
+                title: 'Подтверждение',
+                content: 'Сохранить изменения?',
+                okAction: function (modal) {
+                    // close confirmation window
+                    modal.hide();
+                }
+            };
+
+            // merge options
+            var opts = angular.extend({}, defaults, options);
+
+            // create and fill scope
+            var scope = $rootScope.$new();
+            scope.title = opts.title;
+            scope.content = opts.content;
+            scope.okAction = opts.okAction;
+
+            // OK button handler
+            scope.ok = function () {
+                // call okAction with current modal instance
+                scope.okAction(confirmModal);
+            };
+            
+            // show=true by default, so this line will show our modal window
+            var confirmModal = $modal({scope: scope, templateUrl: 'partials/_modal_confirmation.html'});
+        };
+
+        return Modal;
     });
