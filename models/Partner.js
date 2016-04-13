@@ -27,4 +27,5 @@ PartnerSchema.set('toObject', {virtuals: true});
 
 var Partner = mongoose.model('Partner', PartnerSchema);
 
-module.exports = Partner;
+module.exports.Partner = Partner;
+module.exports.PartnerSchema = PartnerSchema;

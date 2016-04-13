@@ -46,6 +46,7 @@ mongoose.connection.once('open', function () {
     app.use(bodyParser.json());
 
     app
+        .use('/patient-service', routers.PatientService)
         .use('/patient', routers.Patient)
         .use('/service', routers.Service)
         .use('/service-category', routers.ServiceCategory)

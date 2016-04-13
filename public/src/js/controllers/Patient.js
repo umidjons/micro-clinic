@@ -72,7 +72,7 @@ angular.module('MyClinic')
 
         $scope.reloadPage();
     })
-    .controller('PatientViewCtrl', function ($scope, $state, $stateParams, Patient, Service,
+    .controller('PatientViewCtrl', function ($scope, $state, $stateParams, $modal, Patient, Service, PatientService,
                                              ServiceCategory, Discount, PartnerSetter, Msg) {
         $scope.Discount = Discount;
 
@@ -194,9 +194,32 @@ angular.module('MyClinic')
             }
         };
 
+        $scope.savePatientServices = function () {
+            // prepare confirmation modal
+            $scope.title = 'Подтверждение';
+            $scope.content = 'Сохранить изменения?';
+            $scope.okAction = function () {
+                var patientService = new PatientService();
+                patientService.services = angular.copy($scope.patient.services);
+                patientService.patientId = $scope.patient._id;
+                patientService.$save(function (resp) {
+                    // close confirmation window
+                    confirmModal.hide();
+
+                    if (resp.code == 'success') {
+                        $state.go('patientList');
+                    }
+                });
+            };
+            // show=true by default, so this line will show our modal window
+            var confirmModal = $modal({scope: $scope, templateUrl: 'partials/_modal_confirmation.html'});
+        };
+
         Patient.get({id: $stateParams.id}, function (patient) {
             $scope.patient = patient;
             $scope.patient.services = [];
+
+            $scope.patient.services_old = PatientService.forPatient({patientId: patient._id});
         });
 
         //todo: output totals (quantity and price) in table footer

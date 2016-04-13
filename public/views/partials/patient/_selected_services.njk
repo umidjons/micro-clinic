@@ -103,7 +103,14 @@
         </tr>
         </tfoot>
     </table>
+
+    <div class="form-group text-right">
+        <button ng-click="savePatientServices()" class="btn btn-success">
+            <i class="fa fa-fw fa-save"></i> Сохранить
+        </button>
+    </div>
 </div>
 
-<pre>{{ ServiceHelper | json }}</pre>
-<pre>{{ patient.services | json }}</pre>
+<pre>ServiceHelper: {{ ServiceHelper | json }}</pre>
+<pre>SERVICES: {{ patient.services | json }}</pre>
+<pre>OLD SERVICES: {{ patient.services_old | json }}</pre>

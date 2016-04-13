@@ -71,9 +71,8 @@ angular.module('MyClinic')
         );
 
         res.recalc = function (srv) {
-            srv.discount = srv.discount || {};
             srv.priceTotal = srv.quantity * srv.price;
-            if (srv.discount.amount > 0) {
+            if (srv.discount && srv.discount.amount > 0) {
                 srv.priceTotal -= srv.priceTotal * 0.01 * srv.discount.amount;
             }
         };
@@ -87,6 +86,20 @@ angular.module('MyClinic')
             {
                 update: {
                     method: 'PUT'
+                }
+            }
+        );
+    })
+    .factory('PatientService', function ($resource) {
+        return $resource(
+            '/patient-service/:id',
+            {id: '@_id'},
+            {
+                update: {
+                    method: 'PUT'
+                },
+                forPatient: {
+                    method: 'GET', url: '/patient-service/for/:patientId', isArray: true
                 }
             }
         );
@@ -183,12 +196,16 @@ angular.module('MyClinic')
         Discount.set = function () {
             var srvList = this.fnSelectedServices();
             srvList.forEach(function (srv) {
-                // create discount object in the service, if it doesn't exist
-                srv.discount = srv.discount || {};
+                if (Discount.amount == 0) {
+                    delete srv.discount;
+                } else {
+                    // create discount object in the service, if it doesn't exist
+                    srv.discount = srv.discount || {};
 
-                // set amount and note
-                srv.discount.amount = Discount.amount;
-                srv.discount.note = Discount.note;
+                    // set amount and note
+                    srv.discount.amount = Discount.amount;
+                    srv.discount.note = Discount.note;
+                }
 
                 // re-calculate properties
                 Discount.fnRecalcService(srv);
@@ -231,9 +248,12 @@ angular.module('MyClinic')
             // otherwise show aside with initial values
             if (this.selServiceCount == 1) {
                 var firstSrv = this.fnSelectedServices()[0];
-                if ('amount' in firstSrv.discount) {
+                if (firstSrv.discount && 'amount' in firstSrv.discount) {
                     this.amount = firstSrv.discount.amount;
                     this.note = firstSrv.discount.note;
+                } else {
+                    this.amount = 0;
+                    this.note = '';
                 }
             } else {
                 this.amount = 0;
