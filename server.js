@@ -58,3 +58,5 @@ mongoose.connection.once('open', function () {
             console.log('Listening on http://localhost:3000...');
         });
 });
+
+module.exports = app;

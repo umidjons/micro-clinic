@@ -8,6 +8,11 @@ router
     .get('/with-category', function (req, res) {
         models.Service.aggregate([
             {
+                $match: {
+                    'state._id': 'active'
+                }
+            },
+            {
                 $project: {
                     categoryId: '$category._id',
                     categoryTitle: '$category.title',
@@ -54,36 +59,36 @@ router
         });
     })
     .post('/', function (req, res) {
-        console.log('Request body:', req.body);
+        //console.log('Request body:', req.body);
 
         // create model and fill fields from request body
         let newService = new models.Service(req.body);
 
         // try to save
-        newService.save(function (err) {
+        newService.save(function (err, savedService) {
             // if there is error, send it and stop handler with return
             if (err) {
-                return Msg.sendError(res, err.message);
+                return Msg.sendError(res, err);
             }
 
             // all right, show success message
-            Msg.sendSuccess(res, 'Данные успешно сохранены.');
+            Msg.sendSuccess(res, 'Данные успешно сохранены.', savedService);
         });
     })
     .put('/:id', function (req, res) {
-        console.log('Request body:', req.body);
-        console.log('id:', req.params.id);
+        //console.log('Request body:', req.body);
+        //console.log('id:', req.params.id);
 
         models.Service.update({_id: req.params.id}, req.body, function (err, raw) {
             if (err) {
                 return Msg.sendError(res, err.message);
             }
 
-            Msg.sendSuccess(res, 'Данные успешно сохранены.');
+            Msg.sendSuccess(res, 'Данные успешно сохранены.', req.body);
         });
     })
     .delete('/:id', function (req, res) {
-        console.log('id:', req.params.id);
+        //console.log('id:', req.params.id);
 
         models.Service.remove({_id: req.params.id}, function (err, removedService) {
             if (err) {

@@ -48,7 +48,7 @@ angular.module('MyClinic')
                             // close confirmation window
                             modal.hide();
 
-                            if (resp.code == 'success') {
+                            if (resp._id) {
                                 $state.go('serviceList');
                             }
                         });
@@ -58,7 +58,7 @@ angular.module('MyClinic')
                             // close confirmation window
                             modal.hide();
 
-                            if (resp.code == 'success') {
+                            if (resp._id) {
                                 $state.go('serviceList');
                             }
                         });

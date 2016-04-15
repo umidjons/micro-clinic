@@ -64,16 +64,19 @@ class Msg {
     }
 
     /**
-     * Sends error message in the X-MSG header and in the response body.
+     * Sends error message in the X-MSG header and error object in the response body.
      * Also outputs error message into console.
      * @param res HTTP Response object instance
-     * @param {string} message error message text
+     * @param {object} err error message text
      */
-    static sendError(res, message) {
-        let msg = 'Ошибка: ' + message;
-        console.error(msg);
+    static sendError(res, err) {
+        // set content-type to application/json
+        res.type('json');
+
+        let msg = 'Ошибка: ' + err.message;
+        console.error(err);
         this.error(res, msg);
-        res.json({code: STATUS_ERROR, message: msg});
+        res.json({code: STATUS_ERROR, message: msg, err: err});
     }
 
     /**
@@ -86,10 +89,13 @@ class Msg {
      * @param {string} dataPrefix prefix in the console output for the additional data
      */
     static sendSuccess(res, message, data, dataPrefix) {
+        // set content-type to application/json
+        res.type('json');
+
         if (message) {
             // set message if exists
             let msg = 'Ура! ' + message;
-            console.info(msg);
+            //console.info(msg);
             this.success(res, msg);
 
             // if no data provided, then send message as response body too
@@ -101,7 +107,7 @@ class Msg {
         // if data provided, send only it in the response body
         if (data) {
             let pfx = dataPrefix ? dataPrefix : 'Data:';
-            console.log(pfx, data);
+            //console.log(pfx, data);
             return res.json(data);
         }
 
