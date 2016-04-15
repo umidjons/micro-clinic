@@ -38,6 +38,9 @@ angular.module('MyClinic')
             {
                 update: {
                     method: 'PUT' // for .update() method use PUT request
+                },
+                search: {
+                    method: 'POST', url: '/patient/search', isArray: true
                 }
             }
         );
@@ -306,7 +309,7 @@ angular.module('MyClinic')
                 // call okAction with current modal instance
                 scope.okAction(confirmModal);
             };
-            
+
             // show=true by default, so this line will show our modal window
             var confirmModal = $modal({scope: scope, templateUrl: 'partials/_modal_confirmation.html'});
         };

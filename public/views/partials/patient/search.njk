@@ -1,1 +1,112 @@
-<h3>Поиск пациентов</h3>
+<h3>Поиск пациента</h3>
+
+<form name="formSearch" novalidate>
+    <div class="row">
+        <div class="form-group col-sm-3">
+            <label class="req">Фамилия</label>
+            <input ng-model="patient.lastName"
+                   ng-change="searchPatients(formSearch.$valid)"
+                   ng-model-options="{debounce:500}"
+                   class="form-control" maxlength="50" required>
+        </div>
+
+        <div class="form-group col-sm-3">
+            <label class="req">Имя</label>
+            <input ng-model="patient.firstName"
+                   ng-change="searchPatients(formSearch.$valid)"
+                   ng-model-options="{debounce:500}"
+                   class="form-control" maxlength="50" required>
+        </div>
+
+        <div class="form-group col-sm-3">
+            <label>Отчество</label>
+            <input ng-model="patient.middleName"
+                   ng-change="searchPatients(formSearch.$valid)"
+                   ng-model-options="{debounce:500}"
+                   class="form-control" maxlength="50">
+        </div>
+
+        <div class="form-group col-sm-3">
+            <label>Дата рождения</label>
+            <input ng-model="patient.dateOfBirth"
+                   ng-change="searchPatients(formSearch.$valid)"
+                   ng-model-options="{debounce:500}"
+                   class="form-control"
+                   bs-datepicker data-min-date="01.01.1900" data-max-date="today">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <button ng-click="reset(formSearch)" class="btn btn-danger">Очистить</button>
+        </div>
+    </div>
+</form>
+
+<div ng-if="formSearch.$valid && patients.length==0" class="alert alert-warning">
+    Пациент с такими реквизитами не найден!
+    <a ui-sref="patientCreate({initialPatient:patient})"
+       class="btn btn-xs btn-primary">Перейти к регистрацию нового пациента с этими реквизитами
+    </a>
+</div>
+
+<div ng-if="patients.length>0" id="found-patients">
+    <h3>Найденные пациенты</h3>
+
+    <table class="table table-bordered table-striped table-hover table-condensed">
+
+        <thead>
+        <tr>
+            <th>№</th>
+            <th>Фамилия</th>
+            <th>Имя</th>
+            <th>Отчество</th>
+            <th>Дата рождения</th>
+            <th>Пол</th>
+            <th>Адрес</th>
+            <th>Дата регистрации</th>
+            <th class="text-center">
+                <button ng-click="searchPatients(formSearch.$valid)" class="btn btn-xs btn-info" title="Обновить">
+                    <i class="fa fa-fw fa-refresh"></i>
+                </button>
+            </th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr ng-repeat="pat in patients">
+            <td class="text-right">{{ $index + 1 }}</td>
+            <td>{{ pat.lastName }}</td>
+            <td>{{ pat.firstName }}</td>
+            <td>{{ pat.middleName }}</td>
+            <td>{{ pat.dateOfBirth | date }}</td>
+            <td title="{{ pat.sex.title }}" class="text-center">
+                <i ng-if="pat.sex._id == 'male'" class="fa fa-fw fa-mars"></i>
+                <i ng-if="pat.sex._id == 'female'" class="fa fa-fw fa-venus"></i>
+            </td>
+            <td>{{ pat.address }}</td>
+            <td>{{ pat.created | date:'medium' }}</td>
+            <td class="text-center">
+                <div class="btn-group btn-group-xs">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-fw fa-bars"></i> <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li><a ui-sref="patientView({id:pat._id})"><i class="fa fa-fw fa-search"></i> Просмотр</a></li>
+                        <li><a ui-sref="patientEdit({id:pat._id})"><i class="fa fa-fw fa-edit"></i> Изменить</a></li>
+                        <li><a href ng-click="deletePatient(pat)"><i class="fa fa-fw fa-trash"></i> Удалить</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li>
+                            <a ui-sref="patientView({id:pat._id})">
+                                <i class="fa fa-fw fa-paperclip"></i> Результаты анализа
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+
+    </table>
+</div>

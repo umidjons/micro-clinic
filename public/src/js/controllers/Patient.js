@@ -1,8 +1,51 @@
 'use strict';
 
 angular.module('MyClinic')
-    .controller('PatientSearchCtrl', function ($scope) {
+    .controller('PatientSearchCtrl', function ($scope, Patient, Modal) {
 
+        $scope.reset = function (form) {
+            // initial value search fields
+            $scope.patient = {
+                firstName: '',
+                lastName: '',
+                middleName: '',
+                dateOfBirth: ''
+            };
+
+            // empty found patients
+            $scope.patients = [];
+
+            // if form provided, reset its state
+            if (form) {
+                form.$setPristine();
+            }
+        };
+
+        $scope.searchPatients = function (isSearchFormValid) {
+            if (isSearchFormValid) {
+                $scope.patients = Patient.search($scope.patient);
+            }
+        };
+
+        $scope.deletePatient = function (patient) {
+            Modal.confirm({
+                content: 'Удалить пациента?',
+                okAction: function (modal) {
+                    if (patient) {
+                        patient.$delete(function (resp) {
+                            // close confirmation window
+                            modal.hide();
+
+                            if (resp.code == 'success') {
+                                $scope.searchPatients(true);
+                            }
+                        });
+                    }
+                }
+            });
+        };
+
+        $scope.reset();
     })
     .controller('PatientCtrl', function ($scope, $state, $stateParams, Modal, Sex, Patient) {
         $scope.sex = Sex.query();
@@ -13,6 +56,13 @@ angular.module('MyClinic')
             });
         } else {
             $scope.patient = new Patient();
+            if ($stateParams.initialPatient) {
+                let iniPat = $stateParams.initialPatient;
+                if (iniPat.firstName) $scope.patient.firstName = iniPat.firstName;
+                if (iniPat.lastName) $scope.patient.lastName = iniPat.lastName;
+                if (iniPat.middleName) $scope.patient.middleName = iniPat.middleName;
+                if (iniPat.dateOfBirth) $scope.patient.dateOfBirth = iniPat.dateOfBirth;
+            }
         }
 
         $scope.savePatient = function () {

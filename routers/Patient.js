@@ -3,8 +3,46 @@
 var router = require('express').Router();
 var models = require('../models');
 var Msg = require('../include/Msg');
+var sugar = require('sugar');
 
 router
+    .post('/search', function (req, res) {
+        //console.log('Search:', req.body);
+
+        var condition = {
+            firstName: new RegExp(req.body.firstName, 'i'),
+            lastName: new RegExp(req.body.lastName, 'i')
+        };
+
+        if (req.body.middleName) {
+            condition.middleName = new RegExp(req.body.middleName, 'i');
+        }
+
+        if (req.body.dateOfBirth) {
+            condition.dateOfBirth = {
+                $gte: Date.create(req.body.dateOfBirth).beginningOfDay(),
+                $lte: Date.create(req.body.dateOfBirth).endOfDay()
+            };
+        }
+
+        var sort = {
+            lastName: 1,
+            firstName: 1,
+            middleName: 1,
+            dateOfBirth: 1
+        };
+
+        models.Patient
+            .find(condition)
+            .limit(20)
+            .sort(sort)
+            .exec(function (err, patients) {
+                if (err) {
+                    Msg.sendError(res, err);
+                }
+                Msg.sendSuccess(res, '', patients);
+            });
+    })
     .get('/:id', function (req, res) {
         models.Patient.findOne({_id: req.params.id}, function (err, patient) {
             if (err) {
@@ -59,7 +97,7 @@ router
             if (err) {
                 return Msg.sendError(res, err.message);
             }
-            
+
             Msg.sendSuccess(res, 'Запись удален!');
         });
     });

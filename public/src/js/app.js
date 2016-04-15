@@ -58,7 +58,10 @@ angular.module('MyClinic', ['ngAnimate', 'ngSanitize', 'angular-loading-bar', 'u
             .state('patientCreate', {
                 url: '/patient/create',
                 templateUrl: 'partials/patient/create.html',
-                controller: 'PatientCtrl'
+                controller: 'PatientCtrl',
+                params: {
+                    initialPatient: null
+                }
             })
             .state('patientEdit', {
                 url: '/patient/edit/:id',
