@@ -22,7 +22,6 @@
   "dependencies": {
     "jquery": "^2.2.3",
     "angular": "angularjs#^1.5.3",
-    "angular-ui-router": "^0.2.18",
     "angular-resource": "^1.5.3",
     "angular-animate": "^1.5.3",
     "bootstrap": "^3.3.6",
@@ -35,6 +34,7 @@
     "angular-sanitize": "^1.5.3",
     "angular-motion": "^0.4.4",
     "underscore": "^1.8.3",
-    "bootstrap-additions": "^0.3.1"
+    "bootstrap-additions": "^0.3.1",
+    "angular-ui-router": "1.0"
   }
 }

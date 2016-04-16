@@ -69,9 +69,30 @@ angular.module('MyClinic', ['ngAnimate', 'ngSanitize', 'angular-loading-bar', 'u
                 controller: 'PatientCtrl'
             })
             .state('patientView', {
+                abstract: true,
                 url: '/patient/view/:id',
-                templateUrl: 'partials/patient/view.html',
-                controller: 'PatientViewCtrl'
+                views: {
+                    '@': {
+                        templateUrl: 'partials/patient/view.html',
+                        controller: 'PatientViewCtrl'
+                    }
+                }
+            })
+            .state('patientView.addServices', {
+                url: '/add-services',
+                views: {
+                    'patient@patientView': {
+                        templateUrl: 'partials/patient/_add-services.html'
+                    }
+                }
+            })
+            .state('patientView.services', {
+                url: '',
+                views: {
+                    'patient@patientView': {
+                        templateUrl: 'partials/patient/_assigned-services.html'
+                    }
+                }
             })
             .state('patientList', {
                 url: '/patient/list',

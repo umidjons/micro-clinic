@@ -4,6 +4,13 @@
 
 {% include "partials/patient/_patient_info.njk" %}
 
-{% include "partials/patient/_available_services.njk" %}
+<ul class="nav nav-tabs">
+    <li ui-sref-active="active">
+        <a ui-sref="patientView.addServices">Добавить услугу</a>
+    </li>
+    <li ui-sref-active="active">
+        <a ui-sref="patientView.services">Оказанные услуги</a>
+    </li>
+</ul>
 
-{% include "partials/patient/_selected_services.njk" %}
+<div ui-view="patient" class="nav-tabs-body"></div>

@@ -220,6 +220,102 @@ angular.module('MyClinic')
                     this.isAllMarked = allSrvCount > 0 && allSrvCount == this.markedCount ? 1 : 0;
 
                 }
+            },
+            AssignedMarker: {
+                isAllMarked: false,
+                markedCount: 0,
+                toggleAll: function () {
+                    for (let srv of $scope.patient.services_assigned) {
+                        // Mark only newly assigned services
+                        // Payed services shouldn't be editable
+                        if (srv.state._id == 'new') {
+                            srv.marked = this.isAllMarked;
+                        }
+                    }
+                    this.onChange();
+                },
+                /**
+                 * Gets marked services or its count
+                 * @param retCount truth - returns count, falsy - returns marked services
+                 * @returns {*} list of marked services or marked services count
+                 */
+                getMarked: function (retCount) {
+                    var res = _.where($scope.patient.services_assigned, {marked: 1});
+                    if (!retCount) {
+                        return res;
+                    }
+                    return res.length;
+                },
+                onChange: function () {
+                    var allSrvCount = $scope.patient.services_assigned.length;
+                    this.markedCount = this.getMarked(true);
+                    this.isAllMarked = allSrvCount > 0 && allSrvCount == this.markedCount ? 1 : 0;
+
+                }
+            },
+            AssignedService: {
+                refresh: function () {
+                    $scope.patient.services_assigned = PatientService.forPatient({patientId: $scope.patient._id});
+                },
+                remove: function (patSrv) {
+                    if (angular.isUndefined(patSrv)) {
+                        if ($scope.ServiceHelper.AssignedMarker.getMarked(true) > 0) {
+                            var markedPatSrvList = $scope.ServiceHelper.AssignedMarker.getMarked();
+                            var srvIds = _.pluck(markedPatSrvList, '_id');
+                            Modal.confirm({
+                                content: 'Удалить выбранные услуги?',
+                                okAction: function (modal) {
+                                    PatientService.deleteBulk({ids: srvIds}, function (resp) {
+                                        // close confirmation window
+                                        modal.hide();
+
+                                        if (resp.code == 'success') {
+                                            $scope.ServiceHelper.AssignedService.refresh();
+                                            $scope.ServiceHelper.AssignedMarker.onChange();
+
+                                        }
+                                    });
+                                }
+                            });
+                        } else {
+                            Msg.error('Услуга не выбрана!');
+                        }
+                    } else {
+                        Modal.confirm({
+                            content: 'Удалить услугу?',
+                            okAction: function (modal) {
+                                patSrv.$delete(function (resp) {
+                                    // close confirmation window
+                                    modal.hide();
+
+                                    if (resp.code == 'success') {
+                                        $scope.ServiceHelper.AssignedService.refresh();
+                                        $scope.ServiceHelper.AssignedMarker.onChange();
+
+                                    }
+                                });
+                            }
+                        });
+                    }
+                },
+                totalPrice: function () {
+                    if ($scope.patient && $scope.patient.services_assigned) {
+                        return _.reduce($scope.patient.services_assigned, function (memo, srv) {
+                            return memo + srv.priceTotal;
+                        }, 0);
+                    } else {
+                        return 0;
+                    }
+                },
+                totalQuantity: function () {
+                    if ($scope.patient && $scope.patient.services_assigned) {
+                        return _.reduce($scope.patient.services_assigned, function (memo, srv) {
+                            return memo + srv.quantity;
+                        }, 0);
+                    } else {
+                        return 0;
+                    }
+                }
             }
         };
 
@@ -260,8 +356,7 @@ angular.module('MyClinic')
         Patient.get({id: $stateParams.id}, function (patient) {
             $scope.patient = patient;
             $scope.patient.services = [];
-
-            $scope.patient.services_old = PatientService.forPatient({patientId: patient._id});
+            $scope.ServiceHelper.AssignedService.refresh();
         });
 
         //todo: output totals (quantity and price) in table footer

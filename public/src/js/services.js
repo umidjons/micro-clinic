@@ -103,6 +103,9 @@ angular.module('MyClinic')
                 },
                 forPatient: {
                     method: 'GET', url: '/patient-service/for/:patientId', isArray: true
+                },
+                deleteBulk: {
+                    method: 'POST', url: '/patient-service/delete-bulk'
                 }
             }
         );

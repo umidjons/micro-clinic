@@ -75,6 +75,17 @@ router
             Msg.sendSuccess(res, 'Данные успешно сохранены.');
         });
     })
+    .post('/delete-bulk', function (req, res) {
+        var ids = req.body.ids;
+        console.log('/delete-bulk IDS:', ids);
+        models.PatientService.remove({_id: {$in: ids}}, function (err, raw) {
+            if (err) {
+                return Msg.sendError(res, err);
+            }
+
+            Msg.sendSuccess(res, 'Записи удалены!');
+        });
+    })
     .delete('/:id', function (req, res) {
         console.log('id:', req.params.id);
 
