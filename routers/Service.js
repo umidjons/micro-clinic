@@ -34,7 +34,7 @@ router
             }
         ], function (err, services) {
             if (err) {
-                Msg.sendError(res, err.message);
+                Msg.sendError(res, err);
             }
 
             Msg.sendSuccess(res, '', services, 'Services with category');
@@ -43,7 +43,7 @@ router
     .get('/:id', function (req, res) {
         models.Service.findOne({_id: req.params.id}, function (err, service) {
             if (err) {
-                return Msg.sendError(res, err.message);
+                return Msg.sendError(res, err);
             }
 
             Msg.sendSuccess(res, '', service, 'Service:');
@@ -52,7 +52,7 @@ router
     .get('/', function (req, res) {
         models.Service.find().sort({'category.title': 1, title: 1}).exec(function (err, services) {
             if (err) {
-                return Msg.sendError(res, err.message);
+                return Msg.sendError(res, err);
             }
 
             Msg.sendSuccess(res, '', services, 'List of services:');
@@ -81,7 +81,7 @@ router
 
         models.Service.update({_id: req.params.id}, req.body, function (err, raw) {
             if (err) {
-                return Msg.sendError(res, err.message);
+                return Msg.sendError(res, err);
             }
 
             Msg.sendSuccess(res, 'Данные успешно сохранены.', req.body);
@@ -92,7 +92,7 @@ router
 
         models.Service.remove({_id: req.params.id}, function (err, removedService) {
             if (err) {
-                return Msg.sendError(res, err.message);
+                return Msg.sendError(res, err);
             }
 
             Msg.sendSuccess(res, 'Запись удален!');

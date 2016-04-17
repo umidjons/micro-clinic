@@ -177,6 +177,7 @@ describe('Service CRUD', function () {
                     should.exist(res);
                     res.should.have.status(200);
                     res.should.be.json;
+                    res.body.should.be.an('object');
                     res.body.should.have.property('code', 'success');
 
                     // mark saved service as already removed

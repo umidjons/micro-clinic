@@ -73,10 +73,21 @@ class Msg {
         // set content-type to application/json
         res.type('json');
 
-        let msg = 'Ошибка: ' + err.message;
-        console.error(err);
+        let msg = 'Ошибка: ';
+        let errObj = null;
+
+        if (typeof err === 'object' && 'message' in err) {
+            msg += err.message;
+            errObj = err;
+        } else {
+            msg += err;
+            // err holds error text, so create error object
+            errObj = {message: err};
+        }
+
+        console.error(errObj);
         this.error(res, msg);
-        res.json({code: STATUS_ERROR, message: msg, err: err});
+        res.json({code: STATUS_ERROR, message: msg, err: errObj});
     }
 
     /**
