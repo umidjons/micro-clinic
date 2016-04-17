@@ -55,7 +55,7 @@ router
                 // if there is error, send it and stop handler with return
                 if (err) {
                     console.log('Err:', err);
-                    return Msg.sendError(res, err.message);
+                    return Msg.sendError(res, err);
                 }
 
                 // all right, show success message

@@ -74,7 +74,7 @@ angular.module('MyClinic')
                             modal.hide();
 
                             if (resp._id) {
-                                $state.go('patientList');
+                                $state.go('patientView.addServices', {id: resp._id});
                             }
                         });
                     } else {
@@ -83,7 +83,7 @@ angular.module('MyClinic')
                             modal.hide();
 
                             if (resp._id) {
-                                $state.go('patientList');
+                                $state.go('patientView.addServices', {id: resp._id});
                             }
                         });
                     }
@@ -346,7 +346,11 @@ angular.module('MyClinic')
                         modal.hide();
 
                         if (resp.code == 'success') {
-                            $state.go('patientList');
+                            $state.transitionTo('patientView.services', $stateParams, {
+                                reload: true,
+                                inherit: false,
+                                notify: true
+                            });
                         }
                     });
                 }
@@ -358,7 +362,4 @@ angular.module('MyClinic')
             $scope.patient.services = [];
             $scope.ServiceHelper.AssignedService.refresh();
         });
-
-        //todo: output totals (quantity and price) in table footer
-        //todo: create 2 pages: 1) add new services 2) services history (оказанные услуги)
     });
