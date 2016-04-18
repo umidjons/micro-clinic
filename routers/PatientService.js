@@ -8,7 +8,7 @@ router
     .get('/:id', function (req, res) {
         models.PatientService.findOne({_id: req.params.id}, function (err, patientService) {
             if (err) {
-                return Msg.sendError(res, err.message);
+                return Msg.sendError(res, err);
             }
 
             Msg.sendSuccess(res, '', patientService, 'Patient:');
@@ -17,7 +17,7 @@ router
     .get('/for/:patientId', function (req, res) {
         models.PatientService.find({patientId: req.params.patientId}, function (err, patientServices) {
             if (err) {
-                return Msg.sendError(res, err.message);
+                return Msg.sendError(res, err);
             }
 
             Msg.sendSuccess(res, '', patientServices, 'List of patient services:');
@@ -28,6 +28,14 @@ router
             // middleware to prepare patient services for save
 
             console.log('Request body 1:', req.body);
+
+            if (!req.body.patientId) {
+                return Msg.sendError(res, 'Пациент не указан.');
+            }
+
+            if (!req.body.services) {
+                return Msg.sendError(res, 'Услуги не указаны');
+            }
 
             // todo: set currently logged in user's id (or model)
             let user = 1;
@@ -69,7 +77,7 @@ router
 
         models.PatientService.update({_id: req.params.id}, req.body, function (err, raw) {
             if (err) {
-                return Msg.sendError(res, err.message);
+                return Msg.sendError(res, err);
             }
 
             Msg.sendSuccess(res, 'Данные успешно сохранены.');
@@ -91,7 +99,7 @@ router
 
         models.PatientService.remove({_id: req.params.id}, function (err, removedPatientService) {
             if (err) {
-                return Msg.sendError(res, err.message);
+                return Msg.sendError(res, err);
             }
 
             Msg.sendSuccess(res, 'Запись удален!');
