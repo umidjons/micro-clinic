@@ -138,6 +138,11 @@ angular.module('MyClinic', ['ngAnimate', 'ngSanitize', 'angular-loading-bar', 'u
                 url: '/partner/view/:id',
                 templateUrl: 'partials/partner/view.html',
                 controller: 'PartnerViewCtrl'
+            })
+            .state('cashList', {
+                url: '/cash',
+                templateUrl: 'partials/cash/list.html',
+                controller: 'CashListCtrl'
             });
         $urlRouterProvider.otherwise('/');
     })

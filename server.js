@@ -51,6 +51,7 @@ mongoose.connection.once('open', function () {
         .use('/service', routers.Service)
         .use('/service-category', routers.ServiceCategory)
         .use('/partner', routers.Partner)
+        .use('/cash', routers.Cash)
         .get('*', function (req, res) {
             res.render('index', {year: 1900 + new Date().getYear()});
         })

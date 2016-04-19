@@ -6,7 +6,7 @@ var partnerSchema = require('./Partner').PartnerSchema;
 
 
 var PatientServiceSchema = mongoose.Schema({
-    patientId: {type: String, required: true},
+    patientId: {type: mongoose.Schema.Types.ObjectId, required: true},
     category: categorySchema,
     title: {type: String, required: true, maxlength: 150},
     shortTitle: {type: String, required: true, maxlength: 20},

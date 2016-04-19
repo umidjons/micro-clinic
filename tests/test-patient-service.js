@@ -2,13 +2,14 @@ var chai = require('chai');
 var should = chai.should();
 var chaiHttp = require('chai-http');
 var server = require('../server');
+var ObjectId = require('mongoose').Types.ObjectId;
 
 chai.use(chaiHttp);
 
 describe('Patient Service CRUD', function () {
     var retrievedServicesForPatient = null;
     var lastPatientServiceId = null;
-    var patId = '111';
+    var patId = ObjectId();
     var savedPatSrv = null;
     var currentDateTime = new Date();
     var params = {

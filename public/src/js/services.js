@@ -318,4 +318,24 @@ angular.module('MyClinic')
         };
 
         return Modal;
+    })
+    .factory('Cash', function ($resource) {
+        return $resource(
+            '/cash/:id',
+            {id: '@_id'},
+            {
+                update: {
+                    method: 'PUT'
+                },
+                pendingPatients: {
+                    method: 'POST', url: '/cash/pending-patients', isArray: true
+                },
+                pendingServicesOf: {
+                    method: 'POST',
+                    url: '/cash/pending-services-of/:patientId',
+                    isArray: true,
+                    params: {patientId: '@patientId'}
+                }
+            }
+        );
     });

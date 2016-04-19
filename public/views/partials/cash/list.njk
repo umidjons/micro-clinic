@@ -1,0 +1,70 @@
+<h1>Касса</h1>
+
+<table class="table table-bordered table-striped table-condensed">
+    <thead>
+    <tr>
+        <th>№</th>
+        <th>Фамилия</th>
+        <th>Имя</th>
+        <th>Отчество</th>
+        <th>Количество услуг</th>
+        <th>Сумма</th>
+        <th></th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr ng-repeat-start="rec in records">
+        <td>{{ $index + 1 }}</td>
+        <td>{{ rec.patient.lastName }}</td>
+        <td>{{ rec.patient.firstName }}</td>
+        <td>{{ rec.patient.middleName }}</td>
+        <td class="text-right">{{ rec.quantity | number }}</td>
+        <td class="text-right">{{ rec.total | number }}</td>
+        <td class="text-center">
+            <div class="btn-group btn-group-xs">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-fw fa-bars"></i> <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href ng-click="pay(rec)"><i class="fa fa-fw fa-usd"></i> Оплатить</a></li>
+                    <li><a href ng-click="toggleDetails(rec)"><i class="fa fa-fw fa-list"></i> Список услуг</a></li>
+                </ul>
+            </div>
+        </td>
+    </tr>
+
+    <tr ng-repeat-end>
+        <td ng-if="rec.windowPendingServices" colspan="7">
+            <table class="table table-bordered table-hover table-condensed">
+                <thead>
+                <tr>
+                    <th>№</th>
+                    <th>Категория</th>
+                    <th>Услуга</th>
+                    <th>Количество</th>
+                    <th>Общая стоимость</th>
+                    <th>Дата</th>
+                    <th>Состояние</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr ng-repeat="penSrv in rec.pendingServices">
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ penSrv.category.title }}</td>
+                    <td>{{ penSrv.title }}</td>
+                    <td class="text-right">{{ penSrv.quantity | number }}</td>
+                    <td class="text-right">{{ penSrv.priceTotal | number }}</td>
+                    <td>{{ penSrv.created | date:'medium' }}</td>
+                    <td>{{ penSrv.state.title }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<pre>{{ records | json }}</pre>

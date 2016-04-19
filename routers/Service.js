@@ -34,7 +34,7 @@ router
             }
         ], function (err, services) {
             if (err) {
-                Msg.sendError(res, err);
+                return Msg.sendError(res, err);
             }
 
             Msg.sendSuccess(res, '', services, 'Services with category');
