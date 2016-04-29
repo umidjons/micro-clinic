@@ -338,4 +338,33 @@ angular.module('MyClinic')
                 }
             }
         );
+    })
+    .factory('PayType', function () {
+        return {
+            query: function () {
+                return [
+                    {
+                        _id: 'cash',
+                        title: 'Наличные'
+                    },
+                    {
+                        _id: 'cashless',
+                        title: 'Безналичные'
+                    }
+                ];
+            }
+        };
+    })
+    .factory('F', function () {
+        return {
+            total: function (objList, prop) {
+                if (objList) {
+                    return _.reduce(objList, function (memo, obj) {
+                        return memo + obj[prop];
+                    }, 0);
+                } else {
+                    return 0;
+                }
+            }
+        };
     });

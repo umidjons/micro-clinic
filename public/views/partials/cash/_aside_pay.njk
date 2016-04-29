@@ -1,0 +1,44 @@
+<div class="aside" tabindex="-1" role="dialog" style="max-width: 60%;">
+    <div class="aside-dialog">
+        <div class="aside-content" ng-form="formPay">
+
+            <div class="aside-header" ng-show="title">
+                <button type="button" class="close" ng-click="$hide()">&times;</button>
+                <h4 class="aside-title" ng-bind="title"></h4>
+            </div>
+
+            <div class="aside-body">
+                <div class="col-sm-12">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="req">Тип платежа</label>
+                            <select ng-model="Pay.type" ng-options="pt.title for pt in payTypes"
+                                    class="form-control" required>
+                                <option value="">-</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="req">Общая сумма</label>
+                            <input ng-model="Pay.total" class="form-control" readonly required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="req">Долг после оплаты</label>
+                            <input ng-model="Pay.debt" class="form-control" readonly required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="aside-footer">
+                <button type="button" class="btn btn-danger" ng-click="$hide()">Отмена</button>
+                <button ng-click="Pay.save()"
+                        ng-disabled="formPay.$invalid" class="btn btn-success">
+                    <i class="fa fa-fw fa-gift"></i> Оплатить
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

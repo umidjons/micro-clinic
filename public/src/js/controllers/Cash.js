@@ -1,13 +1,108 @@
 'use strict';
 
 angular.module('MyClinic')
-    .controller('CashListCtrl', function ($scope, Cash) {
+    .controller('CashListCtrl', function ($scope, $aside, Cash, PayType) {
+        $scope.payTypes = PayType.query();
         $scope.records = Cash.pendingPatients();
 
-        $scope.toggleDetails = function (patSrv) {
-            patSrv.windowPendingServices = !!!patSrv.windowPendingServices;
-            if (patSrv.windowPendingServices && !patSrv.pendingServices) {
-                patSrv.pendingServices = Cash.pendingServicesOf({patientId: patSrv.patient._id});
+        $scope.startPay = function (patientService) {
+
+            // create and show aside, also keep it in a property
+            let asidePay = $aside({
+                scope: $scope,
+                templateUrl: 'partials/cash/_aside_pay.html',
+                title: 'Оплата',
+                container: 'body',
+                backdrop: 'static',
+                controller: function () {
+                    this.type = undefined;
+                    this.total = patientService.totalDebt;
+                    this.debt = 0; // debt after pay
+
+                    let ctrl = this;
+                    this.save = function () {
+                        alert('Saved!');
+                        //todo: implement saving pays
+                        asidePay.hide();
+                    };
+                },
+                controllerAs: 'Pay',
+                show: true
+            });
+        };
+    })
+    .controller('CashPayCtrl', function ($scope, $stateParams, F, Cash, PayType, Msg, Modal) {
+        // init section
+        var init = function () {
+            $scope.payTypes = PayType.query();
+            $scope.patientService = $stateParams.patientService;
+            $scope.pay = {
+                type: undefined,
+                total: $scope.patientService.totalDebt,
+                debt: 0
+            };
+
+            Cash.pendingServicesOf({patientId: $scope.patientService.patient._id}, function (resp) {
+                $scope.pendingServices = resp;
+                for (let srv of $scope.pendingServices) {
+                    srv.forPay = srv.debt;
+                    srv.debtAfterPay = 0;
+
+                    // add pays array
+                    srv.pays = [];
+                    srv.pays.push({
+                        payType: undefined,
+                        amount: srv.debt
+                    });
+                }
+            });
+        };
+
+        $scope.PendingServiceHelper = {
+            forPayChanged: function (penSrv) {
+                penSrv.debtAfterPay = penSrv.debt - penSrv.forPay;
+                penSrv.pays.splice(1); // remove other pays, except the first
+                penSrv.pays[0].amount = penSrv.forPay; // re-set amount of the first pay
+            },
+            splitPay: function (penSrv) {
+                if (penSrv.pays.length > 1) {
+                    Msg.error('Оплата уже разделена по всем возможным типам!');
+                    return;
+                }
+
+                var halfAmount_1 = Math.ceil(penSrv.forPay / 2);
+                var halfAmount_2 = penSrv.forPay - halfAmount_1;
+
+                // set first pay as cash type with half amount of forPay
+                penSrv.pays[0].amount = halfAmount_1;
+                penSrv.pays[0].payType = $scope.payTypes[0];
+
+                // add second pay with cashless type with another half amount of forPay
+                penSrv.pays.push({
+                    payType: $scope.payTypes[1],
+                    amount: halfAmount_2
+                });
+            },
+            mergePay: function (penSrv) {
+                if (penSrv.pays.length < 2) {
+                    Msg.error('Нечего отменить! Вероятно разделение оплаты по типам уже отменена или разделение не произведена вообще.');
+                    return;
+                }
+                this.forPayChanged(penSrv);
+            },
+            normalizePays: function (penSrv, payIdx) {
+                var otherIdx = 1 - payIdx;
+                penSrv.pays[otherIdx].amount = penSrv.forPay - penSrv.pays[payIdx].amount;
             }
-        }
+        };
+
+        $scope.save = function () {
+            Modal.confirm({
+                okAction: function (modal) {
+                    modal.hide();
+                }
+            });
+        };
+
+        init();
     });

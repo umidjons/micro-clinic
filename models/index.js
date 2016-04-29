@@ -12,3 +12,6 @@ module.exports.Partner = require('./Partner').Partner;
 module.exports.PartnerSchema = require('./Partner').PartnerSchema;
 module.exports.PatientService = require('./PatientService').PatientService;
 module.exports.PatientServiceSchema = require('./PatientService').PatientServiceSchema;
+module.exports.PayTypeSchema = require('./Cash').PayTypeSchema;
+module.exports.CashSchema = require('./Cash').CashSchema;
+module.exports.Cash = require('./Cash').Cash;

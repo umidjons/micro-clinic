@@ -18,7 +18,9 @@ router
                 $group: {
                     _id: '$patientId', // _id is patient id
                     quantity: {$sum: '$quantity'},
-                    total: {$sum: '$priceTotal'},
+                    totalPrice: {$sum: '$priceTotal'},
+                    totalPayed: {$sum: '$payed'},
+                    totalDebt: {$sum: '$debt'},
                     lastService: {$max: '$created'}
                 }
             },

@@ -1,11 +1,12 @@
 angular.module('MyClinic', ['ngAnimate', 'ngSanitize', 'angular-loading-bar', 'ui.router', 'ngResource', 'mgcrea.ngStrap', 'toaster', 'ui.select'])
-    .run(function ($locale, $rootScope) {
+    .run(function ($locale, $rootScope, F) {
         // set default date formats for current locale
         $locale.DATETIME_FORMATS.short = "dd.MM.yyyy H:mm";
         $locale.DATETIME_FORMATS.shortDate = "dd.MM.yyyy";
 
         // do underscope available on views
         $rootScope._ = _;
+        $rootScope.F = F;
     })
     .config(function (cfpLoadingBarProvider) {
         cfpLoadingBarProvider.includeSpinner = false;
@@ -143,6 +144,14 @@ angular.module('MyClinic', ['ngAnimate', 'ngSanitize', 'angular-loading-bar', 'u
                 url: '/cash',
                 templateUrl: 'partials/cash/list.html',
                 controller: 'CashListCtrl'
+            })
+            .state('cashPay', {
+                url: '/pay',
+                templateUrl: 'partials/cash/pay.html',
+                controller: 'CashPayCtrl',
+                params: {
+                    patientService: null
+                }
             });
         $urlRouterProvider.otherwise('/');
     })

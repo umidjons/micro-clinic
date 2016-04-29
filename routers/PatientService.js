@@ -51,6 +51,8 @@ router
 
                 // set patient id for each service
                 srv.patientId = req.body.patientId;
+                srv.payed = 0;
+                srv.debt = srv.priceTotal;
 
                 srv.state = {_id: 'new', title: 'новая'};
             }
