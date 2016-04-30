@@ -3,7 +3,8 @@
 var chai = require('chai'),
     should = chai.should(),
     chaiHttp = require('chai-http'),
-    server = require('../server');
+    server = require('../server'),
+    ObjectId = require('mongoose').Types.ObjectId;
 
 chai.use(chaiHttp);
 
@@ -27,7 +28,9 @@ describe('Testing /cash actions', function () {
                 if (res.body.length > 0) {
                     let patSrv = res.body[0];
                     patSrv.should.have.property('quantity').and.be.at.least(1);
-                    patSrv.should.have.property('total').and.be.above(0);
+                    patSrv.should.have.property('totalPrice').and.be.at.least(0);
+                    patSrv.should.have.property('totalPayed').and.be.at.least(0);
+                    patSrv.should.have.property('totalDebt').and.be.at.least(0);
                     patSrv.should.have.property('lastService').and.be.ok;
                     patSrv.should.have.property('patient').and.be.an('object').and.be.ok;
                 }
@@ -36,17 +39,18 @@ describe('Testing /cash actions', function () {
             });
     });
 
-    it('POST /cash/pending-services-of/:patientId with invalid param', function (done) {
+    it('POST /cash/pending-services-of/:patientId with invalid param - non existing patient id', function (done) {
+        var patId = ObjectId(); // non existing patient id
         chai.request(server)
-            .post('/cash/pending-services-of/111')
-            .send({patientId: 111})
+            .post('/cash/pending-services-of/' + patId)
+            .send({patientId: patId})
             .end(function (err, res) {
                 should.not.exist(err);
                 should.exist(res);
                 res.should.have.status(200);
                 res.should.be.json;
-                res.body.should.be.an('object');
-                res.body.should.have.property('code', 'error');
+                res.body.should.be.an('array');
+                res.body.should.have.lengthOf(0);
 
                 done();
             });
@@ -67,5 +71,39 @@ describe('Testing /cash actions', function () {
                 done();
             });
     });
+
+    it('POST /cash with empty body', function (done) {
+        chai.request(server)
+            .post('/cash')
+            .end(function (err, res) {
+                should.not.exist(err);
+                should.exist(res);
+                res.should.have.status(200);
+                res.should.be.json;
+                res.body.should.be.an('object');
+                res.body.should.have.property('code', 'error');
+
+                done();
+            });
+    });
+
+    it('POST /cash with empty patient services', function (done) {
+        chai.request(server)
+            .post('/cash')
+            .send({pendingServices: []})
+            .end(function (err, res) {
+                should.not.exist(err);
+                should.exist(res);
+                res.should.have.status(200);
+                res.should.be.json;
+                res.body.should.be.an('object');
+                res.body.should.have.property('code', 'error');
+
+                done();
+            });
+    });
+
+    it('POST /cash with invalid pay.amount');
+    it('POST /cash with valid patient service');
 
 });

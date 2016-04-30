@@ -7,7 +7,6 @@ var PayTypeSchema = mongoose.Schema({
 });
 
 var CashSchema = mongoose.Schema({
-    patientServiceId: {type: mongoose.Schema.Types.ObjectId, required: true},
     payType: PayTypeSchema,
     amount: {type: Number, min: 0, required: true},
     state: stateSchema,

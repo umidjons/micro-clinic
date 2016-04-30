@@ -31,7 +31,7 @@ angular.module('MyClinic')
             });
         };
     })
-    .controller('CashPayCtrl', function ($scope, $stateParams, F, Cash, PayType, Msg, Modal) {
+    .controller('CashPayCtrl', function ($scope, $state, $stateParams, F, Cash, PayType, Msg, Modal) {
         // init section
         var init = function () {
             $scope.payTypes = PayType.query();
@@ -85,7 +85,8 @@ angular.module('MyClinic')
             },
             mergePay: function (penSrv) {
                 if (penSrv.pays.length < 2) {
-                    Msg.error('Нечего отменить! Вероятно разделение оплаты по типам уже отменена или разделение не произведена вообще.');
+                    Msg.error('Нечего отменить! Вероятно разделение оплаты по типам уже отменена ' +
+                        'или разделение не произведена вообще.');
                     return;
                 }
                 this.forPayChanged(penSrv);
@@ -99,7 +100,15 @@ angular.module('MyClinic')
         $scope.save = function () {
             Modal.confirm({
                 okAction: function (modal) {
-                    modal.hide();
+                    var cash = new Cash();
+                    cash.pendingServices = angular.copy($scope.pendingServices);
+                    cash.$save(function (resp) {
+                        modal.hide();
+                        console.log('resp=', resp);
+                        if (resp.code === 'success') {
+                            $state.go('cashList');
+                        }
+                    });
                 }
             });
         };
