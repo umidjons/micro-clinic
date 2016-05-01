@@ -10,6 +10,9 @@ var routers = require('./routers');
 
 mongoose.connect('mongodb://127.0.0.1:27017/starmed');
 mongoose.connection.once('open', function () {
+    app.set('port', process.env.PORT || 3000);
+
+    app.disable('x-powered-by');
 
     //---< configure template engine >---
     const VIEW_PATH = path.join(__dirname, 'public', 'views');
@@ -55,8 +58,8 @@ mongoose.connection.once('open', function () {
         .get('*', function (req, res) {
             res.render('index', {year: 1900 + new Date().getYear()});
         })
-        .listen(3000, function () {
-            console.log('Listening on http://localhost:3000...');
+        .listen(app.get('port'), function () {
+            console.log(`Listening on http://localhost:${app.get('port')}...`);
         });
 });
 

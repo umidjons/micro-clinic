@@ -24,6 +24,47 @@ var PatientServiceSchema = mongoose.Schema({
     userId: {type: String, required: true, default: '1'} //todo: set real user id or user schema
 });
 
+PatientServiceSchema.statics.pendingPatients = function (cb) {
+    PatientService.aggregate([
+        //db.patientservices.aggregate([
+        {
+            $match: {
+                'state._id': {$in: ['new', 'partlyPayed']}
+            }
+        },
+        {
+            $group: {
+                _id: '$patientId', // _id is patient id
+                quantity: {$sum: '$quantity'},
+                totalPrice: {$sum: '$priceTotal'},
+                totalPayed: {$sum: '$payed'},
+                totalDebt: {$sum: '$debt'},
+                lastService: {$max: '$created'}
+            }
+        },
+        {
+            $lookup: {
+                from: 'patients',
+                localField: '_id',
+                foreignField: '_id',
+                as: 'patient'
+            }
+        },
+        {
+            $sort: {lastService: -1}
+        },
+        {
+            $unwind: '$patient'
+        }
+    ], function (err, records) {
+        if (err) {
+            return cb(err);
+        }
+
+        cb(null, records);
+    });
+};
+
 var PatientService = mongoose.model('PatientService', PatientServiceSchema);
 
 module.exports.PatientService = PatientService;
