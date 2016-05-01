@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var logger = require('morgan');
 var favicon = require('serve-favicon');
+var compression = require('compression');
 var routers = require('./routers');
 
 mongoose.connect('mongodb://127.0.0.1:27017/starmed');
@@ -16,6 +17,7 @@ mongoose.connection.once('open', function () {
 
     app.disable('x-powered-by');
 
+    app.use(compression());
     app.use(logger('combined'));
     app.use(favicon(path.join(__dirname, '/public/src/images/favicon.png')));
 

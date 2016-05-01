@@ -6,34 +6,34 @@
 </h2>
 
 <div ng-form="formPay">
-    <div class="panel panel-info">
+    <div class="panel panel-primary">
         <div class="panel-heading">
             <h3 class="panel-title text-bold">Общая информация об оплате</h3>
         </div>
         <table class="table table-bordered">
             <tbody>
             <tr>
-                <td class="col-sm-2 text-right text-bold cell-info">Количество услуг</td>
+                <td class="col-sm-2 text-right text-bold">Количество услуг</td>
                 <td class="col-sm-4">{{ F.total(pendingServices,'quantity') | number: 2 }}</td>
-                <td class="col-sm-2 text-right text-bold cell-info">Общая стоимость (сум)</td>
+                <td class="col-sm-2 text-right text-bold">Общая стоимость (сум)</td>
                 <td class="col-sm-4">{{ F.total(pendingServices, 'priceTotal') | number: 2 }}</td>
             </tr>
             <tr>
-                <td class="col-sm-2 text-right text-bold cell-info">Оплачен (сум)</td>
+                <td class="col-sm-2 text-right text-bold">Оплачен (сум)</td>
                 <td class="col-sm-4">{{ F.total(pendingServices,'payed') | number: 2 }}</td>
-                <td class="col-sm-2 text-right text-bold cell-info">Долг (сум)</td>
+                <td class="col-sm-2 text-right text-bold">Долг (сум)</td>
                 <td class="col-sm-4">{{ F.total(pendingServices, 'debt') | number: 2 }}</td>
             </tr>
             <tr>
-                <td class="col-sm-2 text-right text-bold cell-info">К оплате (сум)</td>
+                <td class="col-sm-2 text-right text-bold">К оплате (сум)</td>
                 <td class="col-sm-4">{{ F.total(pendingServices,'forPay') | number: 2 }}</td>
-                <td class="col-sm-2 text-right text-bold cell-info">Долг после оплаты (сум)</td>
+                <td class="col-sm-2 text-right text-bold">Долг после оплаты (сум)</td>
                 <td class="col-sm-4">{{ F.total(pendingServices, 'debtAfterPay') | number: 2 }}</td>
             </tr>
             </tbody>
             <tfoot>
             <tr>
-                <td class="text-right cell-info" colspan="4">
+                <td class="text-right" colspan="4">
                     <button ng-click="save()" ng-disabled="formPay.$invalid" class="btn btn-primary">Оплатить</button>
                 </td>
             </tr>

@@ -12,6 +12,7 @@
   "dependencies": {
     "async": "^2.0.0-rc.3",
     "body-parser": "^1.15.0",
+    "compression": "^1.6.1",
     "express": "^4.13.4",
     "mongoose": "^4.4.11",
     "mongoose-type-email": "^1.0.2",
