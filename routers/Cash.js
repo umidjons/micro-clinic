@@ -29,43 +29,12 @@ router
 
         F.inspect(payInfo, 'Pay Info');
 
-        models.PatientService.pendingServicesOf(payInfo.patientId, function (err, patientServices) {
+        models.Cash.payAll(payInfo, function (err) {
             if (err) {
                 return Msg.sendError(res, err);
             }
 
-            if (patientServices.length == 0) {
-                return Msg.sendError(res, 'Неоплаченные услуги не найдены.');
-            }
-
-            let totalDebt = 0;
-            for (let patSrv of patientServices) {
-                totalDebt += patSrv.debt;
-            }
-
-            if (totalDebt != payInfo.totalDebt) {
-                return Msg.sendError('Неверная сумма оплаты.');
-            }
-
-            for (let patSrv of patientServices) {
-                patSrv.pays.push({
-                    amount: patSrv.debt,
-                    payType: payInfo.payType
-                });
-            }
-
-            models.Cash.preparePays(patientServices, function (err) {
-                if (err) {
-                    return Msg.sendError(res, err);
-                }
-
-                models.Cash.savePays(patientServices, function (err) {
-                    if (err) {
-                        return Msg.sendError(res, err);
-                    }
-                    return Msg.sendSuccess(res, 'Данные успешно сохранены.');
-                });
-            });
+            return Msg.sendSuccess(res, 'Данные успешно сохранены.');
         });
     })
     .post('/', function (req, res, next) {

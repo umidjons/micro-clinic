@@ -18,6 +18,11 @@ var CashSchema = mongoose.Schema({
     userId: {type: String, required: true, default: '1'} //todo: set real user id or user schema
 });
 
+/**
+ * Prepares pays for the given patient services.
+ * @param {array} patSrvList array of PatientService models
+ * @param {function} cb callback function with one parameter - error.
+ */
 CashSchema.statics.preparePays = function (patSrvList, cb) {
     if (!patSrvList || patSrvList.length == 0) {
         return cb('Данные не указаны!');
@@ -65,6 +70,11 @@ CashSchema.statics.preparePays = function (patSrvList, cb) {
     cb();
 };
 
+/**
+ * Saves patient services with pays.
+ * @param {array} patSrvList array of PatientService models.
+ * @param {function} cb callback function with one parameter - error.
+ */
 CashSchema.statics.savePays = function (patSrvList, cb) {
     // save all patient services with pays
     async.each(
@@ -81,7 +91,7 @@ CashSchema.statics.savePays = function (patSrvList, cb) {
                         doc.pays.push(pay);
                     }
                 }
-                doc.save(function (err, savedPatSrv) {
+                doc.save(function (err) {
                     if (err) {
                         return done(err);
                     }
@@ -100,6 +110,55 @@ CashSchema.statics.savePays = function (patSrvList, cb) {
             }
         }
     );
+};
+
+/**
+ * Generates & saves pays for given patient's pending services.
+ * @param {object} payInfo payment info in format {patientId: XXX, payType: XXX, totalDebt: XXX}
+ * @param {function} cb callback function with one parameter - error.
+ */
+CashSchema.statics.payAll = function (payInfo, cb) {
+    models.PatientService.pendingServicesOf(payInfo.patientId, function (err, patientServices) {
+        if (err) {
+            return cb(err);
+        }
+
+        if (patientServices.length == 0) {
+            return cb('Неоплаченные услуги не найдены.');
+        }
+
+        // checking total debt amount
+        let totalDebt = 0;
+        for (let patSrv of patientServices) {
+            totalDebt += patSrv.debt;
+        }
+
+        if (totalDebt != payInfo.totalDebt) {
+            return cb('Неверная сумма оплаты.');
+        }
+
+        // populating pays for each pending service
+        for (let patSrv of patientServices) {
+            patSrv.pays.push({
+                amount: patSrv.debt,
+                payType: payInfo.payType
+            });
+        }
+
+        // validating & preparing pays
+        Cash.preparePays(patientServices, function (err) {
+            if (err) {
+                return cb(err);
+            }
+
+            Cash.savePays(patientServices, function (err) {
+                if (err) {
+                    return cb(err);
+                }
+                return cb();
+            });
+        });
+    });
 };
 
 var Cash = mongoose.model('Cash', CashSchema);
