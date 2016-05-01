@@ -65,6 +65,21 @@ PatientServiceSchema.statics.pendingPatients = function (cb) {
     });
 };
 
+PatientServiceSchema.statics.pendingServicesOf = function (patientId, cb) {
+    var condition = {
+        patientId: patientId,
+        'state._id': {$in: ['new', 'partlyPayed']}
+    };
+
+    PatientService.find(condition).sort({created: -1}).exec(function (err, patientServices) {
+        if (err) {
+            return cb(err);
+        }
+
+        return cb(null, patientServices);
+    });
+};
+
 var PatientService = mongoose.model('PatientService', PatientServiceSchema);
 
 module.exports.PatientService = PatientService;

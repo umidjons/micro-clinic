@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('MyClinic')
-    .controller('CashListCtrl', function ($scope, $aside, Cash, PayType) {
+    .controller('CashListCtrl', function ($scope, $aside, $state, Cash, PayType, Modal) {
         $scope.payTypes = PayType.query();
         $scope.records = Cash.pendingPatients();
 
@@ -21,9 +21,30 @@ angular.module('MyClinic')
 
                     let ctrl = this;
                     this.save = function () {
-                        alert('Saved!');
-                        //todo: implement saving pays
-                        asidePay.hide();
+                        Modal.confirm({
+                            okAction: function (modal) {
+                                var cash = new Cash();
+                                cash.pay = {
+                                    patientId: patientService.patient._id,
+                                    totalDebt: patientService.totalDebt,
+                                    payType: ctrl.type
+                                };
+
+                                cash.$payAll(function (resp) {
+                                    if (resp.code == 'success') {
+                                        // close modal & aside
+                                        modal.hide();
+                                        asidePay.hide();
+                                        // reload page
+                                        $state.transitionTo('cashList', null, {
+                                            reload: true,
+                                            inherit: false,
+                                            notify: true
+                                        });
+                                    }
+                                });
+                            }
+                        });
                     };
                 },
                 controllerAs: 'Pay',
@@ -89,6 +110,7 @@ angular.module('MyClinic')
                         'или разделение не произведена вообще.');
                     return;
                 }
+                penSrv.pays[0].payType = undefined; // restore pay type of the first payment
                 this.forPayChanged(penSrv);
             },
             normalizePays: function (penSrv, payIdx) {

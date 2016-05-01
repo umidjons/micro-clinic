@@ -6,6 +6,8 @@ var nunjucks = require('nunjucks');
 var path = require('path');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var logger = require('morgan');
+var favicon = require('serve-favicon');
 var routers = require('./routers');
 
 mongoose.connect('mongodb://127.0.0.1:27017/starmed');
@@ -13,6 +15,9 @@ mongoose.connection.once('open', function () {
     app.set('port', process.env.PORT || 3000);
 
     app.disable('x-powered-by');
+
+    app.use(logger('combined'));
+    app.use(favicon(path.join(__dirname, '/public/src/images/favicon.png')));
 
     //---< configure template engine >---
     const VIEW_PATH = path.join(__dirname, 'public', 'views');

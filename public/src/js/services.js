@@ -335,6 +335,10 @@ angular.module('MyClinic')
                     url: '/cash/pending-services-of/:patientId',
                     isArray: true,
                     params: {patientId: '@patientId'}
+                },
+                payAll: {
+                    method: 'POST',
+                    url: '/cash/pay-all'
                 }
             }
         );
