@@ -371,4 +371,18 @@ angular.module('MyClinic')
                 }
             }
         };
+    })
+    .factory('Pager', function () {
+        return {
+            new: function (pageSize) {
+                return {
+                    current: 1,
+                    pageSize: pageSize || 10,
+                    total: undefined,
+                    itemNumber: function (itemIndex) {
+                        return (this.current - 1) * this.pageSize + itemIndex + 1;
+                    }
+                };
+            }
+        };
     });

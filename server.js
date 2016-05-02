@@ -18,7 +18,7 @@ mongoose.connection.once('open', function () {
     app.disable('x-powered-by');
 
     app.use(compression());
-    app.use(logger('combined'));
+    app.use(logger('dev'));
     app.use(favicon(path.join(__dirname, '/public/src/images/favicon.png')));
 
     //---< configure template engine >---
@@ -52,7 +52,7 @@ mongoose.connection.once('open', function () {
     app.use('/assets', express.static(path.join(__dirname, 'public')));
 
     // configure parsers
-    app.use(bodyParser.urlencoded({extended: false}));
+    app.use(bodyParser.urlencoded({extended: true}));
     app.use(bodyParser.json());
 
     app

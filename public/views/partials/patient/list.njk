@@ -21,8 +21,10 @@
     </thead>
 
     <tbody>
-    <tr ng-repeat="pat in patients">
-        <td class="text-right">{{ $index + 1 }}</td>
+    <tr dir-paginate="pat in patients | itemsPerPage: pagination.pageSize"
+        current-page="pagination.current"
+        total-items="pagination.total">
+        <td class="text-right">{{ pagination.itemNumber($index) }}</td>
         <td>{{ pat.lastName }}</td>
         <td>{{ pat.firstName }}</td>
         <td>{{ pat.middleName }}</td>
@@ -40,7 +42,8 @@
                     <i class="fa fa-fw fa-bars"></i> <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-right">
-                    <li><a ui-sref="patientView.services({id:pat._id})"><i class="fa fa-fw fa-search"></i> Просмотр</a></li>
+                    <li><a ui-sref="patientView.services({id:pat._id})"><i class="fa fa-fw fa-search"></i> Просмотр</a>
+                    </li>
                     <li><a ui-sref="patientEdit({id:pat._id})"><i class="fa fa-fw fa-edit"></i> Изменить</a></li>
                     <li><a href ng-click="deletePatient(pat)"><i class="fa fa-fw fa-trash"></i> Удалить</a></li>
                     <li role="separator" class="divider"></li>
@@ -54,5 +57,11 @@
         </td>
     </tr>
     </tbody>
-
+    <tfoot>
+    <tr>
+        <td colspan="10">
+            <dir-pagination-controls on-page-change="pageChanged()"></dir-pagination-controls>
+        </td>
+    </tr>
+    </tfoot>
 </table>

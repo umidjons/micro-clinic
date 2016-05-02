@@ -35,6 +35,7 @@
     "angular-motion": "^0.4.4",
     "underscore": "^1.8.3",
     "bootstrap-additions": "^0.3.1",
-    "angular-ui-router": "1.0"
+    "angular-ui-router": "1.0",
+    "angularUtils-pagination": "angular-utils-pagination#^0.11.1"
   }
 }

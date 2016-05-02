@@ -56,15 +56,36 @@ router
             Msg.sendSuccess(res, '', patient, 'Patient:');
         });
     })
-    .get('/', function (req, res) {
-        models.Patient.find().sort({created: -1}).exec(function (err, patients) {
-            if (err) {
-                return Msg.sendError(res, err);
-            }
+    .get('/',
+        function (req, res, next) {
+            models.Patient.count(function (err, count) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
 
-            Msg.sendSuccess(res, '', patients, 'List of patients:');
-        });
-    })
+                // set total items header
+                res.header('X-Total-Items', count);
+
+                next();
+            });
+        },
+        function (req, res) {
+            var pageCurrent = 1 * req.query.p || 1;
+            var pageSize = 1 * req.query.ps || 0; // limit=0 means no limit, so default is to retrieve all
+            var skip = (pageCurrent - 1) * pageSize;
+            
+            console.log('skip=', skip, 'pageCurrent=', pageCurrent, 'pageSize=', pageSize);
+            models.Patient.find()
+                .skip(skip)
+                .limit(pageSize)
+                .sort({created: -1}).exec(function (err, patients) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+
+                Msg.sendSuccess(res, '', patients, 'List of patients:');
+            });
+        })
     .post('/', function (req, res) {
         //console.log('Request body:', req.body);
 

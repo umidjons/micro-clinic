@@ -92,9 +92,18 @@ angular.module('MyClinic')
         };
 
     })
-    .controller('PatientsCtrl', function ($scope, Modal, Patient) {
+    .controller('PatientsCtrl', function ($scope, Modal, Patient, Pager) {
+        $scope.pagination = Pager.new();
+
+        $scope.pageChanged = function () {
+            $scope.reloadPage();
+        };
+
         $scope.reloadPage = function () {
-            $scope.patients = Patient.query();
+            Patient.query({p: $scope.pagination.current, ps: $scope.pagination.pageSize}, function (patients, headers) {
+                $scope.patients = patients;
+                $scope.pagination.total = headers('X-Total-Items');
+            });
         };
 
         $scope.deletePatient = function (patient) {
