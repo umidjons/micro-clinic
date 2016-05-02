@@ -55,6 +55,9 @@ angular.module('MyClinic')
     .controller('CashPayCtrl', function ($scope, $state, $stateParams, F, Cash, PayType, Msg, Modal) {
         // init section
         var init = function () {
+            if (!$stateParams.patientService) {
+                return $state.go('cashList');
+            }
             $scope.payTypes = PayType.query();
             $scope.patientService = $stateParams.patientService;
             $scope.pay = {

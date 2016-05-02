@@ -1,6 +1,7 @@
 'use strict';
 
 var router = require('express').Router();
+var debug = require('debug')('myclinic:router:cash');
 var models = require('../models');
 var Msg = require('../include/Msg');
 var F = require('../include/F');
@@ -16,6 +17,8 @@ router
         });
     })
     .post('/pending-services-of/:patientId', function (req, res) {
+        debug(`patientId: ${req.params.patientId}`);
+        
         models.PatientService.pendingServicesOf(req.params.patientId, function (err, patientServices) {
             if (err) {
                 return Msg.sendError(res, err);

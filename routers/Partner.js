@@ -1,11 +1,13 @@
 'use strict';
 
 var router = require('express').Router();
+var debug = require('debug')('myclinic:router:partner');
 var models = require('../models');
 var Msg = require('../include/Msg');
 
 router
     .get('/:id', function (req, res) {
+        debug(`id: ${req.params.id}`);
         models.Partner.findOne({_id: req.params.id}, function (err, partner) {
             if (err) {
                 return Msg.sendError(res, err.message);
@@ -24,7 +26,6 @@ router
         });
     })
     .post('/', function (req, res) {
-        console.log('Request body:', req.body);
 
         // create model and fill fields from request body
         let newPartner = new models.Partner(req.body);
@@ -41,10 +42,9 @@ router
         });
     })
     .put('/:id', function (req, res) {
-        console.log('Request body:', req.body);
-        console.log('id:', req.params.id);
+        debug(`id: ${req.params.id}`);
 
-        models.Partner.update({_id: req.params.id}, req.body, function (err, raw) {
+        models.Partner.update({_id: req.params.id}, req.body, function (err) {
             if (err) {
                 return Msg.sendError(res, err.message);
             }
@@ -53,9 +53,9 @@ router
         });
     })
     .delete('/:id', function (req, res) {
-        console.log('id:', req.params.id);
+        debug(`id: ${req.params.id}`);
 
-        models.Partner.remove({_id: req.params.id}, function (err, removedPartner) {
+        models.Partner.remove({_id: req.params.id}, function (err) {
             if (err) {
                 return Msg.sendError(res, err.message);
             }

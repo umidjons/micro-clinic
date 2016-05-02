@@ -1,6 +1,7 @@
 'use strict';
 
 var router = require('express').Router();
+var debug = require('debug')('myclinic:router:servicecategory');
 var models = require('../models');
 var Msg = require('../include/Msg');
 
@@ -48,7 +49,7 @@ router
         });
     })
     .post('/', function (req, res) {
-        console.log('Request body:', req.body);
+        //console.log('Request body:', req.body);
 
         // create model and fill fields from request body
         let newServiceCat = new models.ServiceCategory(req.body);
@@ -65,8 +66,7 @@ router
         });
     })
     .put('/:id', function (req, res) {
-        console.log('Request body:', req.body);
-        console.log('id:', req.params.id);
+        debug(`id: ${req.params.id}`);
 
         models.ServiceCategory.update({_id: req.params.id}, req.body, function (err, raw) {
             if (err) {
@@ -77,7 +77,7 @@ router
         });
     })
     .delete('/:id', function (req, res) {
-        console.log('id:', req.params.id);
+        debug(`id:${req.params.id}`);
 
         models.ServiceCategory.remove({_id: req.params.id}, function (err, removedServiceCategory) {
             if (err) {

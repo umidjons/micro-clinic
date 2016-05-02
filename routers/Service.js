@@ -1,6 +1,7 @@
 'use strict';
 
 var router = require('express').Router();
+var debug = require('debug')('myclinic:router:service');
 var models = require('../models');
 var Msg = require('../include/Msg');
 
@@ -41,6 +42,8 @@ router
         });
     })
     .get('/:id', function (req, res) {
+        debug(`id: ${req.params.id}`);
+
         models.Service.findOne({_id: req.params.id}, function (err, service) {
             if (err) {
                 return Msg.sendError(res, err);
@@ -76,10 +79,9 @@ router
         });
     })
     .put('/:id', function (req, res) {
-        //console.log('Request body:', req.body);
-        //console.log('id:', req.params.id);
+        debug(`id: ${req.params.id}`);
 
-        models.Service.update({_id: req.params.id}, req.body, function (err, raw) {
+        models.Service.update({_id: req.params.id}, req.body, function (err) {
             if (err) {
                 return Msg.sendError(res, err);
             }
@@ -88,9 +90,9 @@ router
         });
     })
     .delete('/:id', function (req, res) {
-        //console.log('id:', req.params.id);
+        debug(`id: ${req.params.id}`);
 
-        models.Service.remove({_id: req.params.id}, function (err, removedService) {
+        models.Service.remove({_id: req.params.id}, function (err) {
             if (err) {
                 return Msg.sendError(res, err);
             }

@@ -4,10 +4,11 @@ var router = require('express').Router();
 var models = require('../models');
 var Msg = require('../include/Msg');
 var sugar = require('sugar');
+var debug = require('debug')('myclinic:router:patient');
 
 router
     .post('/search', function (req, res) {
-        //console.log('Search:', req.body);
+        debug(`Search params: ${req.body}`);
 
         if (!req.body.firstName || !req.body.lastName) {
             return Msg.sendError(res, 'Объязательные параметры не указаны.');
@@ -73,8 +74,9 @@ router
             var pageCurrent = 1 * req.query.p || 1;
             var pageSize = 1 * req.query.ps || 0; // limit=0 means no limit, so default is to retrieve all
             var skip = (pageCurrent - 1) * pageSize;
-            
-            console.log('skip=', skip, 'pageCurrent=', pageCurrent, 'pageSize=', pageSize);
+
+            debug(`skip=${skip} pageCurrent=${pageCurrent} pageSize=${pageSize}`);
+
             models.Patient.find()
                 .skip(skip)
                 .limit(pageSize)
@@ -87,10 +89,11 @@ router
             });
         })
     .post('/', function (req, res) {
-        //console.log('Request body:', req.body);
+        debug(`Request body: ${req.body}`);
 
         // create model and fill fields from request body
         let newPatient = new models.Patient(req.body);
+        newPatient.created = new Date();
 
         // try to save patient
         newPatient.save(function (err, savedPatient) {
@@ -104,8 +107,8 @@ router
         });
     })
     .put('/:id', function (req, res) {
-        //console.log('Request body:', req.body);
-        //console.log('id:', req.params.id);
+        //debug(`Request body: ${req.body}`);
+        debug(`id: ${req.params.id}`);
 
         models.Patient.update({_id: req.params.id}, req.body, function (err, raw) {
             if (err) {
@@ -116,9 +119,9 @@ router
         });
     })
     .delete('/:id', function (req, res) {
-        //console.log('id:', req.params.id);
+        debug(`id: ${req.params.id}`);
 
-        models.Patient.remove({_id: req.params.id}, function (err, removedPatient) {
+        models.Patient.remove({_id: req.params.id}, function (err) {
             if (err) {
                 return Msg.sendError(res, err);
             }

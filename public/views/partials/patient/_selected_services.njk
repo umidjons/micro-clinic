@@ -70,8 +70,8 @@
                     </span>
                 </div>
             </td>
-            <td class="text-right" title="{{ selSrv.discount.note }}">{{ selSrv.discount.amount || 0 | number }}</td>
-            <td class="text-right">{{ selSrv.priceTotal | number }}</td>
+            <td class="text-right" title="{{ selSrv.discount.note }}">{{ selSrv.discount.amount || 0 | number: 2 }}</td>
+            <td class="text-right">{{ selSrv.priceTotal | number: 2 }}</td>
             <td>{{ selSrv.partner.code }}</td>
 
             <td class="text-right">

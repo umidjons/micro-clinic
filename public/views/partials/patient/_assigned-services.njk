@@ -14,6 +14,8 @@
                 <th>Количество</th>
                 <th>Скидка (%)</th>
                 <th>Стоимость</th>
+                <th>Оплачен</th>
+                <th>Долг</th>
                 <th>Партнёр</th>
                 <th>Дата</th>
                 <th class="text-right">
@@ -49,8 +51,10 @@
                     {{ selSrv.quantity | number }}
                 </td>
                 <td class="text-right"
-                    title="{{ selSrv.discount.note }}">{{ selSrv.discount.amount || 0 | number }}</td>
-                <td class="text-right">{{ selSrv.priceTotal | number }}</td>
+                    title="{{ selSrv.discount.note }}">{{ selSrv.discount.amount || 0 | number: 2 }}</td>
+                <td class="text-right">{{ selSrv.priceTotal | number: 2 }}</td>
+                <td class="text-right">{{ selSrv.payed | number: 2 }}</td>
+                <td class="text-right">{{ selSrv.debt | number: 2 }}</td>
                 <td>{{ selSrv.partner.code }}</td>
                 <td>{{ selSrv.created | date:'medium' }}</td>
 

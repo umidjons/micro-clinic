@@ -1,11 +1,13 @@
 'use strict';
 
 var router = require('express').Router();
+var debug = require('debug')('myclinic:router:patientservice');
 var models = require('../models');
 var Msg = require('../include/Msg');
 
 router
     .get('/:id', function (req, res) {
+        debug(`id: ${req.params.id}`);
         models.PatientService.findOne({_id: req.params.id}, function (err, patientService) {
             if (err) {
                 return Msg.sendError(res, err);
@@ -15,6 +17,7 @@ router
         });
     })
     .get('/for/:patientId', function (req, res) {
+        debug(`patientId: ${req.params.patientId}`);
         models.PatientService.find({patientId: req.params.patientId}, function (err, patientServices) {
             if (err) {
                 return Msg.sendError(res, err);
@@ -27,7 +30,7 @@ router
         function (req, res, next) {
             // middleware to prepare patient services for save
 
-            console.log('Request body 1:', req.body);
+            //console.log('Request body 1:', req.body);
 
             if (!req.body.patientId) {
                 return Msg.sendError(res, 'Пациент не указан.');
@@ -59,7 +62,7 @@ router
             next();
         },
         function (req, res) {
-            console.log('Request body 2:', req.body);
+            //console.log('Request body 2:', req.body);
 
             models.PatientService.create(req.body.services, function (err, patientServices) {
                 // if there is error, send it and stop handler with return
@@ -74,8 +77,7 @@ router
         }
     )
     .put('/:id', function (req, res) {
-        console.log('Request body:', req.body);
-        console.log('id:', req.params.id);
+        debug(`id: ${req.params.id}`);
 
         models.PatientService.update({_id: req.params.id}, req.body, function (err, raw) {
             if (err) {
@@ -87,7 +89,9 @@ router
     })
     .post('/delete-bulk', function (req, res) {
         var ids = req.body.ids;
-        console.log('/delete-bulk IDS:', ids);
+
+        debug(`/delete-bulk IDS: ${ids}`);
+
         models.PatientService.remove({_id: {$in: ids}}, function (err, raw) {
             if (err) {
                 return Msg.sendError(res, err);
@@ -97,7 +101,7 @@ router
         });
     })
     .delete('/:id', function (req, res) {
-        console.log('id:', req.params.id);
+        debug(`id: ${req.params.id}`);
 
         models.PatientService.remove({_id: req.params.id}, function (err, removedPatientService) {
             if (err) {
