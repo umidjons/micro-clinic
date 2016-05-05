@@ -30,7 +30,6 @@
             <label>Дата рождения</label>
             <input ng-model="patient.dateOfBirth"
                    ng-change="searchPatients(formSearch.$valid)"
-                   ng-model-options="{debounce:500}"
                    class="form-control"
                    bs-datepicker data-min-date="01.01.1900" data-max-date="today">
         </div>
