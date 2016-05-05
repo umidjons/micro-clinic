@@ -47,8 +47,9 @@ angular.module('MyClinic')
 
         $scope.reset();
     })
-    .controller('PatientCtrl', function ($scope, $state, $stateParams, Modal, Sex, Patient) {
+    .controller('PatientCtrl', function ($scope, $state, $stateParams, Modal, Sex, Patient, Resident) {
         $scope.sex = Sex.query();
+        $scope.residents = Resident.query();
 
         if ($stateParams.id) {
             Patient.get({id: $stateParams.id}, function (patient) {
@@ -56,6 +57,7 @@ angular.module('MyClinic')
             });
         } else {
             $scope.patient = new Patient();
+            $scope.patient.resident = $scope.residents[0];
             if ($stateParams.initialPatient) {
                 let iniPat = $stateParams.initialPatient;
                 if (iniPat.firstName) $scope.patient.firstName = iniPat.firstName;
@@ -203,7 +205,7 @@ angular.module('MyClinic')
                 }
             },
             Marker: {
-                isAllMarked: false,
+                isAllMarked: 0,
                 markedCount: 0,
                 toggleAll: function () {
                     for (let srv of $scope.patient.services) {
@@ -231,7 +233,7 @@ angular.module('MyClinic')
                 }
             },
             AssignedMarker: {
-                isAllMarked: false,
+                isAllMarked: 0,
                 markedCount: 0,
                 toggleAll: function () {
                     for (let srv of $scope.patient.services_assigned) {
@@ -255,11 +257,21 @@ angular.module('MyClinic')
                     }
                     return res.length;
                 },
+                getNewServices: function (retCount) {
+                    if (angular.isUndefined($scope.patient))
+                        return;
+                    var res = _.filter($scope.patient.services_assigned, function (srv) {
+                        return srv.state._id == 'new';
+                    });
+                    if (!retCount) {
+                        return res;
+                    }
+                    return res.length;
+                },
                 onChange: function () {
-                    var allSrvCount = $scope.patient.services_assigned.length;
+                    var allSrvCount = this.getNewServices(true);
                     this.markedCount = this.getMarked(true);
                     this.isAllMarked = allSrvCount > 0 && allSrvCount == this.markedCount ? 1 : 0;
-
                 }
             },
             AssignedService: {

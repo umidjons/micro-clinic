@@ -1,58 +1,105 @@
-<div class="row">
-    <div class="form-group col-sm-3">
-        <label class="req">Фамилия</label>
-        <input ng-model="patient.lastName" class="form-control" maxlength="50" required>
+<div class="col-sm-6">
+    <div class="form-group">
+        <label class="control-label col-sm-4 req">Фамилия</label>
+        <div class="col-sm-8">
+            <input ng-model="patient.lastName" class="form-control" maxlength="50" required>
+        </div>
     </div>
 
-    <div class="form-group col-sm-3">
-        <label class="req">Имя</label>
-        <input ng-model="patient.firstName" class="form-control" maxlength="50" required>
+    <div class="form-group">
+        <label class="control-label col-sm-4 req">Имя</label>
+        <div class="col-sm-8">
+            <input ng-model="patient.firstName" class="form-control" maxlength="50" required>
+        </div>
     </div>
 
-    <div class="form-group col-sm-3">
-        <label>Отчество</label>
-        <input ng-model="patient.middleName" class="form-control" maxlength="50">
+    <div class="form-group">
+        <label class="control-label col-sm-4">Отчество</label>
+        <div class="col-sm-8">
+            <input ng-model="patient.middleName" class="form-control" maxlength="50">
+        </div>
     </div>
 
-    <div class="form-group col-sm-3">
-        <label class="req">Дата рождения</label>
-        <input ng-model="patient.dateOfBirth" class="form-control" required
-               bs-datepicker data-min-date="01.01.1900" data-max-date="today">
+    <div class="form-group">
+        <label class="control-label col-sm-4 req">Дата рождения</label>
+        <div class="col-sm-8">
+            <input ng-model="patient.dateOfBirth" class="form-control" required
+                   placeholder="дд.мм.гггг"
+                   bs-datepicker data-min-date="01.01.1900" data-max-date="today">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-4 req">Пол</label>
+        <div class="col-sm-8">
+            <select ng-model="patient.sex" class="form-control" required
+                    ng-options="s.title for s in sex track by s._id">
+                <option value="">-</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-4 req">Гражданство</label>
+        <div class="col-sm-8">
+            <select ng-model="patient.resident" class="form-control" required
+                    ng-options="r.title for r in residents track by r._id">
+                <option value="">-</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-4">Паспорт</label>
+        <div class="col-sm-8">
+            <input ng-model="patient.passport" class="form-control"
+                   placeholder="SS NNNNNNN" pattern="[A-Za-z]{2} \d{7}" maxlength="10">
+        </div>
     </div>
 </div>
 
-<div class="row">
-    <div class="form-group col-sm-3">
-        <label class="req">Пол</label>
-        <select ng-model="patient.sex" class="form-control" required
-                ng-options="s.title for s in sex track by s._id">
-            <option value="">-</option>
-        </select>
-    </div>
-    <div class="form-group col-sm-9">
-        <label class="req">Адрес</label>
-        <input ng-model="patient.address" class="form-control" required maxlength="500">
-    </div>
-</div>
-
-<div class="row">
-    <div class="form-group col-sm-3">
-        <label class="req">Мобильный номер телефона</label>
-        <input ng-model="patient.cellPhone" class="form-control" pattern="\d{5,12}" maxlength="12" required>
+<div class="col-sm-6">
+    <div class="form-group">
+        <label class="control-label col-sm-4 req">Мобильный тел</label>
+        <div class="col-sm-8">
+            <input ng-model="patient.cellPhone" class="form-control" pattern="\d{5,12}"
+                   placeholder="998NNNNNNNNN" maxlength="12" required>
+        </div>
     </div>
 
-    <div class="form-group col-sm-3">
-        <label>Городской номер телефона</label>
-        <input ng-model="patient.homePhone" pattern="\d{5,12}" maxlength="12" class="form-control">
+    <div class="form-group">
+        <label class="control-label col-sm-4">Городской тел</label>
+        <div class="col-sm-8">
+            <input ng-model="patient.homePhone" pattern="\d{5,12}" maxlength="12"
+                   placeholder="998NNNNNNNNN" class="form-control">
+        </div>
     </div>
 
-    <div class="form-group col-sm-3">
-        <label>Email</label>
-        <input ng-model="patient.email" type="email" class="form-control" maxlength="50">
+    <div class="form-group">
+        <label class="control-label col-sm-4">Email</label>
+        <div class="col-sm-8">
+            <input ng-model="patient.email" type="email" class="form-control" maxlength="50">
+        </div>
     </div>
 
-    <div class="form-group col-sm-3">
-        <label>Организация</label>
-        <input ng-model="patient.company" class="form-control" maxlength="200">
+    <div class="form-group">
+        <label class="control-label col-sm-4 req">Адрес</label>
+        <div class="col-sm-8">
+            <input ng-model="patient.address" class="form-control" required maxlength="500">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-4">Место работы</label>
+        <div class="col-sm-8">
+            <input ng-model="patient.workplace" class="form-control" maxlength="200">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-4">Организация</label>
+        <div class="col-sm-8">
+            <input ng-model="patient.company" class="form-control" maxlength="200">
+        </div>
     </div>
 </div>

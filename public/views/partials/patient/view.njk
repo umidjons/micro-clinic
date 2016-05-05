@@ -1,5 +1,6 @@
 <h3>
     {{ patient.lastName }} {{ patient.firstName }} {{ patient.middleName }}
+    <a ui-sref="patientEdit({id:patient._id})" title="Редактировать"><i class="fa fa-fw fa-edit"></i></a>
 </h3>
 
 {% include "partials/patient/_patient_info.njk" %}
@@ -13,4 +14,4 @@
     </li>
 </ul>
 
-<div ui-view="patient" class="nav-tabs-body"></div>
+<div ui-view="patient"></div>

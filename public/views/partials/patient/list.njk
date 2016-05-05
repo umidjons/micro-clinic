@@ -10,8 +10,11 @@
         <th>Отчество</th>
         <th>Дата рождения</th>
         <th>Пол</th>
+        <th>Тел</th>
         <th>Адрес</th>
         <th>Дата регистрации</th>
+        <th>Последнее посещение</th>
+        <th>Долг</th>
         <th class="text-center">
             <button ng-click="reloadPage()" class="btn btn-xs btn-info" title="Обновить">
                 <i class="fa fa-fw fa-refresh"></i>
@@ -23,7 +26,8 @@
     <tbody>
     <tr dir-paginate="pat in patients | itemsPerPage: pagination.pageSize"
         current-page="pagination.current"
-        total-items="pagination.total">
+        total-items="pagination.total"
+        ng-class="{'danger':pat.debt>0}">
         <td class="text-right">{{ pagination.itemNumber($index) }}</td>
         <td>{{ pat.lastName }}</td>
         <td>{{ pat.firstName }}</td>
@@ -33,8 +37,11 @@
             <i ng-if="pat.sex._id == 'male'" class="fa fa-fw fa-mars"></i>
             <i ng-if="pat.sex._id == 'female'" class="fa fa-fw fa-venus"></i>
         </td>
+        <td>{{ pat.cellPhone }}</td>
         <td>{{ pat.address }}</td>
         <td>{{ pat.created | date:'medium' }}</td>
+        <td>{{ pat.lastVisit | date:'medium' }}</td>
+        <td class="text-right">{{ pat.debt | number:2 }}</td>
         <td class="text-center">
             <div class="btn-group btn-group-xs">
                 <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"

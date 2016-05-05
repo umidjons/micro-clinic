@@ -1,16 +1,18 @@
-<h3>Изменение реквизитов пациента</h3>
+<div class="container">
+    <h3>Изменение реквизитов пациента</h3>
 
-<form name="formPatient" novalidate>
+    <form class="form-horizontal" name="formPatient" novalidate>
 
-    {% include "partials/patient/_form_fields.njk" %}
+        {% include "partials/patient/_form_fields.njk" %}
 
-    <div class="row">
-        <div class="col-sm-12 text-right">
-            <button ui-sref="patientList" class="btn btn-danger">Отмена</button>
-            <button ng-click="savePatient()" ng-disabled="formPatient.$invalid"
-                    class="btn btn-success">Сохранить
-            </button>
+        <div class="row">
+            <div class="col-sm-12 text-right">
+                <button ui-sref="patientList" class="btn btn-danger">Отмена</button>
+                <button ng-click="savePatient()" ng-disabled="formPatient.$invalid"
+                        class="btn btn-success">Сохранить
+                </button>
+            </div>
         </div>
-    </div>
 
-</form>
+    </form>
+</div>

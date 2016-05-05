@@ -7,47 +7,60 @@ var sugar = require('sugar');
 var debug = require('debug')('myclinic:router:patient');
 
 router
-    .post('/search', function (req, res) {
-        debug(`Search params: ${req.body}`);
+    .post('/search',
+        function (req, res, next) {
+            debug(`Search params: ${req.body}`);
 
-        if (!req.body.firstName || !req.body.lastName) {
-            return Msg.sendError(res, 'Объязательные параметры не указаны.');
-        }
+            if (!req.body.firstName || !req.body.lastName) {
+                return Msg.sendError(res, 'Объязательные параметры не указаны.');
+            }
 
-        var condition = {
-            firstName: new RegExp(req.body.firstName, 'i'),
-            lastName: new RegExp(req.body.lastName, 'i')
-        };
-
-        if (req.body.middleName) {
-            condition.middleName = new RegExp(req.body.middleName, 'i');
-        }
-
-        if (req.body.dateOfBirth) {
-            condition.dateOfBirth = {
-                $gte: Date.create(req.body.dateOfBirth).beginningOfDay(),
-                $lte: Date.create(req.body.dateOfBirth).endOfDay()
+            var condition = {
+                firstName: new RegExp(req.body.firstName, 'i'),
+                lastName: new RegExp(req.body.lastName, 'i')
             };
-        }
 
-        var sort = {
-            lastName: 1,
-            firstName: 1,
-            middleName: 1,
-            dateOfBirth: 1
-        };
+            if (req.body.middleName) {
+                condition.middleName = new RegExp(req.body.middleName, 'i');
+            }
 
-        models.Patient
-            .find(condition)
-            .limit(20)
-            .sort(sort)
-            .exec(function (err, patients) {
+            if (req.body.dateOfBirth) {
+                condition.dateOfBirth = {
+                    $gte: Date.create(req.body.dateOfBirth).beginningOfDay(),
+                    $lte: Date.create(req.body.dateOfBirth).endOfDay()
+                };
+            }
+
+            var sort = {
+                lastName: 1,
+                firstName: 1,
+                middleName: 1,
+                dateOfBirth: 1
+            };
+
+            models.Patient
+                .find(condition)
+                .limit(20)
+                .sort(sort)
+                .lean()
+                .exec(function (err, patients) {
+                    if (err) {
+                        Msg.sendError(res, err);
+                    }
+
+                    req.patients = patients;
+
+                    next();
+                });
+        },
+        function (req, res) {
+            models.Patient.fillAdditions(req.patients, function (err, results) {
                 if (err) {
-                    Msg.sendError(res, err);
+                    return Msg.sendError(res, err);
                 }
-                Msg.sendSuccess(res, '', patients);
+                Msg.sendSuccess(res, '', results);
             });
-    })
+        })
     .get('/:id', function (req, res) {
         models.Patient.findOne({_id: req.params.id}, function (err, patient) {
             if (err) {
@@ -70,7 +83,7 @@ router
                 next();
             });
         },
-        function (req, res) {
+        function (req, res, next) {
             var pageCurrent = 1 * req.query.p || 1;
             var pageSize = 1 * req.query.ps || 0; // limit=0 means no limit, so default is to retrieve all
             var skip = (pageCurrent - 1) * pageSize;
@@ -80,12 +93,24 @@ router
             models.Patient.find()
                 .skip(skip)
                 .limit(pageSize)
-                .sort({created: -1}).exec(function (err, patients) {
+                .sort({created: -1})
+                .lean()
+                .exec(function (err, patients) {
+                    if (err) {
+                        return Msg.sendError(res, err);
+                    }
+
+                    req.patients = patients;
+
+                    next();
+                });
+        },
+        function (req, res) {
+            models.Patient.fillAdditions(req.patients, function (err, results) {
                 if (err) {
                     return Msg.sendError(res, err);
                 }
-
-                Msg.sendSuccess(res, '', patients, 'List of patients:');
+                Msg.sendSuccess(res, '', results, 'List of patients:');
             });
         })
     .post('/', function (req, res) {

@@ -15,3 +15,5 @@ module.exports.PatientServiceSchema = require('./PatientService').PatientService
 module.exports.PayTypeSchema = require('./Cash').PayTypeSchema;
 module.exports.CashSchema = require('./Cash').CashSchema;
 module.exports.Cash = require('./Cash').Cash;
+module.exports.ResidentSchema = require('./Resident').ResidentSchema;
+module.exports.Resident = require('./Resident').Resident;

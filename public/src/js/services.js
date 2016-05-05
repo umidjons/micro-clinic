@@ -359,6 +359,22 @@ angular.module('MyClinic')
             }
         };
     })
+    .factory('Resident', function () {
+        return {
+            query: function () {
+                return [
+                    {
+                        _id: 'resident',
+                        title: 'Узбекистан'
+                    },
+                    {
+                        _id: 'other',
+                        title: 'Другое'
+                    }
+                ];
+            }
+        };
+    })
     .factory('F', function () {
         return {
             total: function (objList, prop) {

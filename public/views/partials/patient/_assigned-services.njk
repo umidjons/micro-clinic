@@ -4,7 +4,7 @@
             <thead>
             <tr>
                 <th class="text-center">
-                    <input type="checkbox"
+                    <input ng-if="ServiceHelper.AssignedMarker.getNewServices(true)>0" type="checkbox"
                            ng-change="ServiceHelper.AssignedMarker.toggleAll()"
                            ng-model="ServiceHelper.AssignedMarker.isAllMarked" ng-true-value="1" ng-false-value="0">
                 </th>
@@ -40,7 +40,7 @@
 
             <tr ng-repeat="selSrv in patient.services_assigned">
                 <td class="text-center">
-                    <input type="checkbox"
+                    <input ng-if="selSrv.state._id=='new'" type="checkbox"
                            ng-change="ServiceHelper.AssignedMarker.onChange()"
                            ng-model="selSrv.marked" ng-true-value="1" ng-false-value="0">
                 </td>

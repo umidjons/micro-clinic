@@ -31,6 +31,7 @@
             <input ng-model="patient.dateOfBirth"
                    ng-change="searchPatients(formSearch.$valid)"
                    class="form-control"
+                   placeholder="дд.мм.гггг"
                    bs-datepicker data-min-date="01.01.1900" data-max-date="today">
         </div>
     </div>
@@ -62,8 +63,11 @@
             <th>Отчество</th>
             <th>Дата рождения</th>
             <th>Пол</th>
+            <th>Тел</th>
             <th>Адрес</th>
             <th>Дата регистрации</th>
+            <th>Последнее посещение</th>
+            <th>Долг</th>
             <th class="text-center">
                 <button ng-click="searchPatients(formSearch.$valid)" class="btn btn-xs btn-info" title="Обновить">
                     <i class="fa fa-fw fa-refresh"></i>
@@ -73,7 +77,7 @@
         </thead>
 
         <tbody>
-        <tr ng-repeat="pat in patients">
+        <tr ng-repeat="pat in patients" ng-class="{'danger':pat.debt>0}">
             <td class="text-right">{{ $index + 1 }}</td>
             <td>{{ pat.lastName }}</td>
             <td>{{ pat.firstName }}</td>
@@ -83,8 +87,11 @@
                 <i ng-if="pat.sex._id == 'male'" class="fa fa-fw fa-mars"></i>
                 <i ng-if="pat.sex._id == 'female'" class="fa fa-fw fa-venus"></i>
             </td>
+            <td>{{ pat.cellPhone }}</td>
             <td>{{ pat.address }}</td>
             <td>{{ pat.created | date:'medium' }}</td>
+            <td>{{ pat.lastVisit | date:'medium' }}</td>
+            <td class="text-right">{{ pat.debt | number:2 }}</td>
             <td class="text-center">
                 <div class="btn-group btn-group-xs">
                     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
@@ -92,7 +99,8 @@
                         <i class="fa fa-fw fa-bars"></i> <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-right">
-                        <li><a ui-sref="patientView.services({id:pat._id})"><i class="fa fa-fw fa-search"></i> Просмотр</a></li>
+                        <li><a ui-sref="patientView.services({id:pat._id})"><i class="fa fa-fw fa-search"></i> Просмотр</a>
+                        </li>
                         <li><a ui-sref="patientEdit({id:pat._id})"><i class="fa fa-fw fa-edit"></i> Изменить</a></li>
                         <li><a href ng-click="deletePatient(pat)"><i class="fa fa-fw fa-trash"></i> Удалить</a></li>
                         <li role="separator" class="divider"></li>

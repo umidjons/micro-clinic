@@ -19,11 +19,11 @@
     <div ng-repeat="catTitle in categories | filter:filterCategory" class="panel panel-default">
 
         <div class="panel-heading">
-            <div class="row">
-                <div class="col-sm-6">
+            <div class="row" style="margin-right: -12px;">
+                <div class="col-sm-7">
                     {{ catTitle }}
                 </div>
-                <div class="col-sm-6 text-right" style="padding-right: 6px;">
+                <div class="col-sm-5 text-right">
                     {{ ServiceHelper.totalPriceByCategory(catTitle) | number }}
                     <button ng-click="ServiceHelper.Service.addAll(catTitle)" class="btn btn-xs btn-success">
                         <i class="fa fa-fw fa-plus"></i>
@@ -32,12 +32,12 @@
             </div>
         </div>
 
-        <table class="table table-condensed table-hover">
+        <table class="table table-bordered table-condensed table-hover">
             <tbody>
             <tr ng-repeat="srv in ServiceHelper.getByCategory(catTitle) | filter:{title:filterService}">
-                <td>{{ srv.title }}</td>
-                <td class="text-right">{{ srv.price | number }}</td>
-                <td class="text-right">
+                <td class="col-sm-8">{{ srv.title }}</td>
+                <td class="col-sm-3 text-right">{{ srv.price | number }}</td>
+                <td class="col-sm-1 text-right">
                     <button ng-click="ServiceHelper.Service.add(srv)" class="btn btn-xs btn-info">
                         <i class="fa fa-fw fa-plus"></i>
                     </button>

@@ -1,30 +1,51 @@
-<table class="table">
+<table class="table table-bordered">
     <tbody>
     <tr>
+        <td class="cell-title">Пол:</td>
         <td>
-            <i title="Пол: {{ patient.sex.title }}" ng-if="patient.sex._id == 'male'"
-               class="fa fa-lg fa-fw fa-mars"></i>
-            <i title="Пол: {{ patient.sex.title }}" ng-if="patient.sex._id == 'female'"
-               class="fa fa-lg fa-fw fa-venus"></i>
+            <i ng-if="patient.sex._id == 'male'" class="fa fa-lg fa-fw fa-mars"></i>
+            <i ng-if="patient.sex._id == 'female'" class="fa fa-lg fa-fw fa-venus"></i>
+            {{ patient.sex.title }}
         </td>
-        <td title="Дата рождения">
-            <i class="fa fa-lg fa-fw fa-calendar"></i> {{ patient.dateOfBirth | date }}
+
+        <td class="cell-title">Дата рождение:</td>
+        <td>
+            {{ patient.dateOfBirth | date }}
         </td>
-        <td title="Мобильный номер телефона">
-            <i class="fa fa-lg fa-fw fa-mobile"></i> {{ patient.cellPhone || '---' }}
+
+        <td class="cell-title">Мобильный:</td>
+        <td>
+            {{ patient.cellPhone }}
         </td>
-        <td title="Городской номер телефона">
-            <i class="fa fa-lg fa-fw fa-phone"></i> {{ patient.homePhone || '---' }}
+
+        <td class="cell-title">Городской:</td>
+        <td>
+            {{ patient.homePhone }}
         </td>
-        <td title="Email">
-            <i class="fa fa-lg fa-fw fa-envelope"></i> {{ patient.email || '---' }}
+
+        <td class="cell-title">Email:</td>
+        <td>
+            {{ patient.email }}
         </td>
-        <td title="Адрес">
-            <i class="fa fa-lg fa-fw fa-map-marker"></i> {{ patient.address || '---' }}
-        </td>
-        <td title="Организация">
-            <i class="fa fa-lg fa-fw fa-building"></i> {{ patient.company || '---' }}
-        </td>
+    </tr>
+
+    <tr>
+        <td class="cell-title">Гражданство:</td>
+        <td>{{ patient.resident.title }}</td>
+
+        <td class="cell-title">Паспорт:</td>
+        <td>{{ patient.passport }}</td>
+
+        <td class="cell-title">Место работы:</td>
+        <td>{{ patient.workplace }}</td>
+
+        <td class="cell-title">Организация:</td>
+        <td colspan="3">{{ patient.company }}</td>
+    </tr>
+
+    <tr>
+        <td class="cell-title">Адрес:</td>
+        <td colspan="9">{{ patient.address }}</td>
     </tr>
     </tbody>
 </table>
