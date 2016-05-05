@@ -81,3 +81,8 @@ input[type=checkbox].ng-invalid {
 .cell-info {
     background: #d9edf7;
 }
+
+.datepicker.dropdown-menu {
+    width: 250px;
+    height: 200px;
+}
