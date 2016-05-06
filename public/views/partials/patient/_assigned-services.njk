@@ -16,6 +16,7 @@
                 <th>Стоимость</th>
                 <th>Оплачен</th>
                 <th>Долг</th>
+                <th>Состояние</th>
                 <th>Партнёр</th>
                 <th>Дата</th>
                 <th class="text-right">
@@ -55,6 +56,7 @@
                 <td class="text-right">{{ selSrv.priceTotal | number: 2 }}</td>
                 <td class="text-right">{{ selSrv.payed | number: 2 }}</td>
                 <td class="text-right">{{ selSrv.debt | number: 2 }}</td>
+                <td class="text-center">{{ selSrv.state.title }}</td>
                 <td>{{ selSrv.partner.code }}</td>
                 <td>{{ selSrv.created | date:'medium' }}</td>
 
@@ -81,9 +83,11 @@
             <tfoot>
             <tr>
                 <th class="text-right" colspan="4">Всего:</th>
-                <th class="text-right">{{ ServiceHelper.AssignedService.totalQuantity() | number }}</th>
+                <th class="text-right">{{ ServiceHelper.AssignedService.total('quantity') | number }}</th>
                 <th></th>
-                <th class="text-right">{{ ServiceHelper.AssignedService.totalPrice() | number }}</th>
+                <th class="text-right">{{ ServiceHelper.AssignedService.total('price') | number }}</th>
+                <th class="text-right">{{ ServiceHelper.AssignedService.total('payed') | number }}</th>
+                <th class="text-right">{{ ServiceHelper.AssignedService.total('debt') | number }}</th>
             </tr>
             </tfoot>
         </table>

@@ -87,29 +87,70 @@ router
             Msg.sendSuccess(res, 'Данные успешно сохранены.');
         });
     })
-    .post('/delete-bulk', function (req, res) {
-        var ids = req.body.ids;
+    .post('/delete-bulk',
+        function (req, res, next) {
+            debug(`Checking patient services states before bulk deleting. IDS: ${ids}`);
 
-        debug(`/delete-bulk IDS: ${ids}`);
+            models.PatientService.find({_id: req.body.ids, 'state._id': {$ne: 'new'}})
+                .exec(function (err, services) {
+                    if (err) {
+                        return Msg.sendError(res, err);
+                    }
 
-        models.PatientService.remove({_id: {$in: ids}}, function (err, raw) {
-            if (err) {
-                return Msg.sendError(res, err);
-            }
+                    if (services.length > 0) {
+                        let msg = 'Следующих услуг удалить нельзя:\n';
+                        for (let srv of service) {
+                            msg.concat(`${srv.title} состояние - ${srv.state.title}\n`);
+                        }
+                        return Msg.sendError(res, msg);
+                    }
 
-            Msg.sendSuccess(res, 'Записи удалены!');
-        });
-    })
-    .delete('/:id', function (req, res) {
-        debug(`id: ${req.params.id}`);
+                    // all right
+                    next();
+                });
+        },
+        function (req, res) {
+            var ids = req.body.ids;
 
-        models.PatientService.remove({_id: req.params.id}, function (err, removedPatientService) {
-            if (err) {
-                return Msg.sendError(res, err);
-            }
+            debug(`Bulk deleting patient services. IDS: ${ids}`);
 
-            Msg.sendSuccess(res, 'Запись удален!');
-        });
-    });
+            models.PatientService.remove({_id: {$in: ids}}, function (err, raw) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+
+                Msg.sendSuccess(res, 'Записи удалены!');
+            });
+        }
+    )
+    .delete('/:id',
+        function (req, res, next) {
+            debug(`Checking patient service state before deleting. id=${req.params.id}`);
+
+            models.PatientService.findById({_id: req.params.id})
+                .exec(function (err, srv) {
+                    if (err) {
+                        return Msg.sendError(res, err);
+                    }
+
+                    if (srv.state._id != 'new') {
+                        return Msg.sendError(res, `Нельзя удалить услугу в состоянии "${srv.state.title}"`);
+                    }
+
+                    next();
+                });
+        },
+        function (req, res) {
+            debug(`Delete patient service id: ${req.params.id}`);
+
+            models.PatientService.remove({_id: req.params.id}, function (err) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+
+                Msg.sendSuccess(res, 'Запись удален!');
+            });
+        }
+    );
 
 module.exports = router;

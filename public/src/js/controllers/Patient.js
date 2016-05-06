@@ -185,20 +185,9 @@ angular.module('MyClinic')
                 recalc: function (srv) {
                     Service.recalc(srv);
                 },
-                totalPrice: function () {
+                total: function (property) {
                     if ($scope.patient && $scope.patient.services) {
-                        return _.reduce($scope.patient.services, function (memo, srv) {
-                            return memo + srv.priceTotal;
-                        }, 0);
-                    } else {
-                        return 0;
-                    }
-                },
-                totalQuantity: function () {
-                    if ($scope.patient && $scope.patient.services) {
-                        return _.reduce($scope.patient.services, function (memo, srv) {
-                            return memo + srv.quantity;
-                        }, 0);
+                        return $scope.F.total($scope.patient.services, property);
                     } else {
                         return 0;
                     }
@@ -282,6 +271,15 @@ angular.module('MyClinic')
                     if (angular.isUndefined(patSrv)) {
                         if ($scope.ServiceHelper.AssignedMarker.getMarked(true) > 0) {
                             var markedPatSrvList = $scope.ServiceHelper.AssignedMarker.getMarked();
+
+                            // check services state
+                            for (let srv of markedPatSrvList) {
+                                if (srv.state._id != 'new') {
+                                    return Msg.error(`Нельзя удалить услугу в состоянии "${srv.state.title}"`);
+                                }
+                            }
+
+                            // get ids as array
                             var srvIds = _.pluck(markedPatSrvList, '_id');
                             Modal.confirm({
                                 content: 'Удалить выбранные услуги?',
@@ -302,6 +300,9 @@ angular.module('MyClinic')
                             Msg.error('Услуга не выбрана!');
                         }
                     } else {
+                        if (patSrv.state._id != 'new') {
+                            return Msg.error(`Нельзя удалить услугу в состоянии "${patSrv.state.title}"`);
+                        }
                         Modal.confirm({
                             content: 'Удалить услугу?',
                             okAction: function (modal) {
@@ -309,30 +310,16 @@ angular.module('MyClinic')
                                     // close confirmation window
                                     modal.hide();
 
-                                    if (resp.code == 'success') {
-                                        $scope.ServiceHelper.AssignedService.refresh();
-                                        $scope.ServiceHelper.AssignedMarker.onChange();
-
-                                    }
+                                    $scope.ServiceHelper.AssignedService.refresh();
+                                    $scope.ServiceHelper.AssignedMarker.onChange();
                                 });
                             }
                         });
                     }
                 },
-                totalPrice: function () {
+                total: function (property) {
                     if ($scope.patient && $scope.patient.services_assigned) {
-                        return _.reduce($scope.patient.services_assigned, function (memo, srv) {
-                            return memo + srv.priceTotal;
-                        }, 0);
-                    } else {
-                        return 0;
-                    }
-                },
-                totalQuantity: function () {
-                    if ($scope.patient && $scope.patient.services_assigned) {
-                        return _.reduce($scope.patient.services_assigned, function (memo, srv) {
-                            return memo + srv.quantity;
-                        }, 0);
+                        return $scope.F.total($scope.patient.services_assigned, property);
                     } else {
                         return 0;
                     }
