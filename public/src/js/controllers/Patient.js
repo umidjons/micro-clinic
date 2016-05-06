@@ -47,9 +47,14 @@ angular.module('MyClinic')
 
         $scope.reset();
     })
-    .controller('PatientCtrl', function ($scope, $state, $stateParams, Modal, Sex, Patient, Resident) {
+    .controller('PatientCtrl', function ($scope, $state, $stateParams, Modal, Sex, Patient, Resident, Msg) {
         $scope.sex = Sex.query();
         $scope.residents = Resident.query();
+
+        var mustBeSearched = function () {
+            Msg.error('Поиск не осуществлен! Чтобы создать нового пациента, сначала осуществляйте поиск.');
+            $state.go('patientSearch');
+        };
 
         if ($stateParams.id) {
             Patient.get({id: $stateParams.id}, function (patient) {
@@ -60,10 +65,15 @@ angular.module('MyClinic')
             $scope.patient.resident = $scope.residents[0];
             if ($stateParams.initialPatient) {
                 let iniPat = $stateParams.initialPatient;
+                if (!iniPat.firstName || !iniPat.lastName) {
+                    mustBeSearched();
+                }
                 if (iniPat.firstName) $scope.patient.firstName = iniPat.firstName;
                 if (iniPat.lastName) $scope.patient.lastName = iniPat.lastName;
                 if (iniPat.middleName) $scope.patient.middleName = iniPat.middleName;
                 if (iniPat.dateOfBirth) $scope.patient.dateOfBirth = iniPat.dateOfBirth;
+            } else {
+                mustBeSearched();
             }
         }
 
