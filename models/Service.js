@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var categorySchema = require('./ServiceCategory').ServiceCategorySchema;
 var stateSchema = require('./State').StateSchema;
+var templateSchema = require('./Template').TemplateSchema;
 
 var ServiceSchema = mongoose.Schema({
     category: categorySchema,
@@ -8,6 +9,7 @@ var ServiceSchema = mongoose.Schema({
     shortTitle: {type: String, required: true, maxlength: 20},
     price: {type: Number, required: true, default: 0, min: 0},
     state: stateSchema,
+    templates: [templateSchema],
     created: {type: Date, required: true, default: new Date()},
     userId: {type: String, required: true, default: '1'} //todo: set real user id or user schema
 });

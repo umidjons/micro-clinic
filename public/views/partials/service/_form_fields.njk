@@ -1,34 +1,83 @@
 <div class="row">
-    <div class="form-group col-sm-4">
-        <label class="req">Категория</label>
-        <select ng-model="service.category" class="form-control" required
-                ng-options="c.title for c in serviceCategories track by c._id">
-            <option value="">-</option>
-        </select>
+    <div class="form-group">
+        <label class="control-label col-sm-1 req">Категория</label>
+        <div class="col-sm-3">
+            <select ng-model="service.category" class="form-control" required
+                    ng-options="c.title for c in serviceCategories track by c._id">
+                <option value="">-</option>
+            </select>
+        </div>
     </div>
 
-    <div class="form-group col-sm-4">
-        <label class="req">Стоимость</label>
-        <input type="number" ng-model="service.price" class="form-control" min="0" max="999999999" required>
+    <div class="form-group">
+        <label class="control-label col-sm-1 req">Стоимость</label>
+        <div class="col-sm-3">
+            <input type="number" ng-model="service.price" class="form-control" min="0" max="999999999" required>
+        </div>
     </div>
 
-    <div class="form-group col-sm-4">
-        <label class="req">Состояние</label>
-        <select ng-model="service.state" class="form-control" required
-                ng-options="s.title for s in states track by s._id">
-            <option value="">-</option>
-        </select>
+    <div class="form-group">
+        <label class="control-label col-sm-1 req">Состояние</label>
+        <div class="col-sm-3">
+            <select ng-model="service.state" class="form-control" required
+                    ng-options="s.title for s in states track by s._id">
+                <option value="">-</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-1 req">Наименование</label>
+        <div class="col-sm-3">
+            <input ng-model="service.title" class="form-control" maxlength="150" required>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-1 req">Коротко</label>
+        <div class="col-sm-3">
+            <input ng-model="service.shortTitle" class="form-control" maxlength="20" required>
+        </div>
     </div>
 </div>
 
-<div class="row">
-    <div class="form-group col-sm-10">
-        <label class="req">Наименование</label>
-        <input ng-model="service.title" class="form-control" maxlength="150" required>
-    </div>
+<h2>Шаблоны</h2>
 
-    <div class="form-group col-sm-2">
-        <label class="req">Коротко</label>
-        <input ng-model="service.shortTitle" class="form-control" maxlength="20" required>
+<div ng-repeat="tpl in service.templates" class="panel panel-success">
+    <div class="panel-heading">
+        <h3 class="panel-title">Шаблон №{{ $index + 1 }}</h3>
     </div>
+    <div class="panel-body">
+        <form name="formServiceTemplate" novalidate>
+            <div class="form-group">
+                <label class="req">Наименование</label>
+                <input ng-model="tpl.title" class="form-control" maxlength="200" required>
+            </div>
+
+            <div class="form-group">
+                <label class="req">Шаблон</label>
+                <textarea ng-model="tpl.content" ui-tinymce="tinymceOptions" cols="30" rows="10"></textarea>
+            </div>
+
+            <div class="checkbox">
+                <label>
+                    <input ng-model="tpl.isDefault" ng-true-value="1" ng-false-value="0"
+                           ng-change="Template.defaultChanged(tpl)" type="checkbox"> Основной шаблон
+                </label>
+            </div>
+        </form>
+    </div>
+    <div class="panel-footer">
+        <div class="form-group">
+            <button ng-click="Template.remove($index)" class="btn btn-danger">
+                <i class="fa fa-fw fa-minus"></i> Удалить
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
+    <button ng-click="Template.add()" class="btn btn-info">
+        <i class="fa fa-fw fa-plus"></i> Добавить
+    </button>
 </div>

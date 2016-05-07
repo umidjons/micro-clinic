@@ -13,6 +13,7 @@
         <th>Стоимость</th>
         <th></th>
         <th>Дата создание</th>
+        <th>Шаблоны</th>
         <th class="text-center">
             <button ng-click="reloadPage()" class="btn btn-xs btn-info" title="Обновить">
                 <i class="fa fa-fw fa-refresh"></i>
@@ -32,8 +33,8 @@
             <i class="fa fa-fw"
                ng-class="{'fa-check text-success':srv.state._id=='active','fa-ban text-danger':srv.state._id=='blocked'}"></i>
         </td>
-
         <td>{{ srv.created | date:'medium' }}</td>
+        <td class="text-right">{{ srv.templateCount | number }}</td>
         <td class="text-center">
             <div class="btn-group btn-group-xs">
                 <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"

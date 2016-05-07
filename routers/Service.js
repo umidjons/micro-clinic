@@ -53,13 +53,24 @@ router
         });
     })
     .get('/', function (req, res) {
-        models.Service.find().sort({'category.title': 1, title: 1}).exec(function (err, services) {
-            if (err) {
-                return Msg.sendError(res, err);
-            }
+        var light = req.query.light;
+        models.Service.find()
+            .sort({'category.title': 1, title: 1})
+            .lean()
+            .exec(function (err, services) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
 
-            Msg.sendSuccess(res, '', services, 'List of services:');
-        });
+                if (light) {
+                    for (let srv of services) {
+                        srv.templateCount = srv.templates ? srv.templates.length : 0;
+                        srv.templates = undefined;
+                    }
+                }
+
+                Msg.sendSuccess(res, '', services, 'List of services:');
+            });
     })
     .post('/', function (req, res) {
         //console.log('Request body:', req.body);

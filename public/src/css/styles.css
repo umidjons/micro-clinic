@@ -4,9 +4,13 @@ html {
 }
 
 body {
-    padding-top: 70px;
+    padding-top: 35px;
     /* Margin bottom by footer height */
     margin-bottom: 60px;
+}
+
+input[type=radio], input[type=checkbox] {
+    margin-top: 0;
 }
 
 .footer {

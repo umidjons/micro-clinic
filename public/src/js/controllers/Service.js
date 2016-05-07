@@ -1,7 +1,7 @@
 angular.module('MyClinic')
     .controller('ServicesCtrl', function ($scope, Modal, Service) {
         $scope.reloadPage = function () {
-            $scope.services = Service.query();
+            $scope.services = Service.query({light: 1});
         };
 
         $scope.deleteService = function (service) {
@@ -29,14 +29,51 @@ angular.module('MyClinic')
         $scope.serviceCategories = ServiceCategory.query();
         $scope.states = State.query();
 
-        console.log('Params:', $stateParams);
+        $scope.tinymceOptions = {
+            //language: 'ru_RU',
+            //language_url: '/assets/lib/tinymce-dist/langs/ru_RU.js',
+            plugins: 'advlist autolink lists link image charmap print preview hr anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking save table contextmenu directionality emoticons template paste textcolor colorpicker textpattern imagetools',
+            paste_data_images: true
+        };
+
+        $scope.Template = {
+            add: function () {
+                if (!$scope.service.templates) {
+                    $scope.service.templates = [];
+                }
+                $scope.service.templates.push({});
+            },
+            remove: function (idx) {
+                Modal.confirm({
+                    content: 'Удалить шаблон?',
+                    okAction: function (modal) {
+                        modal.hide();
+                        $scope.service.templates.splice(idx, 1);
+                    }
+                });
+            },
+            defaultChanged: function (tpl) {
+                // if new isDefault value is ON, then turn off others values to OFF
+                if (tpl.isDefault == 1) {
+                    for (let t of $scope.service.templates) {
+                        if (t != tpl) {
+                            t.isDefault = 0;
+                        }
+                    }
+                }
+            }
+        };
 
         if ($stateParams.id) {
             Service.get({id: $stateParams.id}, function (service) {
                 $scope.service = service;
+                if (!$scope.service.templates) {
+                    $scope.Template.add();
+                }
             });
         } else {
             $scope.service = new Service();
+            $scope.Template.add();
         }
 
         $scope.saveService = function () {
