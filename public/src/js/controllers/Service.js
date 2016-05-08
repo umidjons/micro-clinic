@@ -67,13 +67,9 @@ angular.module('MyClinic')
         if ($stateParams.id) {
             Service.get({id: $stateParams.id}, function (service) {
                 $scope.service = service;
-                if (!$scope.service.templates) {
-                    $scope.Template.add();
-                }
             });
         } else {
             $scope.service = new Service();
-            $scope.Template.add();
         }
 
         $scope.saveService = function () {
@@ -81,7 +77,6 @@ angular.module('MyClinic')
                 okAction: function (modal) {
                     if ($scope.service._id) {
                         $scope.service.$update(function (resp) {
-                            console.log('Response:', resp);
                             // close confirmation window
                             modal.hide();
 
@@ -91,7 +86,6 @@ angular.module('MyClinic')
                         });
                     } else {
                         $scope.service.$save(function (resp) {
-                            console.log('Response:', resp);
                             // close confirmation window
                             modal.hide();
 
