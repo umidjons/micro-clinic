@@ -10,7 +10,6 @@ angular.module('MyClinic')
                 okAction: function (modal) {
                     if (category) {
                         category.$delete(function (resp) {
-                            console.log('Response:', resp);
                             // close confirmation window
                             modal.hide();
 
@@ -27,6 +26,24 @@ angular.module('MyClinic')
     })
     .controller('ServiceCategoryCtrl', function ($scope, $state, $stateParams, Modal, State, ServiceCategory) {
         $scope.states = State.query();
+
+        $scope.SubCat = {
+            add: function () {
+                if (!$scope.category.subcategories) {
+                    $scope.category.subcategories = [];
+                }
+                $scope.category.subcategories.push({});
+            },
+            remove: function (idx) {
+                Modal.confirm({
+                    content: 'Удалить подкатегорию?',
+                    okAction: function (modal) {
+                        modal.hide();
+                        $scope.category.subcategories.splice(idx, 1);
+                    }
+                });
+            }
+        };
 
         if ($stateParams.id) {
             ServiceCategory.get({id: $stateParams.id}, function (category) {

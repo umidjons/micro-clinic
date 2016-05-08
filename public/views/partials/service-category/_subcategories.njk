@@ -1,0 +1,33 @@
+<h2>Подкатегории</h2>
+
+<table class="table table-bordered table-condensed table-striped">
+    <thead>
+    <tr>
+        <th>№</th>
+        <th>Наименование</th>
+        <th>Короткое наименование</th>
+        <th>
+            <button ng-click="SubCat.add()" class="btn btn-xs btn-info">
+                <i class="fa fa-fw fa-plus"></i> Добавить
+            </button>
+        </th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr ng-repeat="subcat in category.subcategories" ng-form="formSubcat">
+        <td class="text-right">{{ $index + 1 }}</td>
+        <td>
+            <input ng-model="subcat.title" maxlength="50" required class="form-control">
+        </td>
+        <td>
+            <input ng-model="subcat.shortTitle" maxlength="20" required class="form-control">
+        </td>
+        <td>
+            <button ng-click="SubCat.remove($index)" class="btn btn-xs btn-danger" title="Удалить">
+                <i class="fa fa-fw fa-trash"></i>
+            </button>
+        </td>
+    </tr>
+    </tbody>
+</table>
