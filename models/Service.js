@@ -18,6 +18,17 @@ var ServiceSchema = mongoose.Schema({
     userId: {type: String, required: true, default: '1'} //todo: set real user id or user schema
 });
 
+/**
+ * Removes/empties unnecessary properties.
+ * @param {object} service
+ */
+ServiceSchema.statics.lighten = function (service) {
+    service.category.subcategories = undefined;
+    if (service.subcategory && service.subcategory.subcategories) {
+        service.subcategory.subcategories = undefined;
+    }
+};
+
 var Service = mongoose.model('Service', ServiceSchema);
 
 module.exports = Service;

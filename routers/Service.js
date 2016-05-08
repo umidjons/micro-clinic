@@ -77,9 +77,10 @@ router
 
         // create model and fill fields from request body
         let newService = new models.Service(req.body);
-        
-        //todo: delete category, subcategory subcategories
-        
+
+        // delete category & subcategory subcategories
+        models.Service.lighten(newService);
+
         // try to save
         newService.save(function (err, savedService) {
             // if there is error, send it and stop handler with return
@@ -94,12 +95,17 @@ router
     .put('/:id', function (req, res) {
         debug(`id: ${req.params.id}`);
 
-        models.Service.update({_id: req.params.id}, req.body, function (err) {
+        var service = req.body;
+
+        // delete category & subcategory subcategories
+        models.Service.lighten(service);
+
+        models.Service.update({_id: req.params.id}, service, function (err) {
             if (err) {
                 return Msg.sendError(res, err);
             }
 
-            Msg.sendSuccess(res, 'Данные успешно сохранены.', req.body);
+            Msg.sendSuccess(res, 'Данные успешно сохранены.', service);
         });
     })
     .delete('/:id', function (req, res) {
