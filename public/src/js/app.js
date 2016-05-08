@@ -153,6 +153,21 @@ angular.module('MyClinic', ['ngAnimate', 'ngSanitize', 'angular-loading-bar', 'u
                 params: {
                     patientService: null
                 }
+            })
+            .state('serviceCategoryList', {
+                url: '/service-category/list',
+                templateUrl: 'partials/service-category/list.html',
+                controller: 'ServiceCategoryListCtrl'
+            })
+            .state('serviceCategoryCreate', {
+                url: '/service-category/create',
+                templateUrl: 'partials/service-category/create.html',
+                controller: 'ServiceCategoryCtrl'
+            })
+            .state('serviceCategoryEdit', {
+                url: '/service-category/edit/:id',
+                templateUrl: 'partials/service-category/edit.html',
+                controller: 'ServiceCategoryCtrl'
             });
         $urlRouterProvider.otherwise('/');
     })

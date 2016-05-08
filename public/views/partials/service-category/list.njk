@@ -1,0 +1,55 @@
+<h3>Категории</h3>
+
+<button ui-sref="serviceCategoryCreate" class="btn btn-success">
+    <i class="fa fa-fw fa-plus"></i> Новая категория
+</button>
+
+<table class="table table-bordered table-striped table-hover table-condensed">
+
+    <thead>
+    <tr>
+        <th>№</th>
+        <th>Код</th>
+        <th>Наименование</th>
+        <th>Коротко</th>
+        <th></th>
+        <th>Дата создание</th>
+        <th>Подкатегории</th>
+        <th class="text-center">
+            <button ng-click="reloadPage()" class="btn btn-xs btn-info" title="Обновить">
+                <i class="fa fa-fw fa-refresh"></i>
+            </button>
+        </th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr ng-repeat="cat in categories">
+        <td>{{ $index + 1 }}</td>
+        <td>{{ cat._id }}</td>
+        <td>{{ cat.title }}</td>
+        <td>{{ cat.shortTitle }}</td>
+        <td class="text-center" title="{{ cat.state.title }}">
+            <i class="fa fa-fw"
+               ng-class="{'fa-check text-success':cat.state._id=='active','fa-ban text-danger':cat.state._id=='blocked'}"></i>
+        </td>
+        <td>{{ cat.created | date:'medium' }}</td>
+        <td class="text-right">{{ cat.subcategories.length | number }}</td>
+        <td class="text-center">
+            <div class="btn-group btn-group-xs">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-fw fa-bars"></i> <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li>
+                        <a ui-sref="serviceCategoryEdit({id:cat._id})"><i class="fa fa-fw fa-edit"></i> Изменить</a>
+                    </li>
+                    <li><a href ng-click="deleteCategory(cat)"><i class="fa fa-fw fa-trash"></i> Удалить</a></li>
+                </ul>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+
+</table>

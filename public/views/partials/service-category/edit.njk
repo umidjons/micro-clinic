@@ -1,0 +1,16 @@
+<h3>Изменить категорию</h3>
+
+<form name="formCategory" class="form-horizontal" novalidate>
+
+    {% include "partials/service-category/_form_fields.njk" %}
+
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <button ui-sref="serviceCategoryList" class="btn btn-danger">Отмена</button>
+            <button ng-click="saveCategory()" ng-disabled="formCategory.$invalid"
+                    class="btn btn-success">Сохранить
+            </button>
+        </div>
+    </div>
+
+</form>
