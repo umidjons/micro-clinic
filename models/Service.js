@@ -1,10 +1,14 @@
 var mongoose = require('mongoose');
 var categorySchema = require('./ServiceCategory').ServiceCategorySchema;
+var subCategorySchema = require('./ServiceSubCategory').ServiceSubCategorySchema;
+var subSubCategorySchema = require('./ServiceSubSubCategory').ServiceSubSubCategorySchema;
 var stateSchema = require('./State').StateSchema;
 var templateSchema = require('./Template').TemplateSchema;
 
 var ServiceSchema = mongoose.Schema({
     category: categorySchema,
+    subcategory: subCategorySchema,
+    subsubcategory: subSubCategorySchema,
     title: {type: String, required: true, maxlength: 150},
     shortTitle: {type: String, required: true, maxlength: 20},
     price: {type: Number, required: true, default: 0, min: 0},

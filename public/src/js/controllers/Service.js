@@ -36,6 +36,39 @@ angular.module('MyClinic')
             paste_data_images: true
         };
 
+        $scope.Category = {
+            hasSub: function (category) {
+                return this.sub(category).length > 0;
+            },
+            sub: function (category) {
+                if (!category) {
+                    return [];
+                }
+                var cat = _.find($scope.serviceCategories, {_id: category._id});
+                if (cat && cat.subcategories && cat.subcategories.length > 0) {
+                    return cat.subcategories;
+                }
+                return [];
+            },
+            hasSubSub: function (category, subcategory) {
+                return this.subSub(category, subcategory).length > 0;
+            },
+            subSub: function (category, subcategory) {
+                if (!category || !subcategory) {
+                    return [];
+                }
+                var subcats = this.sub(category);
+                if (!subcats) {
+                    return [];
+                }
+                var subcat = _.find(subcats, {_id: subcategory._id});
+                if (subcat && subcat.subcategories && subcat.subcategories.length > 0) {
+                    return subcat.subcategories;
+                }
+                return [];
+            }
+        };
+
         $scope.Template = {
             add: function () {
                 if (!$scope.service.templates) {

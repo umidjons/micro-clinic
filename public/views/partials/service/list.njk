@@ -8,6 +8,8 @@
     <tr>
         <th>№</th>
         <th>Категория</th>
+        <th>Подкатегория</th>
+        <th>Под-подкатегория</th>
         <th>Наименование</th>
         <th>Коротко</th>
         <th>Стоимость</th>
@@ -26,6 +28,8 @@
     <tr ng-repeat="srv in services">
         <td>{{ $index + 1 }}</td>
         <td>{{ srv.category.title }}</td>
+        <td>{{ srv.subcategory.title }}</td>
+        <td>{{ srv.subsubcategory.title }}</td>
         <td>{{ srv.title }}</td>
         <td>{{ srv.shortTitle }}</td>
         <td class="text-right">{{ srv.price | number }}</td>

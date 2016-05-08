@@ -40,13 +40,15 @@ router
         });
     })
     .get('/', function (req, res) {
-        models.ServiceCategory.find().sort({title: 1}).exec(function (err, serviceCategories) {
-            if (err) {
-                return Msg.sendError(res, err.message);
-            }
+        models.ServiceCategory.find()
+            .sort({title: 1, 'subcategories.title': 1})
+            .exec(function (err, serviceCategories) {
+                if (err) {
+                    return Msg.sendError(res, err.message);
+                }
 
-            Msg.sendSuccess(res, '', serviceCategories, 'List of service categories:');
-        });
+                Msg.sendSuccess(res, '', serviceCategories, 'List of service categories:');
+            });
     })
     .post('/:id?', function (req, res) {
         //console.log('Request body:', req.body);

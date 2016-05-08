@@ -9,6 +9,26 @@
         </div>
     </div>
 
+    <div ng-if="Category.hasSub(service.category)" class="form-group">
+        <label class="control-label col-sm-1 req">Подкатегория</label>
+        <div class="col-sm-3">
+            <select ng-model="service.subcategory" class="form-control" required
+                    ng-options="c.title for c in Category.sub(service.category) track by c._id">
+                <option value="">-</option>
+            </select>
+        </div>
+    </div>
+
+    <div ng-if="Category.hasSubSub(service.category, service.subcategory)" class="form-group">
+        <label class="control-label col-sm-1 req">Под-подкатегория</label>
+        <div class="col-sm-3">
+            <select ng-model="service.subsubcategory" class="form-control" required
+                    ng-options="c.title for c in Category.subSub(service.category, service.subcategory) track by c._id">
+                <option value="">-</option>
+            </select>
+        </div>
+    </div>
+
     <div class="form-group">
         <label class="control-label col-sm-1 req">Стоимость</label>
         <div class="col-sm-3">

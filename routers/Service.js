@@ -55,7 +55,7 @@ router
     .get('/', function (req, res) {
         var light = req.query.light;
         models.Service.find()
-            .sort({'category.title': 1, title: 1})
+            .sort({'category.title': 1, 'category.subcategories.title': 1, title: 1})
             .lean()
             .exec(function (err, services) {
                 if (err) {
@@ -77,7 +77,9 @@ router
 
         // create model and fill fields from request body
         let newService = new models.Service(req.body);
-
+        
+        //todo: delete category, subcategory subcategories
+        
         // try to save
         newService.save(function (err, savedService) {
             // if there is error, send it and stop handler with return
