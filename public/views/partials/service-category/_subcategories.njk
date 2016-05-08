@@ -1,21 +1,22 @@
 <h2>Подкатегории</h2>
 
-<table class="table table-bordered table-condensed table-striped">
+<table class="table table-bordered table-condensed">
     <thead>
     <tr>
         <th>№</th>
         <th>Наименование</th>
         <th>Короткое наименование</th>
+        <th>Под-подкатегории</th>
         <th>
-            <button ng-click="SubCat.add()" class="btn btn-xs btn-info">
-                <i class="fa fa-fw fa-plus"></i> Добавить
+            <button ng-click="SubCat.add()" class="btn btn-xs btn-info" title="Добавить подкатегорию">
+                <i class="fa fa-fw fa-plus"></i>
             </button>
         </th>
     </tr>
     </thead>
 
     <tbody>
-    <tr ng-repeat="subcat in category.subcategories" ng-form="formSubcat">
+    <tr ng-repeat-start="subcat in category.subcategories" ng-form="formSubcat">
         <td class="text-right">{{ $index + 1 }}</td>
         <td>
             <input ng-model="subcat.title" maxlength="50" required class="form-control">
@@ -23,10 +24,49 @@
         <td>
             <input ng-model="subcat.shortTitle" maxlength="20" required class="form-control">
         </td>
+        <td class="text-right">{{ subcat.subcategories.length | number }}</td>
         <td>
-            <button ng-click="SubCat.remove($index)" class="btn btn-xs btn-danger" title="Удалить">
+            <button ng-click="SubCat.remove($index)" class="btn btn-xs btn-danger" title="Удалить подкатегорию">
                 <i class="fa fa-fw fa-trash"></i>
             </button>
+            <button ng-click="SubSubCat.add(subcat)" class="btn btn-xs btn-warning" title="Добавить под-подкатегорию">
+                <i class="fa fa-fw fa-plus"></i>
+            </button>
+        </td>
+    </tr>
+
+    <tr ng-repeat-end ng-if="subcat.subcategories.length > 0">
+        <td class="cell-table" colspan="4">
+
+            <table class="table table-bordered table-condensed">
+                <thead>
+                <tr>
+                    <th>№</th>
+                    <th>Наименование</th>
+                    <th>Короткое наименование</th>
+                    <th></th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr ng-repeat="subsub in subcat.subcategories">
+                    <td class="text-right">{{ $index + 1 }}</td>
+                    <td>
+                        <input ng-model="subsub.title" maxlength="50" required class="form-control">
+                    </td>
+                    <td>
+                        <input ng-model="subsub.shortTitle" maxlength="20" required class="form-control">
+                    </td>
+                    <td>
+                        <button ng-click="SubSubCat.remove(subcat, $index)"
+                                class="btn btn-xs btn-danger" title="Удалить под-подкатегорию">
+                            <i class="fa fa-fw fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
         </td>
     </tr>
     </tbody>

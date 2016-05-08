@@ -95,3 +95,13 @@ input[type=checkbox].ng-invalid {
 .table tr.selected > td {
     background: #CDDC39;
 }
+
+.cell-table {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.cell-table > table {
+    background: #d7dade !important;
+    margin: 0;
+}

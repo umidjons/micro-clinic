@@ -45,6 +45,24 @@ angular.module('MyClinic')
             }
         };
 
+        $scope.SubSubCat = {
+            add: function (subCat) {
+                if (!subCat.subcategories) {
+                    subCat.subcategories = [];
+                }
+                subCat.subcategories.push({});
+            },
+            remove: function (subCat, idx) {
+                Modal.confirm({
+                    content: 'Удалить под-подкатегорию?',
+                    okAction: function (modal) {
+                        modal.hide();
+                        subCat.subcategories.splice(idx, 1);
+                    }
+                });
+            }
+        };
+
         if ($stateParams.id) {
             ServiceCategory.get({id: $stateParams.id}, function (category) {
                 $scope.category = category;
