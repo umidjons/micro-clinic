@@ -97,12 +97,47 @@ angular.module('MyClinic')
             }
         };
 
+        //todo: preview is one for all fields
+        //todo: sort fields by set order, react also on order change
+        //todo: move Fields.types into own service
+        //todo: check value uniqueness in field.values
+        $scope.Fields = {
+            types: [
+                {_id: 'text', title: 'Текстовый'},
+                {_id: 'number', title: 'Цифровой'},
+                {_id: 'checkbox', title: 'Флажок'},
+                {_id: 'select', title: 'Выбор'},
+                {_id: 'textarea', title: 'Многострочный текст'}
+            ],
+            typeChanged: function (field) {
+                if (field.type._id == 'select') {
+                    field.values = [{text: ''}, {text: ''}];
+                }
+            },
+            Values: {
+                add: function (field, idx) {
+                    field.values.splice(idx + 1, 0, {text: ''});
+                },
+                remove: function (field, idx) {
+                    field.values.splice(idx, 1);
+                }
+            },
+            add: function () {
+                if (!$scope.service.fields) {
+                    $scope.service.fields = [];
+                }
+                $scope.service.fields.push({});
+            }
+        };
+
         if ($stateParams.id) {
             Service.get({id: $stateParams.id}, function (service) {
                 $scope.service = service;
+                $scope.Fields.add();
             });
         } else {
             $scope.service = new Service();
+            $scope.Fields.add();
         }
 
         $scope.saveService = function () {

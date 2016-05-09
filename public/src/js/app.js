@@ -1,4 +1,4 @@
-angular.module('MyClinic', ['ngAnimate', 'ngSanitize', 'angular-loading-bar', 'ui.router', 'ngResource',
+angular.module('MyClinic', ['ngAnimate', 'ngSanitize', 'ngMessages', 'angular-loading-bar', 'ui.router', 'ngResource',
         'mgcrea.ngStrap', 'toaster', 'ui.select', 'angularUtils.directives.dirPagination', 'ui.tinymce'])
     .run(function ($locale, $rootScope, F) {
         // set default date formats for current locale
