@@ -21,3 +21,6 @@ module.exports.ResidentSchema = require('./Resident').ResidentSchema;
 module.exports.Resident = require('./Resident').Resident;
 module.exports.TemplateSchema = require('./Template').TemplateSchema;
 module.exports.Template = require('./Template').Template;
+module.exports.ServiceFieldTypeSchema = require('./ServiceField').ServiceFieldTypeSchema;
+module.exports.ServiceFieldSchema = require('./ServiceField').ServiceFieldSchema;
+module.exports.ServiceField = require('./ServiceField').ServiceField;
