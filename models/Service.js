@@ -16,6 +16,7 @@ var ServiceSchema = mongoose.Schema({
     state: stateSchema,
     templates: [templateSchema],
     fields: [serviceFieldSchema],
+    resultFields: [serviceFieldSchema],
     created: {type: Date, required: true, default: new Date()},
     userId: {type: String, required: true, default: '1'} //todo: set real user id or user schema
 });

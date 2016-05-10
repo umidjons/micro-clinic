@@ -27,7 +27,8 @@ angular.module('MyClinic')
 
         $scope.reloadPage();
     })
-    .controller('ServiceCtrl', function ($scope, $state, $stateParams, Modal, State, ServiceCategory, Service) {
+    .controller('ServiceCtrl', function ($scope, $state, $stateParams,
+                                         Modal, State, ServiceCategory, Service, FieldType) {
         $scope.serviceCategories = ServiceCategory.query();
         $scope.states = State.query();
 
@@ -99,18 +100,10 @@ angular.module('MyClinic')
             }
         };
 
-        //todo: preview is one for all fields
-        //todo: sort fields by set order, react also on order change
         //todo: move Fields.types into own service
         //todo: check value uniqueness in field.values
         $scope.Fields = {
-            types: [
-                {_id: 'text', title: 'Текстовый'},
-                {_id: 'number', title: 'Цифровой'},
-                {_id: 'checkbox', title: 'Флажок'},
-                {_id: 'select', title: 'Выбор'},
-                {_id: 'textarea', title: 'Многострочный текст'}
-            ],
+            types: FieldType.query(),
             typeChanged: function (field) {
                 if (field.type._id == 'select') {
                     field.values = [{text: ''}, {text: ''}];
@@ -141,6 +134,24 @@ angular.module('MyClinic')
             }
         };
 
+        $scope.ResFields = {
+            add: function () {
+                if (!$scope.service.resultFields) {
+                    $scope.service.resultFields = [];
+                }
+                $scope.service.resultFields.push({});
+            },
+            remove: function (idx) {
+                Modal.confirm({
+                    content: 'Удалить поле?',
+                    okAction: function (modal) {
+                        modal.hide();
+                        $scope.service.resultFields.splice(idx, 1);
+                    }
+                });
+            }
+        };
+
         if ($stateParams.id) {
             Service.get({id: $stateParams.id}, function (service) {
                 $scope.service = service;
@@ -148,6 +159,33 @@ angular.module('MyClinic')
         } else {
             $scope.service = new Service();
         }
+
+        $scope.canSave = function () {
+            var form = $scope.formService;
+            // if form is valid, user can save service
+            if (form.$valid) {
+                return true;
+            }
+
+            // check, whether only preview forms are invalid, if so, let a user save the service
+            let can = true;
+            for (let key in form.$error) {
+                let err = form.$error[key]; // for ex: required: [{<some err obj>},...]
+                // Preview forms are nested, so check $error is array?
+                // Also note, service forms contains nested forms, therefore even plain fields generates
+                // errors as array item.
+                if (Array.isArray(err)) {
+                    for (let errItem of err) {
+                        if (errItem.$name != 'formPreview' && errItem.$name != 'formResPreview') {
+                            // something else from preview forms is invalid, can't save service now
+                            can = false;
+                        }
+                    }
+                }
+            }
+
+            return can;
+        };
 
         $scope.saveService = function () {
             Modal.confirm({
@@ -158,7 +196,7 @@ angular.module('MyClinic')
                             modal.hide();
 
                             if (resp._id) {
-                                $state.go('serviceList');
+                                $state.go('serviceEdit', {id: resp._id});
                             }
                         });
                     } else {
@@ -167,7 +205,7 @@ angular.module('MyClinic')
                             modal.hide();
 
                             if (resp._id) {
-                                $state.go('serviceList');
+                                $state.go('serviceEdit', {id: resp._id});
                             }
                         });
                     }

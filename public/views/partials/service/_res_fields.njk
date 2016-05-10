@@ -1,5 +1,171 @@
 <fieldset>
     <legend>Дополнительные поля результатов</legend>
-    <p class="help-block">Эти поля используются при заполнении результатов услуги, например, результаты анализа.</p>
 
+    <p class="help-block">
+        Эти поля используются при заполнении результатов услуги, например, результаты анализа.
+        Для изменения порядок отображения полей перетащите панел в нужную позицию.
+    </p>
+
+    {% include 'partials/service/_res_fields_preview.njk' %}
+
+    <div ui-sortable ng-model="service.resultFields">
+
+        <div ng-repeat="field in service.resultFields" class="col-sm-6 field-item-movable">
+
+            <div class="panel panel-warning" bs-collapse>
+
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <a href bs-collapse-toggle>
+                            Поле №{{ $index + 1 }}.
+                            <span>{{ field.type.title || "Тип не указан" }}</span> /
+                            <span>{{ field.title || "Без название" }}</span>
+                        </a>
+                    </h3>
+                </div>
+
+                <div bs-collapse-target class="panel-body">
+
+                    <ng-form name="formResFieldConfig" class="form-horizontal" novalidate>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-4 req">Тип</label>
+                            <div class="col-sm-8">
+                                <select ng-model="field.type"
+                                        ng-change="Fields.typeChanged(field)"
+                                        required
+                                        ng-options="type.title for type in Fields.types track by type._id"
+                                        class="form-control">
+                                    <option value="">-</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-4 req">Наименование</label>
+                            <div class="col-sm-8">
+                                <input ng-model="field.title" maxlength="50" required class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-4">Подсказка</label>
+                            <div class="col-sm-8">
+                                <input ng-model="field.placeholder" maxlength="50" class="form-control">
+                                <p class="help-block">
+                                    Отображается внутри поля или как всплывающая подсказка для флажка
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-4">Справка</label>
+                            <div class="col-sm-8">
+                                <input ng-model="field.hint" maxlength="200" class="form-control">
+                                <p class="help-block">Отображается ниже поле как справка</p>
+                            </div>
+                        </div>
+
+                        <div ng-if="field.type._id=='text' || field.type._id=='number' || field.type._id=='textarea'"
+                             class="form-group">
+                            <label class="control-label col-sm-4">Минимальная длина</label>
+                            <div class="col-sm-8">
+                                <input type="number" ng-model="field.minlength" min="0" max="1000" class="form-control">
+                                <p class="help-block">Цифры в диапазоне [0-1000]</p>
+                            </div>
+                        </div>
+
+                        <div ng-if="field.type._id=='text' || field.type._id=='number' || field.type._id=='textarea'"
+                             class="form-group">
+                            <label class="control-label col-sm-4">Максимальная длина</label>
+                            <div class="col-sm-8">
+                                <input type="number" ng-model="field.maxlength" min="0" max="1000" class="form-control">
+                                <p class="help-block">Цифры в диапазоне [0-1000]</p>
+                            </div>
+                        </div>
+
+                        <div ng-if="field.type._id=='text' || field.type._id=='number' || field.type._id=='textarea'"
+                             class="form-group">
+                            <label class="control-label col-sm-4">Формат</label>
+                            <div class="col-sm-8">
+                                <input ng-model="field.pattern" maxlength="1000" class="form-control">
+                                <p class="help-block">Регулярное выражения без "/",
+                                    например, для номера телефона в формате 123-45-67 можно указать
+                                    следующую регулярную выражению: ^\d{3}-\d{2}-\d{2}$</p>
+                            </div>
+                        </div>
+
+                        <div ng-if="field.type._id=='number'" class="form-group">
+                            <label class="control-label col-sm-4">Минимальное значение</label>
+                            <div class="col-sm-8">
+                                <input ng-model="field.min" type="number" class="form-control">
+                            </div>
+                        </div>
+
+                        <div ng-if="field.type._id=='number'" class="form-group">
+                            <label class="control-label col-sm-4">Максимальное значение</label>
+                            <div class="col-sm-8">
+                                <input ng-model="field.max" type="number" class="form-control">
+                            </div>
+                        </div>
+
+                        <div ng-if="field.type._id=='select'" class="form-group">
+                            <label class="control-label col-sm-4 req">Допустимые значении</label>
+                            <div class="col-sm-8">
+                                <div ng-repeat="value in field.values track by $index" class="col-sm-12">
+                                    <div class="input-group">
+                                        <div class="input-group-btn">
+                                            <button ng-click="Fields.Values.add(field, $index)"
+                                                    title="Добавить"
+                                                    class="btn btn-success">
+                                                <i class="fa fa-fw fa-plus"></i>
+                                            </button>
+                                        </div>
+                                        <input ng-model="value.text" maxlength="50" class="form-control" required>
+                                        <div class="input-group-btn">
+                                            <button ng-click="Fields.Values.remove(field, $index)"
+                                                    ng-disabled="field.values.length <= 2"
+                                                    title="Удалить"
+                                                    class="btn btn-danger">
+                                                <i class="fa fa-fw fa-minus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div ng-if="field.type._id=='text' || field.type._id=='number' || field.type._id=='select' || field.type._id=='textarea'"
+                             class="col-sm-offset-4 checkbox">
+                            <label>
+                                <input type="checkbox" ng-model="field.required"> Обязательное поле?
+                            </label>
+                            <p class="help-block">Если отмечен, то полю надо обязательно заполнить</p>
+                        </div>
+
+                    </ng-form>
+
+                </div>
+
+                <div class="panel-footer">
+                    <button ng-click="ResFields.remove($index)" class="btn btn-danger">
+                        <i class="fa fa-fw fa-minus"></i> Удалить поле
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-sm-12">
+        <div class="form-group">
+            <button ng-click="ResFields.add()" class="btn btn-info">
+                <i class="fa fa-fw fa-plus"></i> Добавить поле
+            </button>
+        </div>
+    </div>
+
+    <pre>Result Fields: {{ service.resultFields | json }}</pre>
 </fieldset>

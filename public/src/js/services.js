@@ -31,6 +31,17 @@ angular.module('MyClinic')
             ];
         }
     })
+    .service('FieldType', function () {
+        this.query = function () {
+            return [
+                {_id: 'text', title: 'Текстовый'},
+                {_id: 'number', title: 'Цифровой'},
+                {_id: 'checkbox', title: 'Флажок'},
+                {_id: 'select', title: 'Выбор'},
+                {_id: 'textarea', title: 'Многострочный текст'}
+            ];
+        }
+    })
     .factory('Patient', function ($resource) {
         return $resource(
             '/patient/:id', // URL to patient backend API
