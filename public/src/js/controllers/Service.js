@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('MyClinic')
     .controller('ServicesCtrl', function ($scope, Modal, Service) {
         $scope.reloadPage = function () {
@@ -127,17 +129,24 @@ angular.module('MyClinic')
                     $scope.service.fields = [];
                 }
                 $scope.service.fields.push({});
+            },
+            remove: function (idx) {
+                Modal.confirm({
+                    content: 'Удалить поле?',
+                    okAction: function (modal) {
+                        modal.hide();
+                        $scope.service.fields.splice(idx, 1);
+                    }
+                });
             }
         };
 
         if ($stateParams.id) {
             Service.get({id: $stateParams.id}, function (service) {
                 $scope.service = service;
-                $scope.Fields.add();
             });
         } else {
             $scope.service = new Service();
-            $scope.Fields.add();
         }
 
         $scope.saveService = function () {

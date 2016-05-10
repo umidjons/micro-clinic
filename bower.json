@@ -38,6 +38,7 @@
     "angular-ui-router": "1.0",
     "angularUtils-pagination": "angular-utils-pagination#^0.11.1",
     "angular-ui-tinymce": "^0.0.15",
-    "angular-messages": "^1.5.5"
+    "angular-messages": "^1.5.5",
+    "angular-ui-sortable": "^0.14.0"
   }
 }
