@@ -42,6 +42,19 @@ angular.module('MyClinic')
             ];
         }
     })
+    .factory('Fields', function () {
+        return {
+            value: function (field) {
+                if (angular.isObject(field)) {
+                    if (field.type._id == 'select') {
+                        return field.value.text;
+                    }
+                    return field.value;
+                }
+                return undefined;
+            }
+        };
+    })
     .factory('Patient', function ($resource) {
         return $resource(
             '/patient/:id', // URL to patient backend API

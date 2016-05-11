@@ -139,8 +139,9 @@ angular.module('MyClinic')
         $scope.reloadPage();
     })
     .controller('PatientViewCtrl', function ($scope, $state, $stateParams, Patient, Service, PatientService,
-                                             ServiceCategory, Discount, PartnerSetter, Msg, Modal) {
+                                             ServiceCategory, Discount, PartnerSetter, Msg, Modal, Fields) {
         $scope.Discount = Discount;
+        $scope.Fields = Fields;
 
         ServiceCategory.categoriesWithServices(function (categories) {
             // create array with category titles
@@ -351,6 +352,10 @@ angular.module('MyClinic')
             } else {
                 Msg.error('Услуга не выбрана!');
             }
+        };
+
+        $scope.toggleFields = function (assignedSrv) {
+            assignedSrv.openFields = !assignedSrv.openFields;
         };
 
         $scope.savePatientServices = function () {

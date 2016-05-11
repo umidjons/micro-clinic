@@ -79,6 +79,10 @@ input[type=checkbox].ng-invalid {
     text-align: right;
 }
 
+.cell-value {
+    background: #fff !important;
+}
+
 .cell-default {
     background: #f5f5f5;
 }

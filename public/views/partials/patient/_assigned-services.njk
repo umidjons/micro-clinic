@@ -39,7 +39,7 @@
 
             <tbody>
 
-            <tr ng-repeat="selSrv in patient.services_assigned">
+            <tr ng-repeat-start="selSrv in patient.services_assigned">
                 <td class="text-center">
                     <input ng-if="selSrv.state._id=='new'" type="checkbox"
                            ng-change="ServiceHelper.AssignedMarker.onChange()"
@@ -67,15 +67,41 @@
                             <i class="fa fa-fw fa-bars"></i> <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li>
+                            <li ng-class="{'disabled': selSrv.state._id!='new'}">
                                 <a href ng-click="ServiceHelper.AssignedService.remove(selSrv)">
                                     <i class="fa fa-fw fa-minus"></i> Удалить
+                                </a>
+                            </li>
+                            <li ng-class="{'disabled': !selSrv.fields.length}">
+                                <a href ng-click="toggleFields(selSrv)">
+                                    <i class="fa fa-fw fa-search"></i> Показать/скрыть дополнительные поля
                                 </a>
                             </li>
                         </ul>
                     </div>
                 </td>
 
+            </tr>
+
+            <tr ng-repeat-end>
+                <td ng-if="selSrv.openFields" class="cell-table" colspan="13">
+
+                    <table class="table table-bordered table-condensed">
+                        <tbody>
+                        <tr ng-repeat="field in selSrv.fields">
+                            <td class="col-sm-4 cell-title">{{ field.title }}</td>
+                            <td ng-if="field.type._id!='checkbox'" class="col-sm-8 cell-value">
+                                {{ Fields.value(field) }}
+                            </td>
+                            <td ng-if="field.type._id=='checkbox'" class="col-sm-8 cell-value">
+                                <i ng-if="field.value==true" class="fa fa-fw fa-check text-success"></i>
+                                <i ng-if="!field.value" class="fa fa-fw fa-ban text-danger"></i>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </td>
             </tr>
 
             </tbody>
