@@ -1,4 +1,4 @@
-<div class="col-sm-9">
+<div ng-form="formSelectedServices" class="col-sm-9">
     <table class="table table-bordered table-condensed">
         <thead>
         <tr>
@@ -44,7 +44,7 @@
 
         <tbody>
 
-        <tr ng-repeat="selSrv in patient.services" ng-class="{'selected':selSrv.marked==1}">
+        <tr ng-repeat-start="selSrv in patient.services" ng-class="{'selected':selSrv.marked==1}">
             <td class="text-center">
                 <input type="checkbox"
                        ng-change="ServiceHelper.Marker.onChange()"
@@ -92,6 +92,102 @@
 
         </tr>
 
+        <tr ng-repeat-end>
+            <td ng-if="selSrv.fields.length > 0" class="cell-table" colspan="10">
+
+                <ng-form name="formPreview" class="form-horizontal">
+
+                    <div ng-repeat="field in selSrv.fields" class="field-item">
+
+                        <div ng-if="field.type._id=='text' || field.type._id=='number' || field.type._id=='select' || field.type._id=='textarea'"
+                             class="form-group">
+
+                            <label ng-class="{'req':field.required}"
+                                   class="control-label col-sm-4">
+                                {{ field.title }}
+                            </label>
+
+                            <div class="col-sm-8">
+
+                                <input ng-if="field.type._id=='text'"
+                                       type="text"
+                                       name="model{{ $index }}"
+                                       ng-model="field.value"
+                                       placeholder="{{ field.placeholder }}"
+                                       ng-pattern="field.pattern"
+                                       ng-minlength="field.minlength"
+                                       ng-maxlength="field.maxlength"
+                                       ng-required="field.required"
+                                       maxlength="{{ field.maxlength }}"
+                                       class="form-control">
+
+                                <input ng-if="field.type._id=='number'"
+                                       type="number"
+                                       name="model{{ $index }}"
+                                       ng-model="field.value"
+                                       placeholder="{{ field.placeholder }}"
+                                       ng-pattern="field.pattern"
+                                       ng-minlength="field.minlength"
+                                       ng-maxlength="field.maxlength"
+                                       ng-required="field.required"
+                                       min="{{ field.min }}"
+                                       max="{{ field.max }}"
+                                       class="form-control">
+
+                                <select ng-if="field.type._id=='select'"
+                                        name="model{{ $index }}"
+                                        ng-model="field.value"
+                                        ng-required="field.required"
+                                        ng-options="v.text for v in field.values"
+                                        class="form-control">
+                                    <option value="">{{ field.placeholder }}</option>
+                                </select>
+
+                            <textarea ng-if="field.type._id=='textarea'"
+                                      cols="30" rows="10"
+                                      name="model{{ $index }}"
+                                      ng-model="field.value"
+                                      placeholder="{{ field.placeholder }}"
+                                      ng-pattern="field.pattern"
+                                      ng-minlength="field.minlength"
+                                      ng-maxlength="field.maxlength"
+                                      ng-required="field.required"
+                                      class="form-control">
+                            </textarea>
+
+                                <p ng-if="field.hint" class="help-block">{{ field.hint }}</p>
+                            </div>
+
+                        </div>
+
+                        <div ng-if="field.type._id=='checkbox'" class="col-sm-offset-4 checkbox">
+                            <label title="{{ field.placeholder }}">
+                                <input type="checkbox"
+                                       ng-model="field.value"> {{ field.title }}
+                            </label>
+
+                            <p ng-if="field.hint" class="help-block">{{ field.hint }}</p>
+                        </div>
+
+                        <div class="form-group">
+                            <div ng-messages="formPreview['model'+$index].$error"
+                                 class="col-sm-offset-4 col-sm-8 text-danger">
+                                <div ng-message="required">Поле является обязательным.</div>
+                                <div ng-message="minlength">Минимальная длина не достигнута.</div>
+                                <div ng-message="maxlength">Максимальная длина превышена.</div>
+                                <div ng-message="pattern">Неправильный формат.</div>
+                                <div ng-message="min">Неверное минимальное значение.</div>
+                                <div ng-message="max">Неверное максимальное значение.</div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </ng-form>
+
+            </td>
+        </tr>
+
         </tbody>
 
         <tfoot>
@@ -105,7 +201,7 @@
     </table>
 
     <div class="form-group text-right">
-        <button ng-click="savePatientServices()" class="btn btn-success">
+        <button ng-click="savePatientServices()" ng-disabled="formSelectedServices.$invalid" class="btn btn-success">
             <i class="fa fa-fw fa-save"></i> Сохранить
         </button>
     </div>

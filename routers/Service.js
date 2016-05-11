@@ -24,6 +24,7 @@ router
                     userId: 1,
                     created: 1,
                     price: 1,
+                    fields: 1,
                     __v: 1
                 }
             },

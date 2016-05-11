@@ -106,6 +106,14 @@ input[type=checkbox].ng-invalid {
     margin: 0;
 }
 
+.cell-table .form-group {
+    margin-bottom: 3px;
+}
+
+.cell-table .help-block {
+    margin-bottom: 0;
+}
+
 .field-item-movable {
     cursor: move;
 }

@@ -4,6 +4,7 @@ var stateSchema = require('./State').StateSchema;
 var discountSchema = require('./Discount').DiscountSchema;
 var partnerSchema = require('./Partner').PartnerSchema;
 var cashSchema = require('./Cash').CashSchema;
+var serviceFieldSchema = require('./ServiceField').ServiceFieldSchema;
 
 
 var PatientServiceSchema = mongoose.Schema({
@@ -19,6 +20,7 @@ var PatientServiceSchema = mongoose.Schema({
     pays: [cashSchema],
     discount: {type: discountSchema},
     partner: partnerSchema,
+    fields: [serviceFieldSchema],
     state: stateSchema,
     created: {type: Date, required: true, default: new Date()},
     userId: {type: String, required: true, default: '1'} //todo: set real user id or user schema
