@@ -144,11 +144,7 @@ angular.module('MyClinic')
         $scope.Discount = Discount;
         $scope.Fields = Fields;
 
-        ServiceCategory.categoriesWithServices(function (categories) {
-            // create array with category titles
-            $scope.categories = _.pluck(categories, '_id');
-        });
-        $scope.services = Service.servicesWithCategory();
+        $scope.services = Service.query();
 
         $scope.ServiceHelper = {
             getByCategory: function (catTitle) {
@@ -161,6 +157,31 @@ angular.module('MyClinic')
                 }, 0);
             },
             Service: {
+                filter: {
+                    category: undefined,
+                    subcategory: undefined,
+                    subsubcategory: undefined,
+                    title: undefined,
+                    price: undefined,
+                    reset: function () {
+                        this.category = undefined;
+                        this.subcategory = undefined;
+                        this.subsubcategory = undefined;
+                        this.title = undefined;
+                        this.price = undefined;
+                    },
+                    onChange: function () {
+                        if (angular.isDefined(this.category) && !this.category.title) {
+                            this.category = undefined;
+                        }
+                        if (angular.isDefined(this.subcategory) && !this.subcategory.title) {
+                            this.subcategory = undefined;
+                        }
+                        if (angular.isDefined(this.subsubcategory) && !this.subsubcategory.title) {
+                            this.subsubcategory = undefined;
+                        }
+                    }
+                },
                 add: function (srv, qnt) {
                     var found = _.find($scope.patient.services, {_id: srv._id});
                     qnt = qnt || 1;
@@ -179,6 +200,29 @@ angular.module('MyClinic')
                     var srvList = $scope.ServiceHelper.getByCategory(categoryTitle);
                     for (let srv of srvList) {
                         this.add(srv);
+                    }
+                },
+                addFiltered: function (filteredServices) {
+                    for (let srv of filteredServices) {
+                        this.add(srv);
+                    }
+                },
+                addByCat: function (srv, catLevel) {
+                    var services = _.filter($scope.services, function (service) {
+                        switch (catLevel) {
+                            case 'category':
+                                return service.category.title == srv.category.title;
+                            case 'subcategory':
+                                return service.category.title == srv.category.title
+                                    && service.subcategory.title == srv.subcategory.title;
+                            case 'subsubcategory':
+                                return service.category.title == srv.category.title
+                                    && service.subcategory.title == srv.subcategory.title
+                                    && service.subsubcategory.title == srv.subsubcategory.title;
+                        }
+                    });
+                    for (let service of services) {
+                        this.add(service);
                     }
                 },
                 remove: function (idx) {

@@ -56,7 +56,13 @@ router
     .get('/', function (req, res) {
         var light = req.query.light;
         models.Service.find()
-            .sort({'category.title': 1, 'category.subcategories.title': 1, title: 1})
+            .sort({
+                'category.title': 1,
+                'subcategory.title': 1,
+                'subsubcategory.title': 1,
+                'category.subcategories.title': 1,
+                title: 1
+            })
             .lean()
             .exec(function (err, services) {
                 if (err) {

@@ -1,4 +1,7 @@
-<div ng-form="formSelectedServices" class="col-sm-9">
+<fieldset ng-form="formSelectedServices" class="col-sm-12">
+
+    <legend>Выбранные услуги</legend>
+
     <table class="table table-bordered table-condensed">
         <thead>
         <tr>
@@ -9,6 +12,8 @@
             </th>
             <th>№</th>
             <th>Категория</th>
+            <th>Подкатегория</th>
+            <th>Под-подкатегория</th>
             <th>Услуга</th>
             <th>Количество</th>
             <th>Скидка (%)</th>
@@ -44,7 +49,11 @@
 
         <tbody>
 
-        <tr ng-repeat-start="selSrv in patient.services" ng-class="{'selected':selSrv.marked==1}">
+        <tr ng-repeat-start="selSrv in patient.services"
+            ng-class="{'selected': selSrv.marked == 1, 'row-group-body': !selSrv.fields}"
+            ng-class-even="'row-even'"
+            ng-class-odd="'row-odd'"
+            class="row-group-header">
             <td class="text-center">
                 <input type="checkbox"
                        ng-change="ServiceHelper.Marker.onChange()"
@@ -52,6 +61,8 @@
             </td>
             <td>{{ $index + 1 }}</td>
             <td>{{ selSrv.category.title }}</td>
+            <td>{{ selSrv.subcategory.title }}</td>
+            <td>{{ selSrv.subsubcategory.title }}</td>
             <td>{{ selSrv.title }}</td>
             <td class="text-right col-sm-2">
                 <div class="input-group input-group-sm">
@@ -92,11 +103,15 @@
 
         </tr>
 
-        <tr ng-repeat-end>
-            <td ng-if="selSrv.fields.length > 0" class="cell-table" colspan="10">
-
+        <tr ng-repeat-end
+            ng-class="{'selected':selSrv.marked==1}"
+            ng-class-even="'row-even'"
+            ng-class-odd="'row-odd'"
+            class="row-group-body">
+            <td ng-if="selSrv.fields.length > 0"
+                class="cell-table"
+                colspan="11">
                 {% include "partials/patient/_selected_services_fields.njk" %}
-
             </td>
         </tr>
 
@@ -105,6 +120,8 @@
         <tfoot>
         <tr>
             <th class="text-right" colspan="4">Всего:</th>
+            <th></th>
+            <th></th>
             <th class="text-right">{{ ServiceHelper.Service.total('quantity') | number }}</th>
             <th></th>
             <th class="text-right">{{ ServiceHelper.Service.total('priceTotal') | number }}</th>
@@ -117,4 +134,4 @@
             <i class="fa fa-fw fa-save"></i> Сохранить
         </button>
     </div>
-</div>
+</fieldset>

@@ -9,7 +9,7 @@
 
             <div class="aside-body">
                 <div class="col-sm-12">
-                    <div class="form-horizontal">
+                    <div ng-if="service.templates.length > 0" class="form-horizontal">
                         <div class="form-group">
                             <label class="req">Шаблон</label>
                             <select ng-model="patientService.result.template"

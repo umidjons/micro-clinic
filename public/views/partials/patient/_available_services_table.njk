@@ -1,0 +1,87 @@
+<fieldset class="col-sm-12">
+    <legend>Услуги</legend>
+
+    <table class="table table-bordered table-condensed table-hover">
+        <thead>
+
+        <tr>
+            <th>Категория</th>
+            <th>Подкатегория</th>
+            <th>Под-подкатегория</th>
+            <th>Услуга</th>
+            <th>Стоимость</th>
+            <th class="text-right">
+                <button ng-if="filteredServices.length > 0"
+                        ng-click="ServiceHelper.Service.addFiltered(filteredServices)"
+                        class="btn btn-xs btn-info"
+                        title="Добавить все отфильтрованные услуги">
+                    <i class="fa fa-fw fa-filter"></i><i class="fa fa-fw fa-plus"></i>
+                </button>
+            </th>
+        </tr>
+
+        <tr>
+            <td>
+                <input ng-model="ServiceHelper.Service.filter.category.title"
+                       ng-change="ServiceHelper.Service.filter.onChange()"
+                       class="form-control">
+            </td>
+            <td>
+                <input ng-model="ServiceHelper.Service.filter.subcategory.title"
+                       ng-change="ServiceHelper.Service.filter.onChange()"
+                       class="form-control">
+            </td>
+            <td>
+                <input ng-model="ServiceHelper.Service.filter.subsubcategory.title"
+                       ng-change="ServiceHelper.Service.filter.onChange()"
+                       class="form-control">
+            </td>
+            <td><input ng-model="ServiceHelper.Service.filter.title" class="form-control"></td>
+            <td><input ng-model="ServiceHelper.Service.filter.price" class="form-control"></td>
+            <td class="text-right">
+                <button class="btn btn-xs btn-default"
+                        ng-click="ServiceHelper.Service.filter.reset()"
+                        title="Очистить фильтр">
+                    <i class="fa fa-fw fa-filter"></i><i class="fa fa-fw fa-remove"></i>
+                </button>
+            </td>
+        </tr>
+
+        </thead>
+
+        <tbody>
+        <tr ng-repeat="srv in services | filter: ServiceHelper.Service.filter as filteredServices">
+            <td>{{ srv.category.title }}</td>
+            <td>{{ srv.subcategory.title }}</td>
+            <td>{{ srv.subsubcategory.title }}</td>
+            <td>{{ srv.title }}</td>
+            <td class="text-right">{{ srv.price | number }}</td>
+            <td class="text-right">
+                <button ng-click="ServiceHelper.Service.addByCat(srv,'category')"
+                        ng-disabled="!srv.category.title"
+                        class="btn btn-xs btn-danger"
+                        title="Добавить все услуги категории">
+                    <i class="fa fa-fw fa-plus"></i>
+                </button>
+                <button ng-click="ServiceHelper.Service.addByCat(srv,'subcategory')"
+                        ng-disabled="!srv.subcategory.title"
+                        class="btn btn-xs btn-warning"
+                        title="Добавить все услуги подкатегории">
+                    <i class="fa fa-fw fa-plus"></i>
+                </button>
+                <button ng-click="ServiceHelper.Service.addByCat(srv,'subsubcategory')"
+                        ng-disabled="!srv.subsubcategory.title"
+                        class="btn btn-xs btn-info"
+                        title="Добавить все услуги под-подкатегории">
+                    <i class="fa fa-fw fa-plus"></i>
+                </button>
+                <button ng-click="ServiceHelper.Service.add(srv)"
+                        class="btn btn-xs btn-primary"
+                        title="Добавить услугу">
+                    <i class="fa fa-fw fa-plus"></i>
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</fieldset>

@@ -9,6 +9,30 @@ body {
     margin-bottom: 60px;
 }
 
+.table-bordered,
+.table-bordered > thead > tr > th,
+.table-bordered > thead > tr > th,
+.table-bordered > tbody > tr > th,
+.table-bordered > tbody > tr > th,
+.table-bordered > tfoot > tr > th,
+.table-bordered > tfoot > tr > th,
+.table-bordered > thead > tr > td,
+.table-bordered > thead > tr > td,
+.table-bordered > tbody > tr > td,
+.table-bordered > tbody > tr > td,
+.table-bordered > tfoot > tr > td,
+.table-bordered > tfoot > tr > td {
+    border: 1px solid #ccc;
+}
+
+.row-even {
+    background: #f4eeff;
+}
+
+.row-odd {
+    background: #fff;
+}
+
 input[type=radio], input[type=checkbox] {
     margin-top: 0;
 }
@@ -91,6 +115,30 @@ input[type=checkbox].ng-invalid {
     background: #d9edf7;
 }
 
+.row-group-header > td {
+    border-top: 3px solid #999 !important;
+}
+
+.row-group-header > td:first-child {
+    border-left: 3px solid #999 !important;
+}
+
+.row-group-header > td:last-child {
+    border-right: 3px solid #999 !important;
+}
+
+.row-group-body > td {
+    border-bottom: 3px solid #999 !important;
+}
+
+.row-group-body > td:first-child {
+    border-left: 3px solid #999 !important;
+}
+
+.row-group-body > td:last-child {
+    border-right: 3px solid #999 !important;
+}
+
 .datepicker.dropdown-menu {
     width: 250px;
     height: 200px;
@@ -120,4 +168,9 @@ input[type=checkbox].ng-invalid {
 
 .field-item-movable {
     cursor: move;
+}
+
+.form-additional-info {
+    display: block;
+    padding: 0 15px 25px;
 }
