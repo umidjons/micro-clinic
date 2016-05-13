@@ -4,6 +4,8 @@ var router = require('express').Router();
 var debug = require('debug')('myclinic:router:patientservice');
 var models = require('../models');
 var Msg = require('../include/Msg');
+var mongoose = require('mongoose');
+var F = require('../include/F');
 
 router
     .get('/:id', function (req, res) {
@@ -44,6 +46,9 @@ router
             let user = 1;
             let time = new Date();
             for (let srv of req.body.services) {
+                // keep original service id
+                srv.serviceId = srv._id;
+
                 // delete _id, because it belongs to the service, not patient service
                 delete srv._id;
 
@@ -77,9 +82,14 @@ router
         }
     )
     .put('/:id', function (req, res) {
-        debug(`id: ${req.params.id}`);
+        var patSrv = req.body;
+        var id = req.params.id;
 
-        models.PatientService.update({_id: req.params.id}, req.body, function (err, raw) {
+        debug(`id: ${id}`);
+        debug(F.inspect(patSrv, 'Patient service to update:', true));
+        //return Msg.sendSuccess(res, 'Данные успешно сохранены.');
+
+        models.PatientService.update({_id: id}, patSrv, function (err, raw) {
             if (err) {
                 return Msg.sendError(res, err);
             }
@@ -89,9 +99,9 @@ router
     })
     .post('/delete-bulk',
         function (req, res, next) {
-            debug(`Checking patient services states before bulk deleting. IDS: ${ids}`);
+            debug(`Checking patient services states before bulk deleting. IDS: ${req.body.ids}`);
 
-            models.PatientService.find({_id: req.body.ids, 'state._id': {$ne: 'new'}})
+            models.PatientService.find({_id: {$in: req.body.ids}, 'state._id': {$ne: 'new'}})
                 .exec(function (err, services) {
                     if (err) {
                         return Msg.sendError(res, err);

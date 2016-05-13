@@ -4,11 +4,13 @@ var stateSchema = require('./State').StateSchema;
 var discountSchema = require('./Discount').DiscountSchema;
 var partnerSchema = require('./Partner').PartnerSchema;
 var cashSchema = require('./Cash').CashSchema;
+var templateSchema = require('./Template').TemplateSchema;
 var serviceFieldSchema = require('./ServiceField').ServiceFieldSchema;
 
 
 var PatientServiceSchema = mongoose.Schema({
     patientId: {type: mongoose.Schema.Types.ObjectId, required: true},
+    serviceId: {type: mongoose.Schema.Types.ObjectId, required: true},
     category: categorySchema,
     title: {type: String, required: true, maxlength: 150},
     shortTitle: {type: String, required: true, maxlength: 20},
@@ -21,6 +23,11 @@ var PatientServiceSchema = mongoose.Schema({
     discount: {type: discountSchema},
     partner: partnerSchema,
     fields: [serviceFieldSchema],
+    result: {
+        fields: [serviceFieldSchema],
+        template: templateSchema,
+        content: {type: String}
+    },
     state: stateSchema,
     created: {type: Date, required: true, default: new Date()},
     userId: {type: String, required: true, default: '1'} //todo: set real user id or user schema
@@ -86,3 +93,11 @@ var PatientService = mongoose.model('PatientService', PatientServiceSchema);
 
 module.exports.PatientService = PatientService;
 module.exports.PatientServiceSchema = PatientServiceSchema;
+
+/*
+ * Available states:
+ * {_id:'new', title:'Новый'}
+ * {_id:'partlyPayed', title:'Частично оплачен'}
+ * {_id:'payed', title:'Оплачен'}
+ * {_id:'completed', title:'Завершен'}
+ */

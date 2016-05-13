@@ -74,7 +74,12 @@
                             </li>
                             <li ng-class="{'disabled': !selSrv.fields.length}">
                                 <a href ng-click="toggleFields(selSrv)">
-                                    <i class="fa fa-fw fa-search"></i> Показать/скрыть дополнительные поля
+                                    <i class="fa fa-fw fa-search"></i> Дополнительная информация
+                                </a>
+                            </li>
+                            <li>
+                                <a href ng-click="openResult(selSrv)">
+                                    <i class="fa fa-fw fa-sticky-note"></i> Результат
                                 </a>
                             </li>
                         </ul>

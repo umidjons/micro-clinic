@@ -100,7 +100,6 @@ angular.module('MyClinic')
             }
         };
 
-        //todo: move Fields.types into own service
         //todo: check value uniqueness in field.values
         $scope.Fields = {
             types: FieldType.query(),

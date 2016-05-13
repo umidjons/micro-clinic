@@ -139,7 +139,8 @@ angular.module('MyClinic')
         $scope.reloadPage();
     })
     .controller('PatientViewCtrl', function ($scope, $state, $stateParams, Patient, Service, PatientService,
-                                             ServiceCategory, Discount, PartnerSetter, Msg, Modal, Fields) {
+                                             ServiceCategory, Discount, PartnerSetter, Msg, Modal, Fields,
+                                             $aside) {
         $scope.Discount = Discount;
         $scope.Fields = Fields;
 
@@ -380,9 +381,114 @@ angular.module('MyClinic')
             });
         };
 
+        $scope.openResult = function (srv) {
+            // create and show aside
+            $aside({
+                controller: 'ResultCtrl',
+                templateUrl: 'partials/patient/_aside_result.html',
+                title: 'Результат',
+                container: 'body',
+                backdrop: 'static',
+                show: true,
+                resolve: {
+                    options: function () {
+                        return {
+                            // pass data to aside's controller
+                            patientService: srv
+                        };
+                    }
+                }
+            });
+        };
+
         Patient.get({id: $stateParams.id}, function (patient) {
             $scope.patient = patient;
             $scope.patient.services = [];
             $scope.ServiceHelper.AssignedService.refresh();
         });
+    })
+    .controller('ResultCtrl', function ($scope, $state, $stateParams, options, Service, PatientService, Modal) {
+        $scope.patientService = options.patientService;
+
+        Service.get({id: $scope.patientService.serviceId}, function (resp) {
+            $scope.service = resp;
+
+            // no results yet, make it
+            if (angular.isUndefined($scope.patientService.result)) {
+                $scope.patientService.result = {};
+            }
+
+            // no results fields yet, make it
+            if (angular.isUndefined($scope.patientService.result.fields)) {
+                $scope.patientService.result.fields = angular.copy($scope.service.resultFields);
+            }
+        });
+
+        $scope.tinymceOptions = {
+            //language: 'ru_RU',
+            //language_url: '/assets/lib/tinymce-dist/langs/ru_RU.js',
+            plugins: 'advlist autolink lists link image charmap print preview hr anchor pagebreak searchreplace ' +
+            'wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking save table ' +
+            'contextmenu directionality emoticons template paste textcolor colorpicker textpattern imagetools',
+            paste_data_images: true
+        };
+
+        $scope.templateChanged = function () {
+            if ($scope.patientService.result.template) {
+                Modal.confirm({
+                    content: 'Заменить содержимое поле из шаблона?',
+                    okAction: function (modal) {
+                        modal.hide();
+                        // copy templates content into results content
+                        $scope.patientService.result.content = $scope.patientService.result.template.content;
+                    }
+                });
+            } else {
+                Modal.confirm({
+                    content: 'Очистить содержимое поле?',
+                    okAction: function (modal) {
+                        modal.hide();
+                        // clear result content
+                        $scope.patientService.result.content = '';
+                    }
+                });
+            }
+        };
+
+        var savePatSrv = function (modal) {
+            PatientService.update($scope.patientService, function (resp) {
+                // close confirmation window
+                modal.hide();
+
+                // close aside
+                // aside is a parent scope, so $show/$hide is available
+                $scope.$hide();
+
+                if (resp.code == 'success') {
+                    $state.transitionTo('patientView.services', $stateParams, {
+                        reload: true,
+                        inherit: false,
+                        notify: true
+                    });
+                }
+            });
+        };
+
+        $scope.serviceComplete = function () {
+            Modal.confirm({
+                content: 'Завершить услугу?',
+                okAction: function (modal) {
+                    $scope.patientService.state = {_id: 'completed', title: 'Завершен'};
+                    savePatSrv(modal);
+                }
+            });
+        };
+
+        $scope.serviceSave = function () {
+            Modal.confirm({
+                okAction: function (modal) {
+                    savePatSrv(modal);
+                }
+            });
+        };
     });

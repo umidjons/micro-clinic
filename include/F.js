@@ -9,9 +9,13 @@ class F {
      * @param {object} obj any primitive or complex type value
      * @param {string} prefix message before value, such as `Data:`
      */
-    static inspect(obj, prefix) {
+    static inspect(obj, prefix, ret) {
         prefix = prefix || '';
-        console.log(prefix, util.inspect(obj, false, null, true));
+        var result = util.inspect(obj, false, null, true);
+        if (ret) {
+            return prefix + ' ' + result;
+        }
+        console.log(prefix, result);
     }
 }
 
