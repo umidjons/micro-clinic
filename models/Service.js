@@ -21,6 +21,8 @@ var ServiceSchema = mongoose.Schema({
     userId: {type: String, required: true, default: '1'} //todo: set real user id or user schema
 });
 
+ServiceSchema.index({category: 1, subcategory: 1, subsubcategory: 1, title: 1}, {unique: true});
+
 /**
  * Removes/empties unnecessary properties.
  * @param {object} service

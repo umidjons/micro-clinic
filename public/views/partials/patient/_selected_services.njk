@@ -50,7 +50,7 @@
         <tbody>
 
         <tr ng-repeat-start="selSrv in patient.services"
-            ng-class="{'selected': selSrv.marked == 1, 'row-group-body': !selSrv.fields}"
+            ng-class="{'selected': selSrv.marked == 1, 'row-group-body': !selSrv.fields || selSrv.fields.length == 0}"
             ng-class-even="'row-even'"
             ng-class-odd="'row-odd'"
             class="row-group-header">

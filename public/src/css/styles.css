@@ -4,7 +4,7 @@ html {
 }
 
 body {
-    padding-top: 35px;
+    padding-top: 45px;
     /* Margin bottom by footer height */
     margin-bottom: 60px;
 }
@@ -173,4 +173,12 @@ input[type=checkbox].ng-invalid {
 .form-additional-info {
     display: block;
     padding: 0 15px 25px;
+}
+
+.modal-title {
+    font-size: 20px;
+}
+
+.modal-body {
+    font-size: 16px;
 }

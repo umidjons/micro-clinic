@@ -145,6 +145,7 @@ angular.module('MyClinic')
         $scope.Fields = Fields;
 
         $scope.services = Service.query();
+        $scope.categories = ServiceCategory.query();
 
         $scope.ServiceHelper = {
             getByCategory: function (catTitle) {
@@ -179,6 +180,40 @@ angular.module('MyClinic')
                         }
                         if (angular.isDefined(this.subsubcategory) && !this.subsubcategory.title) {
                             this.subsubcategory = undefined;
+                        }
+                    },
+                    by: function (category, level) {
+                        switch (level) {
+                            case 'category':
+                                if (angular.isDefined(category)) {
+                                    this.category = {title: category.title};
+                                    if (angular.isDefined(category.subcategories)) {
+                                        $scope.subcategories = category.subcategories;
+                                    }
+                                } else {
+                                    this.category = undefined;
+                                    this.subcategory = undefined;
+                                    this.subsubcategory = undefined;
+                                }
+                                break;
+                            case 'subcategory':
+                                if (angular.isDefined(category)) {
+                                    this.subcategory = {title: category.title};
+                                    if (angular.isDefined(category.subcategories)) {
+                                        $scope.subsubcategories = category.subcategories;
+                                    }
+                                } else {
+                                    this.subcategory = undefined;
+                                    this.subsubcategory = undefined;
+                                }
+                                break;
+                            case 'subsubcategory':
+                                if (angular.isDefined(category)) {
+                                    this.subsubcategory = {title: category.title};
+                                } else {
+                                    this.subsubcategory = undefined;
+                                }
+                                break;
                         }
                     }
                 },
@@ -463,7 +498,8 @@ angular.module('MyClinic')
             }
 
             // no results fields yet, make it
-            if (angular.isUndefined($scope.patientService.result.fields)) {
+            if (angular.isUndefined($scope.patientService.result.fields)
+                || $scope.patientService.result.fields.length == 0) {
                 $scope.patientService.result.fields = angular.copy($scope.service.resultFields);
             }
         });
