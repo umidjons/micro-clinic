@@ -1,7 +1,9 @@
 'use strict';
 
 angular.module('MyClinic')
-    .controller('ServicesCtrl', function ($scope, Modal, Service) {
+    .controller('ServicesCtrl', function ($scope, Modal, Service, State) {
+        $scope.states = State.query();
+
         $scope.reloadPage = function () {
             $scope.services = Service.query({light: 1});
         };

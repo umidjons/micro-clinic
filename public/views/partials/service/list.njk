@@ -13,7 +13,7 @@
         <th>Наименование</th>
         <th>Коротко</th>
         <th>Стоимость</th>
-        <th></th>
+        <th>Состояние</th>
         <th>Дата создание</th>
         <th>Шаблоны</th>
         <th class="text-center">
@@ -22,10 +22,41 @@
             </button>
         </th>
     </tr>
+    <tr>
+        <th></th>
+        <th>
+            <input ng-model="filter.category.title" maxlength="200" class="form-control">
+        </th>
+        <th>
+            <input ng-model="filter.subcategory.title" maxlength="200" class="form-control">
+        </th>
+        <th>
+            <input ng-model="filter.subsubcategory.title" maxlength="200" class="form-control">
+        </th>
+        <th>
+            <input ng-model="filter.title" maxlength="200" class="form-control">
+        </th>
+        <th>
+            <input ng-model="filter.shortTitle" maxlength="50" class="form-control">
+        </th>
+        <th>
+            <input ng-model="filter.price" maxlength="20" class="form-control">
+        </th>
+        <th>
+            <select ng-model="filter.state.title"
+                    ng-options="state.title as state.title for state in states"
+                    class="form-control">
+                <option value="">-</option>
+            </select>
+        </th>
+        <th></th>
+        <th></th>
+        <th></th>
+    </tr>
     </thead>
 
     <tbody>
-    <tr ng-repeat="srv in services">
+    <tr ng-repeat="srv in services | filter: filter: F.allowNulls">
         <td>{{ $index + 1 }}</td>
         <td>{{ srv.category.title }}</td>
         <td>{{ srv.subcategory.title }}</td>

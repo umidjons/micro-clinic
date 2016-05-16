@@ -409,6 +409,10 @@ angular.module('MyClinic')
                 } else {
                     return 0;
                 }
+            },
+            allowNulls: function (input, actual) {
+                if (actual === null) return true;
+                else return ('' + input).toLowerCase().indexOf(('' + actual).toLowerCase()) > -1;
             }
         };
     })
