@@ -6,12 +6,16 @@ var partnerSchema = require('./Partner').PartnerSchema;
 var cashSchema = require('./Cash').CashSchema;
 var templateSchema = require('./Template').TemplateSchema;
 var serviceFieldSchema = require('./ServiceField').ServiceFieldSchema;
+var subCategorySchema = require('./ServiceSubCategory').ServiceSubCategorySchema;
+var subSubCategorySchema = require('./ServiceSubSubCategory').ServiceSubSubCategorySchema;
 
 
 var PatientServiceSchema = mongoose.Schema({
     patientId: {type: mongoose.Schema.Types.ObjectId, required: true},
     serviceId: {type: mongoose.Schema.Types.ObjectId, required: true},
     category: categorySchema,
+    subcategory: subCategorySchema,
+    subsubcategory: subSubCategorySchema,
     title: {type: String, required: true, maxlength: 150},
     shortTitle: {type: String, required: true, maxlength: 20},
     price: {type: Number, required: true, default: 0, min: 0},
