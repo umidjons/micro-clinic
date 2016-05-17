@@ -91,6 +91,10 @@ angular.module('MyClinic')
                 update: {
                     method: 'PUT'
                 },
+                clone: {
+                    method: 'POST',
+                    url: '/service/clone'
+                },
                 servicesWithCategory: {
                     method: 'GET', url: '/service/with-category', isArray: true
                 }

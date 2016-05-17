@@ -213,6 +213,22 @@ angular.module('MyClinic')
                 }
             });
         };
+        $scope.cloneService = function () {
+            Modal.confirm({
+                okAction: function (modal) {
+                    if ($scope.service._id) {
+                        $scope.service.$clone(function (resp) {
+                            // close confirmation window
+                            modal.hide();
+
+                            if (resp._id) {
+                                $state.go('serviceEdit', {id: resp._id});
+                            }
+                        });
+                    }
+                }
+            });
+        };
 
     })
     .controller('ServiceViewCtrl', function ($scope, $state, $stateParams, Service) {

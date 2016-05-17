@@ -116,6 +116,11 @@ angular.module('MyClinic', ['ngAnimate', 'ngSanitize', 'ngMessages', 'angular-lo
                 templateUrl: 'partials/service/edit.html',
                 controller: 'ServiceCtrl'
             })
+            .state('serviceClone', {
+                url: '/service/clone/:id',
+                templateUrl: 'partials/service/clone.html',
+                controller: 'ServiceCtrl'
+            })
             .state('serviceView', {
                 url: '/service/view/:id',
                 templateUrl: 'partials/service/view.html',

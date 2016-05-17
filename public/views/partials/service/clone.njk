@@ -1,10 +1,9 @@
 <ol class="breadcrumb">
     <li><a ui-sref="serviceList">Услуги</a></li>
     <li><a ui-sref="serviceCreate">Новая услуга</a></li>
-    <li><a ui-sref="serviceClone({id:service._id})">Дублировать услугу</a></li>
 </ol>
 
-<h3>Изменение услуги</h3>
+<h3>Дублирование услуги</h3>
 
 <form name="formService" class="form-horizontal" novalidate>
 
@@ -13,7 +12,7 @@
     <div class="row">
         <div class="col-sm-12 text-right">
             <button ui-sref="serviceList" class="btn btn-danger">Отмена</button>
-            <button ng-click="saveService()" ng-disabled="!canSave()"
+            <button ng-click="cloneService()" ng-disabled="!canSave()"
                     class="btn btn-success">Сохранить
             </button>
         </div>
