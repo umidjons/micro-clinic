@@ -4,20 +4,62 @@
     <thead>
     <tr>
         <th>№</th>
-        <th>Фамилия</th>
-        <th>Имя</th>
-        <th>Отчество</th>
-        <th>Тел</th>
-        <th>Количество услуг</th>
-        <th>Общая стоимость</th>
-        <th>Оплачена</th>
-        <th>Долг</th>
+        <th>
+            <a href ng-click="changeSort('patient.lastName')">Фамилия</a>
+            <i ng-class="classSort('patient.lastName')" class="fa fa-fw"></i>
+        </th>
+        <th>
+            <a href ng-click="changeSort('patient.firstName')">Имя</a>
+            <i ng-class="classSort('patient.firstName')" class="fa fa-fw"></i>
+        </th>
+        <th>
+            <a href ng-click="changeSort('patient.middleName')">Отчество</a>
+            <i ng-class="classSort('patient.middleName')" class="fa fa-fw"></i>
+        </th>
+        <th>
+            <a href ng-click="changeSort('patient.cellPhone')">Тел</a>
+            <i ng-class="classSort('patient.cellPhone')" class="fa fa-fw"></i>
+        </th>
+        <th>
+            <a href ng-click="changeSort('quantity')">Количество услуг</a>
+            <i ng-class="classSort('quantity')" class="fa fa-fw"></i>
+        </th>
+        <th>
+            <a href ng-click="changeSort('totalPrice')">Общая стоимость</a>
+            <i ng-class="classSort('totalPrice')" class="fa fa-fw"></i>
+        </th>
+        <th>
+            <a href ng-click="changeSort('totalPayed')">Оплачена</a>
+            <i ng-class="classSort('totalPayed')" class="fa fa-fw"></i>
+        </th>
+        <th>
+            <a href ng-click="changeSort('totalDebt')">Долг</a>
+            <i ng-class="classSort('totalDebt')" class="fa fa-fw"></i>
+        </th>
         <th></th>
+    </tr>
+
+    <tr>
+        <th></th>
+        <th><input ng-model="filter.patient.lastName" class="form-control"></th>
+        <th><input ng-model="filter.patient.firstName" class="form-control"></th>
+        <th><input ng-model="filter.patient.middleName" class="form-control"></th>
+        <th><input ng-model="filter.patient.cellPhone" class="form-control"></th>
+        <th><input ng-model="filter.quantity" class="form-control"></th>
+        <th><input ng-model="filter.totalPrice" class="form-control"></th>
+        <th><input ng-model="filter.totalPayed" class="form-control"></th>
+        <th><input ng-model="filter.totalDebt" class="form-control"></th>
+        <th class="text-center">
+            <button ng-click="resetFilter()" title="Очистить фильтр" class="btn btn-xs btn-default">
+                <i class="fa fa-fw fa-filter"></i>
+                <i class="fa fa-fw fa-remove"></i>
+            </button>
+        </th>
     </tr>
     </thead>
 
     <tbody>
-    <tr ng-repeat="rec in records">
+    <tr ng-repeat="rec in records | orderBy: sort.by : sort.reverse | filter: filter" ng-dblclick="startPay(rec)">
         <td>{{ $index + 1 }}</td>
         <td>{{ rec.patient.lastName }}</td>
         <td>{{ rec.patient.firstName }}</td>

@@ -11,6 +11,10 @@
                 <div class="col-sm-12">
                     <div class="form-horizontal">
                         <div class="form-group">
+                            <label>ФИО</label>
+                            <p class="form-control-static bold text-success">{{ Pay.fullName }}</p>
+                        </div>
+                        <div class="form-group">
                             <label class="req">Тип платежа</label>
                             <select ng-model="Pay.type" ng-options="pt.title for pt in payTypes"
                                     class="form-control" required>

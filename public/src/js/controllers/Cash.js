@@ -18,6 +18,8 @@ angular.module('MyClinic')
                     this.type = undefined;
                     this.total = patientService.totalDebt;
                     this.debt = 0; // debt after pay
+                    this.fullName = patientService.patient.lastName + ' ' + patientService.patient.firstName + ' '
+                        + patientService.patient.middleName;
 
                     let ctrl = this;
                     this.save = function () {
@@ -51,6 +53,28 @@ angular.module('MyClinic')
                 show: true
             });
         };
+
+        $scope.resetFilter = function () {
+            $scope.sort = {by: undefined, reverse: false};
+            $scope.filter = {};
+        };
+
+        $scope.changeSort = function (columnName) {
+            if (angular.isUndefined($scope.sort)) {
+                $scope.sort = {by: undefined, reverse: false};
+            }
+            $scope.sort.by = columnName;
+            $scope.sort.reverse = !$scope.sort.reverse;
+        };
+
+        $scope.classSort = function (columnName) {
+            if (!$scope.sort) return '';
+            var class_ = $scope.sort.by == columnName;
+            if (!class_) return '';
+            return !$scope.sort.reverse ? 'fa-caret-up' : 'fa-caret-down';
+        };
+
+
     })
     .controller('CashPayCtrl', function ($scope, $state, $stateParams, F, Cash, PayType, Msg, Modal) {
         // init section
@@ -129,7 +153,6 @@ angular.module('MyClinic')
                     cash.pendingServices = angular.copy($scope.pendingServices);
                     cash.$save(function (resp) {
                         modal.hide();
-                        console.log('resp=', resp);
                         if (resp.code === 'success') {
                             $state.go('cashList');
                         }
@@ -163,6 +186,26 @@ angular.module('MyClinic')
                 });
             }
             pay.payDetailsOpened = !pay.payDetailsOpened;
+        };
+
+        $scope.resetSearch = function () {
+            $scope.sort = {by: undefined, reverse: false};
+            $scope.search = {};
+        };
+
+        $scope.changeSort = function (columnName) {
+            if (angular.isUndefined($scope.sort)) {
+                $scope.sort = {by: undefined, reverse: false};
+            }
+            $scope.sort.by = columnName;
+            $scope.sort.reverse = !$scope.sort.reverse;
+        };
+
+        $scope.classSort = function (columnName) {
+            if (!$scope.sort) return '';
+            var class_ = $scope.sort.by == columnName;
+            if (!class_) return '';
+            return !$scope.sort.reverse ? 'fa-caret-up' : 'fa-caret-down';
         };
 
         $scope.refresh();

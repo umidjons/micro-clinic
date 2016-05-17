@@ -34,20 +34,55 @@
     <thead>
     <tr>
         <th>№</th>
-        <th>Фамилия</th>
-        <th>Имя</th>
-        <th>Отчество</th>
-        <th>Тел</th>
-        <th>Сумма</th>
-        <th>Дата</th>
+        <th>
+            <a href ng-click="F.changeSort('patient.lastName')">Фамилия</a>
+            <i ng-class="classSort('patient.lastName')" class="fa fa-fw"></i>
+        </th>
+        <th>
+            <a href ng-click="changeSort('patient.firstName')">Имя</a>
+            <i ng-class="classSort('patient.firstName')" class="fa fa-fw"></i>
+        </th>
+        <th>
+            <a href ng-click="changeSort('patient.middleName')">Отчество</a>
+            <i ng-class="classSort('patient.middleName')" class="fa fa-fw"></i>
+        </th>
+        <th>
+            <a href ng-click="changeSort('patient.cellPhone')">Тел</a>
+            <i ng-class="classSort('patient.cellPhone')" class="fa fa-fw"></i>
+        </th>
+        <th>
+            <a href ng-click="changeSort('payAmount')">Сумма</a>
+            <i ng-class="classSort('payAmount')" class="fa fa-fw"></i>
+        </th>
+        <th>
+            <a href ng-click="changeSort('payTime')">Дата</a>
+            <i ng-class="classSort('payTime')" class="fa fa-fw"></i>
+        </th>
         <th></th>
+    </tr>
+
+    <tr>
+        <th></th>
+        <th><input ng-model="search.patient.lastName" class="form-control"></th>
+        <th><input ng-model="search.patient.firstName" class="form-control"></th>
+        <th><input ng-model="search.patient.middleName" class="form-control"></th>
+        <th><input ng-model="search.patient.cellPhone" class="form-control"></th>
+        <th><input ng-model="search.payAmount" class="form-control"></th>
+        <th></th>
+        <th class="text-center">
+            <button ng-click="resetSearch()" title="Очистить фильтр" class="btn btn-xs btn-default">
+                <i class="fa fa-fw fa-filter"></i>
+                <i class="fa fa-fw fa-remove"></i>
+            </button>
+        </th>
     </tr>
     </thead>
 
     <tbody>
-    <tr ng-repeat-start="rec in records"
+    <tr ng-repeat-start="rec in records | orderBy: sort.by : sort.reverse | filter: search"
         class="row-group-header"
-        ng-class="{'row-group-body':!rec.payDetailsOpened}">
+        ng-class="{'row-group-body':!rec.payDetailsOpened}"
+        ng-dblclick="details(rec)">
         <td>{{ $index + 1 }}</td>
         <td>{{ rec.patient.lastName }}</td>
         <td>{{ rec.patient.firstName }}</td>
