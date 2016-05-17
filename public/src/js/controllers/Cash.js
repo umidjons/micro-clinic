@@ -139,4 +139,31 @@ angular.module('MyClinic')
         };
 
         init();
+    })
+    .controller('CashRegCtrl', function ($scope, $state, Cash) {
+        $scope.filter = {
+            startDate: Date.create('today'),
+            endDate: Date.create('today')
+        };
+
+        $scope.refresh = function () {
+            var params = {
+                startDate: $scope.filter.startDate,
+                endDate: $scope.filter.endDate
+            };
+            Cash.registry(params, function (resp) {
+                $scope.records = resp;
+            });
+        };
+
+        $scope.details = function (pay) {
+            if (angular.isUndefined(pay.payDetails)) {
+                Cash.payDetails({patientId: pay.patientId, payTime: pay.payTime}, function (resp) {
+                    pay.payDetails = resp;
+                });
+            }
+            pay.payDetailsOpened = !pay.payDetailsOpened;
+        };
+
+        $scope.refresh();
     });

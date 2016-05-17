@@ -16,9 +16,34 @@ router
             Msg.sendSuccess(res, '', records);
         });
     })
+    .post('/registry', function (req, res) {
+        if (!req.body.startDate || !req.body.endDate) {
+            return Msg.sendError(res, 'Неправильный период!');
+        }
+        models.PatientService.payedPatients(req.body.startDate, req.body.endDate, function (err, records) {
+            if (err) {
+                return Msg.sendError(res, err);
+            }
+
+            Msg.sendSuccess(res, '', records);
+        });
+    })
+    .post('/registry/pay-details/:patientId', function (req, res) {
+        if (!req.body.payTime) {
+            return Msg.sendError(res, 'Неправильная время оплаты!');
+        }
+
+        models.PatientService.payDetails(req.params.patientId, req.body.payTime, function (err, records) {
+            if (err) {
+                return Msg.sendError(res, err);
+            }
+
+            Msg.sendSuccess(res, '', records);
+        });
+    })
     .post('/pending-services-of/:patientId', function (req, res) {
         debug(`patientId: ${req.params.patientId}`);
-        
+
         models.PatientService.pendingServicesOf(req.params.patientId, function (err, patientServices) {
             if (err) {
                 return Msg.sendError(res, err);

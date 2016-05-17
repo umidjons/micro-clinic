@@ -360,6 +360,17 @@ angular.module('MyClinic')
                     isArray: true,
                     params: {patientId: '@patientId'}
                 },
+                registry: {
+                    method: 'POST',
+                    url: '/cash/registry',
+                    isArray: true
+                },
+                payDetails: {
+                    method: 'POST',
+                    url: '/cash/registry/pay-details/:patientId',
+                    isArray: true,
+                    params: {patientId: '@patientId'}
+                },
                 payAll: {
                     method: 'POST',
                     url: '/cash/pay-all'

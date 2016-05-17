@@ -8,7 +8,7 @@ var templateSchema = require('./Template').TemplateSchema;
 var serviceFieldSchema = require('./ServiceField').ServiceFieldSchema;
 var subCategorySchema = require('./ServiceSubCategory').ServiceSubCategorySchema;
 var subSubCategorySchema = require('./ServiceSubSubCategory').ServiceSubSubCategorySchema;
-
+var sugar = require('sugar');
 
 var PatientServiceSchema = mongoose.Schema({
     patientId: {type: mongoose.Schema.Types.ObjectId, required: true},
@@ -68,6 +68,108 @@ PatientServiceSchema.statics.pendingPatients = function (cb) {
         },
         {
             $unwind: '$patient'
+        }
+    ], function (err, records) {
+        if (err) {
+            return cb(err);
+        }
+
+        cb(null, records);
+    });
+};
+
+PatientServiceSchema.statics.payedPatients = function (startDate, endDate, cb) {
+    startDate = startDate || 'today';
+    endDate = endDate || 'today';
+
+    startDate = Date.create(startDate);
+    endDate = Date.create(endDate);
+
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(23, 59, 59, 999);
+
+    PatientService.aggregate([
+        //db.patientservices.aggregate([
+        {
+            $match: {
+                'pays.created': {$gte: startDate, $lte: endDate}
+            }
+        },
+        {
+            $unwind: '$pays'
+        },
+        {
+            $group: {
+                _id: {patientId: '$patientId', 'payTime': '$pays.created'},
+                payAmount: {$sum: '$pays.amount'}
+            }
+        },
+        {
+            $sort: {'_id.payTime': -1}
+        },
+        {
+            $lookup: {
+                from: 'patients',
+                localField: '_id.patientId',
+                foreignField: '_id',
+                as: 'patient'
+            }
+        },
+        {
+            $unwind: '$patient'
+        },
+        {
+            $project: {
+                _id: 0,
+                patientId: '$_id.patientId',
+                patient: '$patient',
+                payTime: '$_id.payTime',
+                payAmount: '$payAmount'
+            }
+        }
+    ], function (err, records) {
+        if (err) {
+            return cb(err);
+        }
+
+        cb(null, records);
+    });
+};
+
+
+PatientServiceSchema.statics.payDetails = function (patientId, dateTime, cb) {
+    dateTime = Date.create(dateTime);
+
+    PatientService.aggregate([
+        //db.patientservices.aggregate([
+        {
+            $match: {
+                'pays.created': dateTime
+            }
+        },
+        {
+            $unwind: '$pays'
+        },
+        {
+            $match: {
+                'pays.created': dateTime
+            }
+        },
+        {
+            $lookup: {
+                from: 'patients',
+                localField: 'patientId',
+                foreignField: '_id',
+                as: 'patient'
+            }
+        },
+        {
+            $unwind: '$patient'
+        },
+        {
+            $sort: {
+                '_id': 1
+            }
         }
     ], function (err, records) {
         if (err) {

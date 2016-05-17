@@ -146,6 +146,11 @@ angular.module('MyClinic', ['ngAnimate', 'ngSanitize', 'ngMessages', 'angular-lo
                 templateUrl: 'partials/cash/list.html',
                 controller: 'CashListCtrl'
             })
+            .state('cashRegistry', {
+                url: '/cash/registry',
+                templateUrl: 'partials/cash/registry.html',
+                controller: 'CashRegCtrl'
+            })
             .state('cashPay', {
                 url: '/pay',
                 templateUrl: 'partials/cash/pay.html',

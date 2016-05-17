@@ -39,6 +39,7 @@
     "angularUtils-pagination": "angular-utils-pagination#^0.11.1",
     "angular-ui-tinymce": "^0.0.15",
     "angular-messages": "^1.5.5",
-    "angular-ui-sortable": "^0.14.0"
+    "angular-ui-sortable": "^0.14.0",
+    "sugar": "^1.4.1"
   }
 }

@@ -154,7 +154,8 @@ input[type=checkbox].ng-invalid {
 }
 
 .cell-table > table {
-    background: #d7dade !important;
+    /*background: #d7dade !important;*/
+    background: #e7ecff !important;
     margin: 0;
 }
 

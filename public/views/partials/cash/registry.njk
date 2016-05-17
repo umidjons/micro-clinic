@@ -1,0 +1,99 @@
+<h1>Реестр оплат</h1>
+
+<div class="col-sm-4">
+    <form class="form-horizontal" novalidate>
+        <div class="form-group">
+            <label class="control-label col-sm-4 req">с</label>
+            <div class="col-sm-8">
+                <input ng-model="filter.startDate"
+                       bs-datepicker
+                       data-autoclose="true"
+                       data-max-date="{{ filter.endDate }}"
+                       class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4 req">по</label>
+            <div class="col-sm-8">
+                <input ng-model="filter.endDate"
+                       bs-datepicker
+                       data-autoclose="true"
+                       data-min-date="{{ filter.startDate }}"
+                       class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-8">
+                <button ng-click="refresh()" class="btn btn-default">Обновить</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<table class="table table-bordered table-striped table-condensed">
+    <thead>
+    <tr>
+        <th>№</th>
+        <th>Фамилия</th>
+        <th>Имя</th>
+        <th>Отчество</th>
+        <th>Тел</th>
+        <th>Сумма</th>
+        <th>Дата</th>
+        <th></th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr ng-repeat-start="rec in records"
+        class="row-group-header"
+        ng-class="{'row-group-body':!rec.payDetailsOpened}">
+        <td>{{ $index + 1 }}</td>
+        <td>{{ rec.patient.lastName }}</td>
+        <td>{{ rec.patient.firstName }}</td>
+        <td>{{ rec.patient.middleName }}</td>
+        <td>{{ rec.patient.cellPhone }}</td>
+        <td class="text-right">{{ rec.payAmount | number: 2 }}</td>
+        <td class="text-right">{{ rec.payTime | date: 'medium' }}</td>
+        <td class="text-center">
+            <button ng-click="details(rec)" title="Подробно" class="btn btn-xs btn-info">
+                <i class="fa fa-fw fa-search"></i>
+            </button>
+        </td>
+    </tr>
+
+    <tr ng-repeat-end class="row-group-body">
+        <td ng-if="rec.payDetailsOpened" colspan="8" class="cell-table">
+
+            <table class="table table-bordered table-condensed">
+                <thead>
+                <tr>
+                    <th class="col-sm-1">№</th>
+                    <th class="col-sm-2">Категория</th>
+                    <th class="col-sm-2">Подкатегория</th>
+                    <th class="col-sm-2">Под-подкатегория</th>
+                    <th class="col-sm-2">Услуга</th>
+                    <th class="col-sm-1">Сумма</th>
+                    <th class="col-sm-1">Тип оплаты</th>
+                    <th class="col-sm-1">Кассир</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="pay in rec.payDetails">
+                    <td class="text-right">{{ $index + 1 }}</td>
+                    <td>{{ pay.category.title }}</td>
+                    <td>{{ pay.subcategory.title }}</td>
+                    <td>{{ pay.subsubcategory.title }}</td>
+                    <td>{{ pay.title }}</td>
+                    <td class="text-right">{{ pay.pays.amount | number: 2 }}</td>
+                    <td>{{ pay.pays.payType.title }}</td>
+                    <td>{{ pay.pays.userId }}</td>
+                </tr>
+                </tbody>
+            </table>
+
+        </td>
+    </tr>
+
+    </tbody>
+</table>
