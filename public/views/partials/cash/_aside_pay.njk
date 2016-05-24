@@ -17,6 +17,7 @@
                         <div class="form-group">
                             <label class="req">Тип платежа</label>
                             <select ng-model="Pay.type" ng-options="pt.title for pt in payTypes"
+                                    ng-change="Pay.typeChanged()"
                                     class="form-control" required>
                                 <option value="">-</option>
                             </select>
@@ -24,7 +25,23 @@
 
                         <div class="form-group">
                             <label class="req">Общая сумма</label>
-                            <input ng-model="Pay.total" class="form-control" readonly required>
+                            <input ng-model="Pay.total" ng-change="Pay.recalc()"
+                                   class="form-control"
+                                   type="number" min="0" ng-max="Pay.totalMax" required>
+                        </div>
+
+                        <div ng-if="Pay.type._id == 'separated'" class="form-group">
+                            <label class="req">По терминалу</label>
+                            <input ng-model="Pay.totalCashless" ng-change="Pay.recalc('cashless')"
+                                   type="number" min="1" ng-max="Pay.total-Pay.totalCash"
+                                   class="form-control" required>
+                        </div>
+
+                        <div ng-if="Pay.type._id == 'separated'" class="form-group">
+                            <label class="req">По наличному</label>
+                            <input ng-model="Pay.totalCash" ng-change="Pay.recalc('cash')"
+                                   type="number" min="1" ng-max="Pay.total-Pay.totalCashless"
+                                   class="form-control" required>
                         </div>
 
                         <div class="form-group">

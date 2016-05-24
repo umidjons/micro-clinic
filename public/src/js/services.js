@@ -410,6 +410,10 @@ angular.module('MyClinic')
                     {
                         _id: 'cashless',
                         title: 'Безналичные'
+                    },
+                    {
+                        _id: 'separated',
+                        title: 'Наличный/Безналичный'
                     }
                 ];
             }

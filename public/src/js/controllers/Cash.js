@@ -16,12 +16,38 @@ angular.module('MyClinic')
                 backdrop: 'static',
                 controller: function () {
                     this.type = undefined;
+                    this.totalMax = patientService.totalDebt;
                     this.total = patientService.totalDebt;
                     this.debt = 0; // debt after pay
                     this.fullName = patientService.patient.lastName + ' ' + patientService.patient.firstName + ' '
                         + patientService.patient.middleName;
 
                     let ctrl = this;
+
+                    this.typeChanged = function () {
+                        if (ctrl.type._id == 'separated') {
+                            ctrl.recalc();
+                        } else {
+                            ctrl.totalCash = 0;
+                            ctrl.totalCashless = 0;
+                        }
+                    };
+
+                    this.recalc = function (which) {
+                        if (ctrl.type && ctrl.type._id == 'separated') {
+                            if (angular.isUndefined(which)) { // total changed
+                                ctrl.totalCash = Math.ceil(ctrl.total / 2);
+                                ctrl.totalCashless = ctrl.total - ctrl.totalCash;
+                            } else if (which == 'cash') { // cash changed
+                                ctrl.totalCashless = ctrl.total - ctrl.totalCash;
+                            } else if (which == 'cashless') { // cashless changed
+                                ctrl.totalCash = ctrl.total - ctrl.totalCashless;
+                            }
+                        }
+                        // calculate debt
+                        ctrl.debt = ctrl.totalMax - ctrl.total;
+                    };
+
                     this.save = function () {
                         Modal.confirm({
                             okAction: function (modal) {
@@ -29,7 +55,11 @@ angular.module('MyClinic')
                                 cash.pay = {
                                     patientId: patientService.patient._id,
                                     totalDebt: patientService.totalDebt,
-                                    payType: ctrl.type
+                                    payType: ctrl.type,
+                                    total: ctrl.total,
+                                    totalCash: ctrl.totalCash,
+                                    totalCashless: ctrl.totalCashless,
+                                    debt: ctrl.debt
                                 };
 
                                 cash.$payAll(function (resp) {

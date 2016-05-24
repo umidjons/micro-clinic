@@ -4,6 +4,8 @@ var mongoose = require('mongoose');
 var async = require('async');
 var stateSchema = require('./State').StateSchema;
 var models = require('.');
+var F = require('../include/F');
+var debug = require('debug')('myclinic:model:cash');
 
 var PayTypeSchema = mongoose.Schema({
     _id: {type: String, required: true},
@@ -84,13 +86,7 @@ CashSchema.statics.savePays = function (patSrvList, cb) {
                 doc.debt = patSrv.debt;
                 doc.payed = patSrv.payed;
                 doc.state = patSrv.state;
-                if (!doc.pays) {
-                    doc.pays = patSrv.pays;
-                } else {
-                    for (let pay of patSrv.pays) {
-                        doc.pays.push(pay);
-                    }
-                }
+                doc.pays = patSrv.pays;
                 doc.save(function (err) {
                     if (err) {
                         return done(err);
@@ -114,7 +110,8 @@ CashSchema.statics.savePays = function (patSrvList, cb) {
 
 /**
  * Generates & saves pays for given patient's pending services.
- * @param {object} payInfo payment info in format {patientId: XXX, payType: XXX, totalDebt: XXX}
+ * @param {object} payInfo payment info in format
+ *   {patientId: XXX, payType: XXX, totalDebt: XXX, total: XXX, totalCash: XXX, totalCashless: XXX, debt: XXX}
  * @param {function} cb callback function with one parameter - error.
  */
 CashSchema.statics.payAll = function (payInfo, cb) {
@@ -127,36 +124,140 @@ CashSchema.statics.payAll = function (payInfo, cb) {
             return cb('Неоплаченные услуги не найдены.');
         }
 
-        // checking total debt amount
-        let totalDebt = 0;
-        for (let patSrv of patientServices) {
-            totalDebt += patSrv.debt;
-        }
+        var time = new Date();
 
-        if (totalDebt != payInfo.totalDebt) {
-            return cb('Неверная сумма оплаты.');
-        }
+        var patientServicesWithPays = [];
+
+        let pType = payInfo.payType._id;
 
         // populating pays for each pending service
         for (let patSrv of patientServices) {
-            patSrv.pays.push({
-                amount: patSrv.debt,
-                payType: payInfo.payType
-            });
+
+            debug(F.inspect(patSrv, 'Patient Service=', true));
+            debug(F.inspect(pType, 'Pay Type=', true));
+
+            if (pType == 'cash' || pType == 'cashless') {
+                // determine amount
+                let amount = patSrv.debt;
+                if (patSrv.debt > payInfo.total && payInfo.total > 0) {
+                    amount = payInfo.total;
+                }
+
+                // generate pay
+                patSrv.pays.push({
+                    amount: amount,
+                    payType: payInfo.payType,
+                    created: time,
+                    userId: 1, // todo: set currently logged in user's id (or model)
+                    state: {_id: 'payed', title: 'Оплачен'}
+                });
+
+                // decrease debt & increase payed
+                patSrv.debt -= amount;
+                patSrv.payed += amount;
+
+                // change service state
+                if (patSrv.debt > 0) {
+                    patSrv.state = {_id: 'partlyPayed', title: 'Частично оплачен'};
+                } else {
+                    patSrv.state = {_id: 'payed', title: 'Оплачен'};
+                }
+
+                // decrease left amount
+                payInfo.total -= amount;
+
+                patientServicesWithPays.push(patSrv);
+
+                // if there are no more money, stop processing other services
+                if (payInfo.total <= 0) {
+                    break;
+                }
+
+
+            } else if (pType == 'separated') {
+                let amount = patSrv.debt;
+                if (patSrv.debt > payInfo.totalCashless && payInfo.totalCashless > 0) {
+                    amount = payInfo.totalCashless;
+                }
+
+                // generate pay
+                patSrv.pays.push({
+                    amount: amount,
+                    payType: {_id: 'cashless', title: 'Безналичные'},
+                    created: time,
+                    userId: 1, // todo: set currently logged in user's id (or model)
+                    state: {_id: 'payed', title: 'Оплачен'}
+                });
+
+                // decrease debt & increase payed
+                patSrv.debt -= amount;
+                patSrv.payed += amount;
+
+                // change service state
+                if (patSrv.debt > 0) {
+                    patSrv.state = {_id: 'partlyPayed', title: 'Частично оплачен'};
+                } else {
+                    patSrv.state = {_id: 'payed', title: 'Оплачен'};
+                }
+
+                // decrease left amount
+                payInfo.totalCashless -= amount;
+                payInfo.total -= amount;
+
+                // if there are no more money, stop processing other services
+                if (payInfo.total <= 0) {
+                    patientServicesWithPays.push(patSrv);
+                    break;
+                }
+
+                // if there is more debt, cover it from cash
+                if (patSrv.debt > 0) {
+                    amount = patSrv.debt;
+                    if (patSrv.debt > payInfo.totalCash && payInfo.totalCash > 0) {
+                        amount = payInfo.totalCash;
+                    }
+
+                    // generate pay
+                    patSrv.pays.push({
+                        amount: amount,
+                        payType: {_id: 'cash', title: 'Наличные'},
+                        created: time,
+                        userId: 1, // todo: set currently logged in user's id (or model)
+                        state: {_id: 'payed', title: 'Оплачен'}
+                    });
+
+                    // decrease debt & increase payed
+                    patSrv.debt -= amount;
+                    patSrv.payed += amount;
+
+                    // change service state
+                    if (patSrv.debt > 0) {
+                        patSrv.state = {_id: 'partlyPayed', title: 'Частично оплачен'};
+                    } else {
+                        patSrv.state = {_id: 'payed', title: 'Оплачен'};
+                    }
+
+                    // decrease left amount
+                    payInfo.totalCash -= amount;
+                    payInfo.total -= amount;
+
+                    // if there are no more money, stop processing other services
+                    if (payInfo.total <= 0) {
+                        patientServicesWithPays.push(patSrv);
+                        break;
+                    }
+                }
+            }
         }
 
-        // validating & preparing pays
-        Cash.preparePays(patientServices, function (err) {
+        debug(F.inspect(patientServicesWithPays, 'patientServicesWithPays=', true));
+
+        // save patient services with pays
+        Cash.savePays(patientServicesWithPays, function (err) {
             if (err) {
                 return cb(err);
             }
-
-            Cash.savePays(patientServices, function (err) {
-                if (err) {
-                    return cb(err);
-                }
-                return cb();
-            });
+            return cb();
         });
     });
 };
