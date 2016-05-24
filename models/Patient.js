@@ -21,7 +21,8 @@ var PatientSchema = mongoose.Schema({
     email: {type: mongoose.SchemaTypes.Email, maxlength: 50},
     workplace: {type: String, maxlength: 200},
     company: {type: String, maxlength: 200},
-    created: {type: Date, required: true, default: new Date()},
+    lastVisit: {type: Date, required: true},
+    created: {type: Date, required: true},
     userId: {type: String, required: true, default: '1'} //todo: set real user id or user schema
 });
 
@@ -57,6 +58,12 @@ PatientSchema.statics.fillAdditions = function (patients, cb) {
             cb(null, patients);
         }
     );
+};
+
+PatientSchema.statics.setLastVisit = function (patientId, visitDateTime, cb) {
+    Patient.update({_id: patientId}, {$set: {lastVisit: visitDateTime}}, function (err, raw) {
+        cb(err, raw);
+    });
 };
 
 var Patient = mongoose.model('Patient', PatientSchema);

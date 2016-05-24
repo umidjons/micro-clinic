@@ -106,16 +106,22 @@ angular.module('MyClinic')
     })
     .controller('PatientsCtrl', function ($scope, Modal, Patient, Pager) {
         $scope.pagination = Pager.new();
+        $scope.todaysOnly = 1;
 
         $scope.pageChanged = function () {
             $scope.reloadPage();
         };
 
         $scope.reloadPage = function () {
-            Patient.query({p: $scope.pagination.current, ps: $scope.pagination.pageSize}, function (patients, headers) {
-                $scope.patients = patients;
-                $scope.pagination.total = headers('X-Total-Items');
-            });
+            Patient.query({
+                    p: $scope.pagination.current,
+                    ps: $scope.pagination.pageSize,
+                    today: $scope.todaysOnly
+                },
+                function (patients, headers) {
+                    $scope.patients = patients;
+                    $scope.pagination.total = headers('X-Total-Items');
+                });
         };
 
         $scope.deletePatient = function (patient) {

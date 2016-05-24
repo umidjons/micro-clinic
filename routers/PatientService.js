@@ -76,8 +76,16 @@ router
                     return Msg.sendError(res, err);
                 }
 
-                // all right, show success message
-                Msg.sendSuccess(res, 'Данные успешно сохранены.');
+                // update last visit
+                models.Patient.setLastVisit(req.body.patientId, req.body.services[0].created, function (err, raw) {
+                    if (err) {
+                        console.log('Err on setting last visit date and time:', err);
+                        return Msg.sendError(res, err);
+                    }
+
+                    // all right, show success message
+                    Msg.sendSuccess(res, 'Данные успешно сохранены.');
+                });
             });
         }
     )

@@ -1,5 +1,15 @@
 <h3>Пациенты</h3>
 
+<div class="checkbox">
+    <label>
+        <input ng-model="todaysOnly" type="checkbox"
+               ng-true-value="1"
+               ng-false-value="0"
+               ng-change="pageChanged()"> Только сегодняшнее
+    </label>
+</div>
+
+
 <table class="table table-bordered table-striped table-hover table-condensed">
 
     <thead>

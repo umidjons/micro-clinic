@@ -72,7 +72,18 @@ router
     })
     .get('/',
         function (req, res, next) {
-            models.Patient.count(function (err, count) {
+            // by default no condition
+            req.condition = {};
+
+            // show only patients visited today
+            if (req.query.today == 1) {
+                let beginOfDay = Date.create('today').beginningOfDay();
+                let endOfDay = Date.create('today').endOfDay();
+                req.condition = {lastVisit: {$gte: beginOfDay, $lte: endOfDay}};
+            }
+
+            // calculate count of patients
+            models.Patient.count(req.condition, function (err, count) {
                 if (err) {
                     return Msg.sendError(res, err);
                 }
@@ -83,14 +94,14 @@ router
                 next();
             });
         },
-        function (req, res, next) {
+        function (req, res) {
             var pageCurrent = 1 * req.query.p || 1;
             var pageSize = 1 * req.query.ps || 0; // limit=0 means no limit, so default is to retrieve all
             var skip = (pageCurrent - 1) * pageSize;
 
             debug(`skip=${skip} pageCurrent=${pageCurrent} pageSize=${pageSize}`);
 
-            models.Patient.find()
+            models.Patient.find(req.condition)
                 .skip(skip)
                 .limit(pageSize)
                 .sort({created: -1})
@@ -102,23 +113,17 @@ router
 
                     req.patients = patients;
 
-                    next();
+                    return Msg.sendSuccess(res, '', req.patients, 'List of patients:');
                 });
-        },
-        function (req, res) {
-            models.Patient.fillAdditions(req.patients, function (err, results) {
-                if (err) {
-                    return Msg.sendError(res, err);
-                }
-                Msg.sendSuccess(res, '', results, 'List of patients:');
-            });
-        })
+        }
+    )
     .post('/', function (req, res) {
         debug(`Request body: ${req.body}`);
 
         // create model and fill fields from request body
         let newPatient = new models.Patient(req.body);
         newPatient.created = new Date();
+        newPatient.lastVisit = newPatient.created;
 
         // try to save patient
         newPatient.save(function (err, savedPatient) {
