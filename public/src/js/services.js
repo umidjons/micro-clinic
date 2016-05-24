@@ -104,7 +104,11 @@ angular.module('MyClinic')
         res.recalc = function (srv) {
             srv.priceTotal = srv.quantity * srv.price;
             if (srv.discount && srv.discount.amount > 0) {
-                srv.priceTotal -= srv.priceTotal * 0.01 * srv.discount.amount;
+                if (srv.discount.type == 'percent') {
+                    srv.priceTotal -= srv.priceTotal * 0.01 * srv.discount.amount;
+                } else if (srv.discount.type == 'amount') {
+                    srv.priceTotal -= srv.discount.amount;
+                }
             }
         };
 
@@ -231,6 +235,8 @@ angular.module('MyClinic')
     })
     .factory('Discount', function ($aside, $rootScope) {
         var Discount = {
+            type: 'percent',
+            max: 100,
             amount: 0,
             note: '',
             aside: null,
@@ -239,6 +245,15 @@ angular.module('MyClinic')
             // fnCheckedServices() - return selected services,
             // fnCheckedServices(true) - return count of selected services
             fnSelectedServices: null
+        };
+
+        Discount.setType = function (type) {
+            Discount.type = type;
+            if (type == 'percent') {
+                Discount.max = 100;
+            } else {
+                Discount.max = 10000000;
+            }
         };
 
         /**
@@ -256,6 +271,7 @@ angular.module('MyClinic')
                     // set amount and note
                     srv.discount.amount = Discount.amount;
                     srv.discount.note = Discount.note;
+                    srv.discount.type = Discount.type;
                 }
 
                 // re-calculate properties

@@ -14,10 +14,24 @@
                             <label class="req">Скидка</label>
                             <div class="input-group">
                                 <input ng-model="Discount.amount" type="number" class="form-control"
-                                       min="0" max=100 required>
-                                <span class="input-group-addon">
-                                    <i class="fa fa-fw fa-percent"></i>
-                                </span>
+                                       min="0" ng-max="Discount.max" required>
+                                <div class="input-group-btn">
+                                    <button class="btn btn-default" data-toggle="dropdown">
+                                        <i ng-if="Discount.type=='percent'" class="fa fa-fw fa-percent"></i>
+                                        <span ng-if="Discount.type=='amount'">сум</span>
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-right">
+                                        <li>
+                                            <a href ng-click="Discount.setType('percent')">
+                                                <i class="fa fa-fw fa-percent"></i>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href ng-click="Discount.setType('amount')">сум</a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">

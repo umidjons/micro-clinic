@@ -1,7 +1,8 @@
 var mongoose = require('mongoose');
 
 var DiscountSchema = mongoose.Schema({
-    amount: {type: Number, required: true, min: 0, max: 100},
+    type: {type: String, required: true, enum: ['percent', 'amount']},
+    amount: {type: Number, required: true, min: 0, max: 1000000},
     note: {type: String, maxlength: 200}
 });
 

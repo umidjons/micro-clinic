@@ -12,7 +12,7 @@
                 <th>Категория</th>
                 <th>Услуга</th>
                 <th>Количество</th>
-                <th>Скидка (%)</th>
+                <th>Скидка</th>
                 <th>Стоимость</th>
                 <th>Оплачен</th>
                 <th>Долг</th>
@@ -52,7 +52,11 @@
                     {{ selSrv.quantity | number }}
                 </td>
                 <td class="text-right"
-                    title="{{ selSrv.discount.note }}">{{ selSrv.discount.amount || 0 | number: 2 }}</td>
+                    title="{{ selSrv.discount.note }}">
+                    {{ selSrv.discount.amount || 0 | number: 2 }}
+                    <span ng-if="selSrv.discount.type == 'percent'">%</span>
+                    <span ng-if="selSrv.discount.type == 'amount'">сум</span>
+                </td>
                 <td class="text-right">{{ selSrv.priceTotal | number: 2 }}</td>
                 <td class="text-right">{{ selSrv.payed | number: 2 }}</td>
                 <td class="text-right">{{ selSrv.debt | number: 2 }}</td>

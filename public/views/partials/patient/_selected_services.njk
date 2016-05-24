@@ -16,7 +16,7 @@
             <th>Под-подкатегория</th>
             <th>Услуга</th>
             <th>Количество</th>
-            <th>Скидка (%)</th>
+            <th>Скидка</th>
             <th>Стоимость</th>
             <th>Партнёр</th>
             <th class="text-right">
@@ -86,6 +86,8 @@
                 ng-dblclick="ServiceHelper.Service.openDiscount(selSrv)"
                 title="{{ selSrv.discount.note }}">
                 {{ selSrv.discount.amount || 0 | number: 2 }}
+                <span ng-if="selSrv.discount.type == 'percent'">%</span>
+                <span ng-if="selSrv.discount.type == 'amount'">сум</span>
             </td>
             <td class="text-right">{{ selSrv.priceTotal | number: 2 }}</td>
             <td ng-dblclick="ServiceHelper.Service.openPartner(selSrv)">{{ selSrv.partner.code }}</td>
