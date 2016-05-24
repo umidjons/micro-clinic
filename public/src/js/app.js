@@ -146,6 +146,21 @@ angular.module('MyClinic', ['ngAnimate', 'ngSanitize', 'ngMessages', 'angular-lo
                 templateUrl: 'partials/partner/view.html',
                 controller: 'PartnerViewCtrl'
             })
+            .state('userList', {
+                url: '/user/list',
+                templateUrl: 'partials/user/list.html',
+                controller: 'UsersCtrl'
+            })
+            .state('userCreate', {
+                url: '/user/create',
+                templateUrl: 'partials/user/create.html',
+                controller: 'UserCtrl'
+            })
+            .state('userEdit', {
+                url: '/user/edit/:id',
+                templateUrl: 'partials/user/edit.html',
+                controller: 'UserCtrl'
+            })
             .state('cashList', {
                 url: '/cash',
                 templateUrl: 'partials/cash/list.html',

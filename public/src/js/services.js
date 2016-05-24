@@ -121,6 +121,23 @@ angular.module('MyClinic')
             }
         );
     })
+    .factory('User', function ($resource) {
+        return $resource(
+            '/user/:id',
+            {id: '@_id'},
+            {
+                update: {
+                    method: 'PUT'
+                }
+            }
+        );
+    })
+    .factory('Permission', function ($resource) {
+        return $resource(
+            '/permission/:id',
+            {id: '@_id'}
+        );
+    })
     .factory('PatientService', function ($resource) {
         return $resource(
             '/patient-service/:id',

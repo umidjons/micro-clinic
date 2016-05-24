@@ -1,0 +1,21 @@
+<ol class="breadcrumb">
+    <li><a ui-sref="userList">Пользователи</a></li>
+    <li><a ui-sref="userCreate">Новый пользователь</a></li>
+</ol>
+
+<h3>Изменение пользователя</h3>
+
+<form name="formUser" novalidate>
+
+    {% include "partials/user/_form_fields.njk" %}
+
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <button ui-sref="userList" class="btn btn-danger">Отмена</button>
+            <button ng-click="saveUser()" ng-disabled="formUser.$invalid"
+                    class="btn btn-success">Сохранить
+            </button>
+        </div>
+    </div>
+
+</form>

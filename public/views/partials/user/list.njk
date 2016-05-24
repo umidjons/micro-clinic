@@ -1,0 +1,61 @@
+<h3>Пользователи</h3>
+
+<button ui-sref="userCreate" class="btn btn-success"><i class="fa fa-fw fa-plus"></i> Новый пользователь</button>
+
+<table class="table table-bordered table-striped table-hover table-condensed">
+
+    <thead>
+    <tr>
+        <th>№</th>
+        <th>Имя пользователя</th>
+        <th>Фамилия</th>
+        <th>Имя</th>
+        <th>Отчество</th>
+        <th>Адрес</th>
+        <th>Мобильный</th>
+        <th>Городской</th>
+        <th>Email</th>
+        <th>Привилегии</th>
+        <th>Дата регистрации</th>
+        <th></th>
+        <th class="text-center">
+            <button ng-click="reloadPage()" class="btn btn-xs btn-info" title="Обновить">
+                <i class="fa fa-fw fa-refresh"></i>
+            </button>
+        </th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr ng-repeat="user in users">
+        <td class="text-right">{{ $index + 1 }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.lastName }}</td>
+        <td>{{ user.firstName }}</td>
+        <td>{{ user.middleName }}</td>
+        <td>{{ user.address }}</td>
+        <td>{{ user.cellPhone }}</td>
+        <td>{{ user.homePhone }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.permissions }}</td>
+        <td>{{ user.created | date:'medium' }}</td>
+        <td class="text-center" title="{{ user.state.title }}">
+            <i class="fa fa-fw"
+               ng-class="{'fa-check text-success':user.state._id=='active','fa-ban text-danger':user.state._id=='blocked'}"></i>
+        </td>
+        <td class="text-center">
+            <div class="btn-group btn-group-xs">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-fw fa-bars"></i> <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a ui-sref="userEdit({id:user._id})"><i class="fa fa-fw fa-edit"></i> Изменить</a></li>
+                    <li><a href ng-click="deleteUser(user)"><i class="fa fa-fw fa-trash"></i> Удалить</a></li>
+                </ul>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+
+</table>

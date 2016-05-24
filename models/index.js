@@ -24,3 +24,7 @@ module.exports.Template = require('./Template').Template;
 module.exports.ServiceFieldTypeSchema = require('./ServiceField').ServiceFieldTypeSchema;
 module.exports.ServiceFieldSchema = require('./ServiceField').ServiceFieldSchema;
 module.exports.ServiceField = require('./ServiceField').ServiceField;
+module.exports.UserSchema = require('./User').UserSchema;
+module.exports.User = require('./User').User;
+module.exports.PermissionSchema = require('./Permission').PermissionSchema;
+module.exports.Permission = require('./Permission').Permission;
