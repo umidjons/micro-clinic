@@ -288,6 +288,20 @@ angular.module('MyClinic')
                     } else {
                         return 0;
                     }
+                },
+                openDiscount: function (srv) {
+                    if (!srv.marked) {
+                        srv.marked = 1;
+                        $scope.ServiceHelper.Marker.onChange();
+                    }
+                    $scope.openDiscount();
+                },
+                openPartner: function (srv) {
+                    if (!srv.marked) {
+                        srv.marked = 1;
+                        $scope.ServiceHelper.Marker.onChange();
+                    }
+                    $scope.openPartner();
                 }
             },
             Marker: {
@@ -316,6 +330,13 @@ angular.module('MyClinic')
                     this.markedCount = this.getMarked(true);
                     this.isAllMarked = allSrvCount > 0 && allSrvCount == this.markedCount ? 1 : 0;
 
+                },
+                toggle: function (srv, event) {
+                    // CTRL + Click toggles selection
+                    if (event.ctrlKey) {
+                        srv.marked = !srv.marked * 1;
+                        this.onChange();
+                    }
                 }
             },
             AssignedMarker: {

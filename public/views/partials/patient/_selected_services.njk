@@ -50,6 +50,7 @@
         <tbody>
 
         <tr ng-repeat-start="selSrv in patient.services"
+            ng-click="ServiceHelper.Marker.toggle(selSrv,$event)"
             ng-class="{'selected': selSrv.marked == 1, 'row-group-body': !selSrv.fields || selSrv.fields.length == 0}"
             ng-class-even="'row-even'"
             ng-class-odd="'row-odd'"
@@ -81,24 +82,20 @@
                     </span>
                 </div>
             </td>
-            <td class="text-right" title="{{ selSrv.discount.note }}">{{ selSrv.discount.amount || 0 | number: 2 }}</td>
+            <td class="text-right"
+                ng-dblclick="ServiceHelper.Service.openDiscount(selSrv)"
+                title="{{ selSrv.discount.note }}">
+                {{ selSrv.discount.amount || 0 | number: 2 }}
+            </td>
             <td class="text-right">{{ selSrv.priceTotal | number: 2 }}</td>
-            <td>{{ selSrv.partner.code }}</td>
+            <td ng-dblclick="ServiceHelper.Service.openPartner(selSrv)">{{ selSrv.partner.code }}</td>
 
             <td class="text-right">
-                <div class="btn-group btn-group-xs">
-                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-fw fa-bars"></i> <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li>
-                            <a href ng-click="ServiceHelper.Service.remove($index)">
-                                <i class="fa fa-fw fa-minus"></i> Удалить
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+                <button ng-click="ServiceHelper.Service.remove($index)"
+                        title="Удалить"
+                        class="btn btn-xs btn-default">
+                    <i class="fa fa-fw fa-trash"></i>
+                </button>
             </td>
 
         </tr>

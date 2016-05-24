@@ -45,10 +45,10 @@
         <thead>
 
         <tr>
-            <th>Категория</th>
-            <th>Подкатегория</th>
-            <th>Под-подкатегория</th>
-            <th>Услуга</th>
+            <th class="col-sm-2">Категория</th>
+            <th class="col-sm-2">Подкатегория</th>
+            <th class="col-sm-2">Под-подкатегория</th>
+            <th class="col-sm-3">Услуга</th>
             <th>Стоимость</th>
             <th class="text-right">
                 <button ng-if="filteredServices.length > 0"
@@ -90,7 +90,8 @@
         </thead>
 
         <tbody>
-        <tr ng-repeat="srv in services | filter: ServiceHelper.Service.filter as filteredServices">
+        <tr ng-repeat="srv in services | filter: ServiceHelper.Service.filter as filteredServices"
+            ng-dblclick="ServiceHelper.Service.add(srv)">
             <td>{{ srv.category.title }}</td>
             <td>{{ srv.subcategory.title }}</td>
             <td>{{ srv.subsubcategory.title }}</td>
