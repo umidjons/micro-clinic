@@ -6,15 +6,22 @@ var models = require('../models');
 var Msg = require('../include/Msg');
 
 router
-    .get('/:id', function (req, res) {
-        debug(`id: ${req.params.id}`);
+    .param('id', function (req, res, next, id) {
+        debug(`param id: ${req.params.id}`);
         models.User.findOne({_id: req.params.id}, function (err, user) {
             if (err) {
                 return Msg.sendError(res, err.message);
             }
 
-            Msg.sendSuccess(res, '', user, 'User:');
+            // populate user object on request
+            req.user = user;
+
+            next();
         });
+    })
+    .get('/:id', function (req, res) {
+        // req.user is populated via param(id) handler
+        Msg.sendSuccess(res, '', req.user, 'User:');
     })
     .get('/', function (req, res) {
         models.User.find(function (err, users) {
@@ -42,9 +49,17 @@ router
         });
     })
     .put('/:id', function (req, res) {
-        debug(`id: ${req.params.id}`);
+        // req.user contains user object retrieved via param(id) handler
 
-        models.User.update({_id: req.params.id}, req.body, function (err) {
+        // empty password means - DO NOT CHANGE PASSWORD
+        if (req.body.password == '') {
+            delete req.body.password;
+        }
+
+        // merge req.body into user
+        req.user = Object.assign(req.user, req.body);
+
+        req.user.save(function (err) {
             if (err) {
                 return Msg.sendError(res, err.message);
             }
@@ -53,9 +68,8 @@ router
         });
     })
     .delete('/:id', function (req, res) {
-        debug(`id: ${req.params.id}`);
-
-        models.User.remove({_id: req.params.id}, function (err) {
+        // req.user contains user object retrieved via param(id) handler
+        req.user.remove(function (err) {
             if (err) {
                 return Msg.sendError(res, err.message);
             }

@@ -37,7 +37,14 @@
         <td>{{ user.cellPhone }}</td>
         <td>{{ user.homePhone }}</td>
         <td>{{ user.email }}</td>
-        <td>{{ user.permissions }}</td>
+        <td>
+            <ul class="list-unstyled">
+                <li ng-repeat="(perm, val) in user.permissions">
+                    <i ng-class="{'fa-check text-success':val,'fa-ban text-danger':!val}"
+                       class="fa fa-fw"></i> {{ _.find(permissions, {_id: perm}).title }}
+                </li>
+            </ul>
+        </td>
         <td>{{ user.created | date:'medium' }}</td>
         <td class="text-center" title="{{ user.state.title }}">
             <i class="fa fa-fw"

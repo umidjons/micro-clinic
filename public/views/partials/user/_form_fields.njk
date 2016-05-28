@@ -1,16 +1,21 @@
-<div class="row">
+<div>
     <div class="form-group">
         <label class="control-label col-sm-3 req">Имя пользователя</label>
         <div class="col-sm-3">
-            <input ng-model="user.username" class="form-control" pattern="[a-zA-Z]{3,}" maxlength="50" required>
+            <input ng-model="user.username" class="form-control"
+                   pattern="[a-zA-Z][a-zA-Z0-9_.]{3,}" maxlength="50" required>
+            <p class="help-block">Начинается с латиницы. Допустимые символы: a-z, A-Z, 0-9, ".", "_"</p>
         </div>
     </div>
 
     <div class="form-group">
-        <label class="control-label col-sm-3 req">Пароль</label>
+        <label ng-class="{'req': !user._id}" class="control-label col-sm-3">Пароль</label>
         <div class="col-sm-3">
             <input ng-model="user.password" type="password" class="form-control"
-                   pattern="[0-9a-zA-Z_!@#$%^&*+-=()\[\]{}.,<>?/:;|~`]{3,}" maxlength="30" required>
+                   pattern="[0-9a-zA-Z_!@#$%^&*+-=()\[\]{}.,<>?/:;|~`]{3,}" maxlength="30" ng-required="!user._id">
+            <p class="help-block">
+                <span ng-if="user._id" class="text-warning">Чтобы не менять пароль, оставьте поле пустым.</span>
+                Допустимые символы 0-9, a-z, A-Z, "_!@#$%^&*+-=()[]{}.,<>?/:;|~`"</p>
         </div>
     </div>
 
@@ -73,14 +78,12 @@
         </div>
     </div>
 
-    <div class="form-group">
-        <div class="col-sm-12">
-            <label>Привилегии</label>
-            <div ng-repeat="perm in permissions" class="checkbox">
-                <label>
-                    <input ng-model="user.permissions[perm._id]" type="checkbox"> {{ perm.title }}
-                </label>
-            </div>
+    <div class="col-sm-12">
+        <label>Привилегии</label>
+        <div ng-repeat="perm in permissions" class="checkbox">
+            <label>
+                <input ng-model="user.permissions[perm._id]" type="checkbox"> {{ perm.title }}
+            </label>
         </div>
     </div>
 </div>

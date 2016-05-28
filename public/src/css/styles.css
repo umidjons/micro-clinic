@@ -163,7 +163,7 @@ input[type=checkbox].ng-invalid {
     margin-bottom: 3px;
 }
 
-.cell-table .help-block {
+.help-block {
     margin-bottom: 0;
 }
 

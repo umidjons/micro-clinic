@@ -2,14 +2,14 @@
 
 angular.module('MyClinic')
     .controller('UserCtrl', function ($scope, $state, $stateParams, Modal, User, State, Permission) {
-        console.log('Params:', $stateParams);
-
         $scope.states = State.query();
         $scope.permissions = Permission.query();
 
         if ($stateParams.id) {
             User.get({id: $stateParams.id}, function (user) {
-                console.log('user=', user);
+                // empty password
+                user.password = '';
+
                 $scope.user = user;
             });
         } else {
@@ -21,17 +21,19 @@ angular.module('MyClinic')
                 okAction: function (modal) {
                     if ($scope.user._id) {
                         $scope.user.$update(function (resp) {
-                            console.log('Response:', resp);
                             // close confirmation window
                             modal.hide();
 
                             if (resp.code == 'success') {
-                                $state.go('userList');
+                                $state.transitionTo('userEdit', $stateParams, {
+                                    reload: true,
+                                    inherit: false,
+                                    notify: true
+                                });
                             }
                         });
                     } else {
                         $scope.user.$save(function (resp) {
-                            console.log('Response:', resp);
                             // close confirmation window
                             modal.hide();
 
@@ -45,8 +47,9 @@ angular.module('MyClinic')
         };
 
     })
-    .controller('UsersCtrl', function ($scope, Modal, User) {
+    .controller('UsersCtrl', function ($scope, Modal, User, Permission) {
         $scope.reloadPage = function () {
+            $scope.permissions = Permission.query();
             $scope.users = User.query();
         };
 
