@@ -1,4 +1,4 @@
-<nav class="navbar navbar-default navbar-fixed-top">
+<nav ng-if="loggedin" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
 
         <div class="navbar-header">
@@ -62,7 +62,9 @@
 
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="#" title="Профиль"><i class="fa fa-fw fa-user"></i></a></li>
-                <li><a href="#" title="Выход"><i class="fa fa-fw fa-power-off"></i></a></li>
+                <li ng-controller="LoginCtrl">
+                    <a href ng-click="logout()" title="Выход"><i class="fa fa-fw fa-power-off"></i></a>
+                </li>
             </ul>
 
         </div><!--/.nav-collapse -->

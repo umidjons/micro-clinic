@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 require('mongoose-type-email');
 var stateSchema = require('./State').StateSchema;
 var debug = require('debug')('myclinic:model:user');
+var F = require('../include/F');
 
 var UserSchema = mongoose.Schema({
     username: {type: String, required: true, maxlength: 50},
@@ -50,7 +51,16 @@ UserSchema.pre('save', function (next) {
 });
 
 UserSchema.methods.comparePassword = function (candidatePassword, cb) {
-    bcrypt.compare(candidatePassword, this.password, function (err, isMatch) {
+    var password = this.password;
+    var enteredPassword = candidatePassword + '';
+
+    debug(F.inspect(enteredPassword, 'Candidate Password:', true));
+    debug(F.inspect(password, 'User Password from DB:', true));
+
+    bcrypt.compare(enteredPassword, password, function (err, isMatch) {
+        debug(F.inspect(err, 'Err:', true));
+        debug(F.inspect(isMatch, 'isMatch:', true));
+
         if (err) return cb(err);
         cb(null, isMatch);
     });

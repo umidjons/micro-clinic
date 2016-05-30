@@ -14,14 +14,14 @@ router
             }
 
             // populate user object on request
-            req.user = user;
+            req.userObj = user;
 
             next();
         });
     })
     .get('/:id', function (req, res) {
-        // req.user is populated via param(id) handler
-        Msg.sendSuccess(res, '', req.user, 'User:');
+        // req.userObj is populated via param(id) handler
+        Msg.sendSuccess(res, '', req.userObj, 'User:');
     })
     .get('/', function (req, res) {
         models.User.find(function (err, users) {
@@ -49,7 +49,7 @@ router
         });
     })
     .put('/:id', function (req, res) {
-        // req.user contains user object retrieved via param(id) handler
+        // req.userObj contains user object retrieved via param(id) handler
 
         // empty password means - DO NOT CHANGE PASSWORD
         if (req.body.password == '') {
@@ -57,9 +57,9 @@ router
         }
 
         // merge req.body into user
-        req.user = Object.assign(req.user, req.body);
+        req.userObj = Object.assign(req.userObj, req.body);
 
-        req.user.save(function (err) {
+        req.userObj.save(function (err) {
             if (err) {
                 return Msg.sendError(res, err.message);
             }
@@ -68,8 +68,8 @@ router
         });
     })
     .delete('/:id', function (req, res) {
-        // req.user contains user object retrieved via param(id) handler
-        req.user.remove(function (err) {
+        // req.userObj contains user object retrieved via param(id) handler
+        req.userObj.remove(function (err) {
             if (err) {
                 return Msg.sendError(res, err.message);
             }

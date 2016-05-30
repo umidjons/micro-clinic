@@ -1,5 +1,6 @@
 'use strict';
 
+var cfg = require('./include/config');
 var express = require('express');
 var app = express();
 var nunjucks = require('nunjucks');
@@ -10,10 +11,11 @@ var logger = require('morgan');
 var favicon = require('serve-favicon');
 var compression = require('compression');
 var routers = require('./routers');
+var passport = require('passport');
 
-mongoose.connect('mongodb://127.0.0.1:27017/starmed');
+mongoose.connect(cfg.db);
 mongoose.connection.once('open', function () {
-    app.set('port', process.env.PORT || 3000);
+    app.set('port', process.env.PORT || cfg.app_port);
 
     app.disable('x-powered-by');
 
@@ -29,6 +31,10 @@ mongoose.connection.once('open', function () {
         {
             express: app,
             tags: {
+                blockStart: '{%',
+                blockEnd: '%}',
+                commentStart: '<#',
+                commentEnd: '#>',
                 variableStart: '{{{',
                 variableEnd: '}}}'
             }
@@ -55,6 +61,13 @@ mongoose.connection.once('open', function () {
     app.use(bodyParser.urlencoded({extended: true}));
     app.use(bodyParser.json());
 
+    app.get('/', function (req, res) {
+        //res.set('Authorization', `JWT ${app.get('jwt_token')}`);
+        res.render('index', {year: 1900 + new Date().getYear()});
+    });
+
+    routers.Auth(app);
+
     app
         .use('/user', routers.User)
         .use('/permission', routers.Permission)
@@ -64,9 +77,6 @@ mongoose.connection.once('open', function () {
         .use('/service-category', routers.ServiceCategory)
         .use('/partner', routers.Partner)
         .use('/cash', routers.Cash)
-        .get('/', function (req, res) {
-            res.render('index', {year: 1900 + new Date().getYear()});
-        })
         .listen(app.get('port'), function () {
             console.log(`Listening on http://localhost:${app.get('port')}...`);
         });

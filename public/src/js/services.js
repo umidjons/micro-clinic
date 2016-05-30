@@ -42,6 +42,29 @@ angular.module('MyClinic')
             ];
         }
     })
+    .factory('Auth', function ($http, $localStorage, $rootScope) {
+        return {
+            login: function (username, password, callback) {
+                $http.post('/authenticate', {username: username, password: password})
+                    .success(function (resp) {
+                        if (resp.token) {
+                            $rootScope.loggedin = true;
+                            $localStorage.currentUser = resp.user;
+                            $localStorage.currentUser.token = resp.token;
+                            $http.defaults.headers.common.Authorization = 'JWT ' + resp.token;
+                            callback(true);
+                        } else {
+                            callback(false);
+                        }
+                    });
+            },
+            logout: function () {
+                $rootScope.loggedin = false;
+                delete $localStorage.currentUser;
+                $http.defaults.headers.common.Authorization = '';
+            }
+        };
+    })
     .factory('Fields', function () {
         return {
             value: function (field) {
