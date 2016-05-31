@@ -77,6 +77,7 @@ mongoose.connection.once('open', function () {
         .use('/service-category', routers.ServiceCategory)
         .use('/partner', routers.Partner)
         .use('/cash', routers.Cash)
+        .use('/branch', routers.Branch)
         .listen(app.get('port'), function () {
             console.log(`Listening on http://localhost:${app.get('port')}...`);
         });

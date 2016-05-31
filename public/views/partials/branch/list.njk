@@ -1,0 +1,51 @@
+<h3>Филиалы</h3>
+
+<button ui-sref="branchCreate" class="btn btn-success"><i class="fa fa-fw fa-plus"></i> Новый филиал</button>
+
+<table class="table table-bordered table-striped table-hover table-condensed">
+
+    <thead>
+    <tr>
+        <th>№</th>
+        <th>Наименование</th>
+        <th>Тел</th>
+        <th>Адрес</th>
+        <th>Дата регистрации</th>
+        <th>Пользователь</th>
+        <th></th>
+        <th class="text-center">
+            <button ng-click="reloadPage()" class="btn btn-xs btn-info" title="Обновить">
+                <i class="fa fa-fw fa-refresh"></i>
+            </button>
+        </th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr ng-repeat="branch in branches">
+        <td class="text-right">{{ $index + 1 }}</td>
+        <td>{{ branch.title }}</td>
+        <td>{{ branch.phone }}</td>
+        <td>{{ branch.address }}</td>
+        <td>{{ branch.created | date:'medium' }}</td>
+        <td title="{{ branch.user.fullName }}">{{ branch.user.username }}</td>
+        <td class="text-center" title="{{ branch.state.title }}">
+            <i class="fa fa-fw"
+               ng-class="{'fa-check text-success':branch.state._id=='active','fa-ban text-danger':branch.state._id=='blocked'}"></i>
+        </td>
+        <td class="text-center">
+            <div class="btn-group btn-group-xs">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-fw fa-bars"></i> <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a ui-sref="branchEdit({id:branch._id})"><i class="fa fa-fw fa-edit"></i> Изменить</a></li>
+                    <li><a href ng-click="deleteBranch(branch)"><i class="fa fa-fw fa-trash"></i> Удалить</a></li>
+                </ul>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+
+</table>

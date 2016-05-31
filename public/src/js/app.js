@@ -216,6 +216,21 @@
                     url: '/service-category/edit/:id',
                     templateUrl: 'partials/service-category/edit.html',
                     controller: 'ServiceCategoryCtrl'
+                })
+                .state('branchesList', {
+                    url: '/branch/list',
+                    templateUrl: 'partials/branch/list.html',
+                    controller: 'BranchesCtrl'
+                })
+                .state('branchCreate', {
+                    url: '/branch/create',
+                    templateUrl: 'partials/branch/create.html',
+                    controller: 'BranchCtrl'
+                })
+                .state('branchEdit', {
+                    url: '/branch/edit/:id',
+                    templateUrl: 'partials/branch/edit.html',
+                    controller: 'BranchCtrl'
                 });
             $urlRouterProvider.otherwise('/');
         })

@@ -1,0 +1,19 @@
+<ol class="breadcrumb">
+    <li><a ui-sref="branchesList">Филиалы</a></li>
+    <li><a ui-sref="branchCreate">Новый филиал</a></li>
+</ol>
+
+<h3>Новый филиал</h3>
+
+<form name="formBranch" class="form-horizontal" novalidate>
+
+    {% include "partials/branch/_form_fields.njk" %}
+
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <button ui-sref="branchesList" class="btn btn-danger">Отмена</button>
+            <button ng-click="saveBranch()" ng-disabled="formBranch.$invalid" class="btn btn-success">Сохранить</button>
+        </div>
+    </div>
+
+</form>

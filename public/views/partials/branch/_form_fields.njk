@@ -1,0 +1,33 @@
+<div>
+    <div class="form-group">
+        <label class="control-label col-sm-3 req">Наименование</label>
+        <div class="col-sm-3">
+            <input ng-model="branch.title" class="form-control" maxlength="100" required>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-3">Адрес</label>
+        <div class="col-sm-3">
+            <input ng-model="branch.address" class="form-control" maxlength="500">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-3">Номер телефона</label>
+        <div class="col-sm-3">
+            <input ng-model="branch.phone" class="form-control" pattern="\d{5,12}" maxlength="12">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-3 req">Состояние</label>
+        <div class="col-sm-3">
+            <select ng-model="branch.state" class="form-control" required
+                    ng-options="s.title for s in states track by s._id">
+                <option value="">-</option>
+            </select>
+        </div>
+    </div>
+
+</div>

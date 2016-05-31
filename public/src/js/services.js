@@ -148,6 +148,17 @@ angular.module('MyClinic')
             }
         );
     })
+    .factory('Branch', function ($resource) {
+        return $resource(
+            '/branch/:id',
+            {id: '@_id'},
+            {
+                update: {
+                    method: 'PUT'
+                }
+            }
+        );
+    })
     .factory('User', function ($resource) {
         return $resource(
             '/user/:id',

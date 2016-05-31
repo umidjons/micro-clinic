@@ -28,3 +28,5 @@ module.exports.UserSchema = require('./User').UserSchema;
 module.exports.User = require('./User').User;
 module.exports.PermissionSchema = require('./Permission').PermissionSchema;
 module.exports.Permission = require('./Permission').Permission;
+module.exports.BranchSchema = require('./Branch').BranchSchema;
+module.exports.Branch = require('./Branch').Branch;
