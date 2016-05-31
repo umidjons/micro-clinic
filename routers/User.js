@@ -24,7 +24,7 @@ router
         Msg.sendSuccess(res, '', req.userObj, 'User:');
     })
     .get('/', function (req, res) {
-        models.User.find(function (err, users) {
+        models.User.find().exec(function (err, users) {
             if (err) {
                 return Msg.sendError(res, err.message);
             }
@@ -33,9 +33,10 @@ router
         });
     })
     .post('/', function (req, res) {
+        let user = models.User.sortPermissions(req.body);
 
         // create model and fill fields from request body
-        let newUser = new models.User(req.body);
+        let newUser = new models.User(user);
 
         // try to save partner
         newUser.save(function (err) {
@@ -51,13 +52,15 @@ router
     .put('/:id', function (req, res) {
         // req.userObj contains user object retrieved via param(id) handler
 
+        let user = models.User.sortPermissions(req.body);
+
         // empty password means - DO NOT CHANGE PASSWORD
-        if (req.body.password == '') {
-            delete req.body.password;
+        if (user.password == '') {
+            delete user.password;
         }
 
         // merge req.body into user
-        req.userObj = Object.assign(req.userObj, req.body);
+        req.userObj = Object.assign(req.userObj, user);
 
         req.userObj.save(function (err) {
             if (err) {

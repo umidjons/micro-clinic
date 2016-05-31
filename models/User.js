@@ -1,3 +1,5 @@
+'use strict';
+
 var bcrypt = require('bcrypt-nodejs');
 var mongoose = require('mongoose');
 require('mongoose-type-email');
@@ -86,6 +88,22 @@ UserSchema.statics.can = function (user, operation) {
 
     debug('Checking permissions...');
     return !!user.permissions[operation];
+};
+
+UserSchema.statics.sortPermissions = function (userJson) {
+    debug('sortPermissions()');
+    if (userJson.permissions) {
+        // sort permissions
+        let perms = {};
+        Object.keys(userJson.permissions)
+            .sort()
+            .forEach(function (permName, value) {
+                perms[permName] = userJson.permissions[permName];
+            });
+        userJson.permissions = perms;
+    }
+
+    return userJson;
 };
 
 var User = mongoose.model('User', UserSchema);

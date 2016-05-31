@@ -39,7 +39,7 @@
         <td>{{ user.email }}</td>
         <td>
             <ul class="list-unstyled">
-                <li ng-repeat="(perm, val) in user.permissions">
+                <li ng-if="val" ng-repeat="(perm, val) in user.permissions">
                     <i ng-class="{'fa-check text-success':val,'fa-ban text-danger':!val}"
                        class="fa fa-fw"></i> {{ _.find(permissions, {_id: perm}).title }}
                 </li>
