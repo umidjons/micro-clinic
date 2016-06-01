@@ -18,7 +18,7 @@ var ServiceSchema = mongoose.Schema({
     fields: [serviceFieldSchema],
     resultFields: [serviceFieldSchema],
     created: {type: Date, required: true, default: new Date()},
-    userId: {type: String, required: true, default: '1'} //todo: set real user id or user schema
+    user: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User'}
 });
 
 ServiceSchema.index({category: 1, subcategory: 1, subsubcategory: 1, title: 1}, {unique: true});

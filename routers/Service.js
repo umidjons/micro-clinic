@@ -6,6 +6,17 @@ var models = require('../models');
 var Msg = require('../include/Msg');
 
 router
+    .param('id', function (req, res, next, id) {
+        debug(`param(id): ${id}`);
+        models.Service.findById(id, function (err, service) {
+            if (err) {
+                return Msg.sendError(res, err);
+            }
+
+            req.service = service;
+            next();
+        });
+    })
     .get('/with-category', function (req, res) {
         models.Service.aggregate([
             {
@@ -21,7 +32,7 @@ router
                     category: 1,
                     title: 1,
                     shortTitle: 1,
-                    userId: 1,
+                    user: 1,
                     created: 1,
                     price: 1,
                     fields: 1,
@@ -43,15 +54,7 @@ router
         });
     })
     .get('/:id', function (req, res) {
-        debug(`id: ${req.params.id}`);
-
-        models.Service.findOne({_id: req.params.id}, function (err, service) {
-            if (err) {
-                return Msg.sendError(res, err);
-            }
-
-            Msg.sendSuccess(res, '', service, 'Service:');
-        });
+        Msg.sendSuccess(res, '', req.service, 'Service:');
     })
     .get('/', function (req, res) {
         var light = req.query.light;
@@ -63,6 +66,7 @@ router
                 'category.subcategories.title': 1,
                 title: 1
             })
+            .populate('user', 'username lastName firstName middleName')
             .lean()
             .exec(function (err, services) {
                 if (err) {
@@ -80,7 +84,6 @@ router
             });
     })
     .post('/clone', function (req, res) {
-        //console.log('Request body:', req.body);
         var srv = req.body;
 
         // remove unnecessary _id
@@ -90,7 +93,7 @@ router
         srv.created = new Date();
 
         // set who cloned
-        srv.userId = 1; // todo: change to actual user data
+        srv.user = req.user._id;
 
         // create model and fill fields from request body
         let newService = new models.Service(srv);
@@ -110,10 +113,10 @@ router
         });
     })
     .post('/', function (req, res) {
-        //console.log('Request body:', req.body);
-
         // create model and fill fields from request body
         let newService = new models.Service(req.body);
+        newService.created = new Date();
+        newService.user = req.user._id;
 
         // delete category & subcategory subcategories
         models.Service.lighten(newService);
@@ -130,14 +133,12 @@ router
         });
     })
     .put('/:id', function (req, res) {
-        debug(`id: ${req.params.id}`);
-
-        var service = req.body;
+        req.service = Object.assign(req.service, req.body);
 
         // delete category & subcategory subcategories
-        models.Service.lighten(service);
+        models.Service.lighten(req.service);
 
-        models.Service.update({_id: req.params.id}, service, function (err) {
+        req.service.save(function (err, service) {
             if (err) {
                 return Msg.sendError(res, err);
             }
@@ -146,9 +147,7 @@ router
         });
     })
     .delete('/:id', function (req, res) {
-        debug(`id: ${req.params.id}`);
-
-        models.Service.remove({_id: req.params.id}, function (err) {
+        req.service.remove(function (err) {
             if (err) {
                 return Msg.sendError(res, err);
             }

@@ -15,6 +15,7 @@
         <th>Стоимость</th>
         <th>Состояние</th>
         <th>Дата создание</th>
+        <th>Пользователь</th>
         <th>Шаблоны</th>
         <th class="text-center">
             <button ng-click="reloadPage()" class="btn btn-xs btn-info" title="Обновить">
@@ -52,6 +53,7 @@
         <th></th>
         <th></th>
         <th></th>
+        <th></th>
     </tr>
     </thead>
 
@@ -69,6 +71,9 @@
                ng-class="{'fa-check text-success':srv.state._id=='active','fa-ban text-danger':srv.state._id=='blocked'}"></i>
         </td>
         <td>{{ srv.created | date:'medium' }}</td>
+        <td title="{{ srv.user.lastName + ' ' + srv.user.firstName + ' ' + srv.user.middleName }}">
+            {{ srv.user.username }}
+        </td>
         <td class="text-right">{{ srv.templateCount | number }}</td>
         <td class="text-center">
             <div class="btn-group btn-group-xs">
