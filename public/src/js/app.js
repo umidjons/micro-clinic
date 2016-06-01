@@ -2,10 +2,11 @@
     angular.module('MyClinic', ['ngAnimate', 'ngSanitize', 'ngMessages', 'ngStorage', 'angular-loading-bar',
             'ui.router', 'ngResource', 'mgcrea.ngStrap', 'toaster', 'ui.select',
             'angularUtils.directives.dirPagination', 'ui.tinymce', 'ui.sortable'])
-        .run(function ($rootScope, $http, $location, $localStorage) {
+        .run(function ($rootScope, $http, $location, $localStorage, Auth) {
             // keep user logged in after page refresh
             if ($localStorage.currentUser) {
                 $rootScope.loggedin = true;
+                $rootScope.$localStorage = $localStorage;
                 $http.defaults.headers.common.Authorization = 'JWT ' + $localStorage.currentUser.token;
             }
 
@@ -13,6 +14,12 @@
             $rootScope.$on('$locationChangeStart', function (event, next, current) {
                 var publicPages = ['/login'];
                 var restrictedPage = publicPages.indexOf($location.path()) === -1;
+
+                // if user opens /login page in logged in state, then logout it first
+                if ($location.path() == '/login' && $rootScope.loggedin) {
+                    Auth.logout();
+                }
+
                 if (restrictedPage && !$localStorage.currentUser) {
                     $location.path('/login');
                 }

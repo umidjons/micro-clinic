@@ -44,13 +44,15 @@ angular.module('MyClinic')
     })
     .factory('Auth', function ($http, $localStorage, $rootScope) {
         return {
-            login: function (username, password, callback) {
+            login: function (username, password, branch, callback) {
                 $http.post('/authenticate', {username: username, password: password})
                     .success(function (resp) {
                         if (resp.token) {
+                            $rootScope.$localStorage=$localStorage;
                             $rootScope.loggedin = true;
-                            $localStorage.currentUser = resp.user;
-                            $localStorage.currentUser.token = resp.token;
+                            $rootScope.$localStorage.currentUser = resp.user;
+                            $rootScope.$localStorage.currentUser.token = resp.token;
+                            $rootScope.$localStorage.currentUser.branch = branch;
                             $http.defaults.headers.common.Authorization = 'JWT ' + resp.token;
                             callback(true);
                         } else {
@@ -155,6 +157,9 @@ angular.module('MyClinic')
             {
                 update: {
                     method: 'PUT'
+                },
+                activeBranches: {
+                    method: 'GET', url: '/active-branches', isArray: true
                 }
             }
         );

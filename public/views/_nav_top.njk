@@ -10,7 +10,7 @@
                 <span class="icon-bar"></span>
             </button>
 
-            <a class="navbar-brand" ui-sref="home">STARMED</a>
+            <a class="navbar-brand" ui-sref="home">{{ $localStorage.currentUser.branch.title }}</a>
 
         </div>
 
@@ -62,7 +62,11 @@
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#" title="Профиль"><i class="fa fa-fw fa-user"></i></a></li>
+                <li>
+                    <a href="#" title="Профиль {{ $localStorage.currentUser.fullName }}">
+                        <i class="fa fa-fw fa-user"></i> {{ $localStorage.currentUser.username }}
+                    </a>
+                </li>
                 <li ng-controller="LoginCtrl">
                     <a href ng-click="logout()" title="Выход"><i class="fa fa-fw fa-power-off"></i></a>
                 </li>

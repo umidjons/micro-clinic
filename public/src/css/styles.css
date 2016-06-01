@@ -183,3 +183,7 @@ input[type=checkbox].ng-invalid {
 .modal-body {
     font-size: 16px;
 }
+
+.navbar-brand {
+    text-transform: uppercase;
+}

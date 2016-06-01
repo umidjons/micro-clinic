@@ -12,6 +12,8 @@ var favicon = require('serve-favicon');
 var compression = require('compression');
 var routers = require('./routers');
 var passport = require('passport');
+var models = require('./models');
+var Msg = require('./include/Msg');
 
 mongoose.connect(cfg.db);
 mongoose.connection.once('open', function () {
@@ -64,6 +66,21 @@ mongoose.connection.once('open', function () {
     app.get('/', function (req, res) {
         //res.set('Authorization', `JWT ${app.get('jwt_token')}`);
         res.render('index', {year: 1900 + new Date().getYear()});
+    });
+
+    app.get('/active-branches', function (req, res) {
+        // Used on login page.
+        // Fetches without authorization.
+        models.Branch
+            .find({'state._id': 'active'})
+            .sort({title: 1})
+            .exec(function (err, branches) {
+                if (err) {
+                    return Msg.sendError(res, err.message);
+                }
+
+                Msg.sendSuccess(res, '', branches, 'List of active branches:');
+            });
     });
 
     routers.Auth(app);
