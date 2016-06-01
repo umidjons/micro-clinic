@@ -14,6 +14,7 @@
         <th>Коротко</th>
         <th></th>
         <th>Дата создание</th>
+        <th>Пользователь</th>
         <th>Подкатегории</th>
         <th class="text-center">
             <button ng-click="reloadPage()" class="btn btn-xs btn-info" title="Обновить">
@@ -34,6 +35,7 @@
                ng-class="{'fa-check text-success':cat.state._id=='active','fa-ban text-danger':cat.state._id=='blocked'}"></i>
         </td>
         <td>{{ cat.created | date:'medium' }}</td>
+        <td title="{{ cat.user.fullName }}">{{ cat.user.username }}</td>
         <td class="text-right">{{ cat.subcategories.length | number }}</td>
         <td class="text-center">
             <div class="btn-group btn-group-xs">

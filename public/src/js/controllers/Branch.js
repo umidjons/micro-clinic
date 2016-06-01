@@ -22,7 +22,11 @@
                                 modal.hide();
 
                                 if (resp.code == 'success') {
-                                    $state.go('branchesList');
+                                    $state.transitionTo('branchEdit', $stateParams, {
+                                        reload: true,
+                                        inherit: false,
+                                        notify: true
+                                    });
                                 }
                             });
                         } else {

@@ -4,8 +4,19 @@ var router = require('express').Router();
 var debug = require('debug')('myclinic:router:servicecategory');
 var models = require('../models');
 var Msg = require('../include/Msg');
+var F = require('../include/F');
 
 router
+    .param('id', function (req, res, next, id) {
+        models.ServiceCategory.findById(id).exec(function (err, category) {
+            if (err) {
+                return Msg.sendError(res, err);
+            }
+
+            req.serviceCategory = category;
+            next();
+        });
+    })
     .get('/with-services', function (req, res) {
         models.Service.aggregate([
             {
@@ -31,17 +42,12 @@ router
         });
     })
     .get('/:id', function (req, res) {
-        models.ServiceCategory.findOne({_id: req.params.id}, function (err, serviceCategory) {
-            if (err) {
-                return Msg.sendError(res, err.message);
-            }
-
-            Msg.sendSuccess(res, '', serviceCategory, 'Service:');
-        });
+        Msg.sendSuccess(res, '', req.serviceCategory, 'Service:');
     })
     .get('/', function (req, res) {
         models.ServiceCategory.find()
             .sort({title: 1, 'subcategories.title': 1, 'subcategories.subcategories.title': 1})
+            .populate('user', 'username lastName firstName middleName')
             .exec(function (err, serviceCategories) {
                 if (err) {
                     return Msg.sendError(res, err.message);
@@ -50,14 +56,12 @@ router
                 Msg.sendSuccess(res, '', serviceCategories, 'List of service categories:');
             });
     })
-    .post('/:id?', function (req, res) {
-        //console.log('Request body:', req.body);
-
+    .post('/', function (req, res) {
         // create model and fill fields from request body
         let newServiceCat = new models.ServiceCategory(req.body);
 
         newServiceCat.created = new Date();
-        newServiceCat.userId = '1'; //todo: set real user id or user schema
+        newServiceCat.user = req.user._id;
 
         // try to save
         newServiceCat.save(function (err, savedServiceCategory) {
@@ -71,22 +75,18 @@ router
         });
     })
     .put('/:id', function (req, res) {
-        debug(`id: ${req.params.id}`);
+        req.serviceCategory = Object.assign(req.serviceCategory, req.body);
 
-        var serviceCategory = req.body;
-
-        models.ServiceCategory.update({_id: req.params.id}, serviceCategory, function (err) {
+        req.serviceCategory.save(function (err, serviceCategory) {
             if (err) {
-                return Msg.sendError(res, err.message);
+                return Msg.sendError(res, err);
             }
 
             Msg.sendSuccess(res, 'Данные успешно сохранены.', serviceCategory);
         });
     })
     .delete('/:id', function (req, res) {
-        debug(`id:${req.params.id}`);
-
-        models.ServiceCategory.remove({_id: req.params.id}, function (err, removedServiceCategory) {
+        req.serviceCategory.remove(function (err) {
             if (err) {
                 return Msg.sendError(res, err.message);
             }
