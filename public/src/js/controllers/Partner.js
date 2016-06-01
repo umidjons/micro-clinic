@@ -33,9 +33,8 @@
                             $scope.partner.$save(function (resp) {
                                 // close confirmation window
                                 modal.hide();
-
-                                if (resp.code == 'success') {
-                                    $state.go('partnerList');
+                                if (resp.partnerId) {
+                                    $state.go('partnerEdit', {id: resp.partnerId});
                                 }
                             });
                         }

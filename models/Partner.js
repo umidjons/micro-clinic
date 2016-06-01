@@ -15,8 +15,10 @@ var PartnerSchema = mongoose.Schema({
     company: {type: String, maxlength: 200},
     state: stateSchema,
     created: {type: Date, required: true, default: new Date()},
-    userId: {type: String, required: true, default: '1'} //todo: set real user id or user schema
+    user: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User'}
 });
+
+PartnerSchema.index({code: 1}, {unique: true});
 
 PartnerSchema.virtual('fullName').get(function () {
     return (this.lastName + ' ' + this.firstName + ' ' + this.middleName).trim();

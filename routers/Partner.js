@@ -6,45 +6,58 @@ var models = require('../models');
 var Msg = require('../include/Msg');
 
 router
-    .get('/:id', function (req, res) {
-        debug(`id: ${req.params.id}`);
-        models.Partner.findOne({_id: req.params.id}, function (err, partner) {
+    .param('id', function (req, res, next, id) {
+        debug(`param(id): ${id}`);
+
+        models.Partner.findById(id).exec(function (err, partner) {
             if (err) {
-                return Msg.sendError(res, err.message);
+                return Msg.sendError(res, err);
             }
 
-            Msg.sendSuccess(res, '', partner, 'Partner:');
+            req.partner = partner;
+            next();
         });
     })
+    .get('/:id', function (req, res) {
+        req.partner.populate('user', 'username lastName firstName middleName');
+        Msg.sendSuccess(res, '', req.partner, 'Partner:');
+    })
     .get('/', function (req, res) {
-        models.Partner.find(function (err, partners) {
-            if (err) {
-                return Msg.sendError(res, err.message);
-            }
+        models.Partner.find()
+            .sort({code: 1})
+            .populate('user', 'username lastName firstName middleName')
+            .exec(function (err, partners) {
+                if (err) {
+                    return Msg.sendError(res, err.message);
+                }
 
-            Msg.sendSuccess(res, '', partners, 'List of partners:');
-        });
+                Msg.sendSuccess(res, '', partners, 'List of partners:');
+            });
     })
     .post('/', function (req, res) {
 
         // create model and fill fields from request body
         let newPartner = new models.Partner(req.body);
+        newPartner.created = new Date();
+        newPartner.user = req.user._id;
 
         // try to save partner
-        newPartner.save(function (err) {
+        newPartner.save(function (err, partner) {
             // if there is error, send it and stop handler with return
             if (err) {
-                return Msg.sendError(res, err.message);
+                if (err.code == 11000) {
+                    return Msg.sendError(res, 'Партнёр с таким кодом уже существует.');
+                }
+                return Msg.sendError(res, err);
             }
 
             // all right, show success message
-            Msg.sendSuccess(res, 'Данные успешно сохранены.');
+            Msg.sendSuccess(res, 'Данные успешно сохранены.', {partnerId: partner._id});
         });
     })
     .put('/:id', function (req, res) {
-        debug(`id: ${req.params.id}`);
-
-        models.Partner.update({_id: req.params.id}, req.body, function (err) {
+        req.partner = Object.assign(req.partner, req.body);
+        req.partner.save(function (err) {
             if (err) {
                 return Msg.sendError(res, err.message);
             }
@@ -53,9 +66,7 @@ router
         });
     })
     .delete('/:id', function (req, res) {
-        debug(`id: ${req.params.id}`);
-
-        models.Partner.remove({_id: req.params.id}, function (err) {
+        req.partner.remove(function (err) {
             if (err) {
                 return Msg.sendError(res, err.message);
             }

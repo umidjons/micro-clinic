@@ -18,6 +18,7 @@
         <th>Email</th>
         <th>Организация</th>
         <th>Дата регистрации</th>
+        <th>Пользователь</th>
         <th></th>
         <th class="text-center">
             <button ng-click="reloadPage()" class="btn btn-xs btn-info" title="Обновить">
@@ -41,6 +42,7 @@
         <td>{{ partner.email }}</td>
         <td>{{ partner.company }}</td>
         <td>{{ partner.created | date:'medium' }}</td>
+        <td title="{{ partner.user.fullName }}">{{ partner.user.username }}</td>
         <td class="text-center" title="{{ partner.state.title }}">
             <i class="fa fa-fw"
                ng-class="{'fa-check text-success':partner.state._id=='active','fa-ban text-danger':partner.state._id=='blocked'}"></i>
