@@ -42,7 +42,7 @@ router
         });
     })
     .get('/:id', function (req, res) {
-        req.serviceCategory.populate('user', 'username lastName firstName middleName');
+        //req.serviceCategory.populate('user', 'username lastName firstName middleName');
         Msg.sendSuccess(res, '', req.serviceCategory, 'Service:');
     })
     .get('/', function (req, res) {
