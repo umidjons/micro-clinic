@@ -21,7 +21,7 @@ var UserSchema = mongoose.Schema({
     // Permission object, attributes are permission names, values are true/false, e.g.: {"user:create":true}
     permissions: {},
     created: {type: Date, required: true, default: new Date()},
-    userId: {type: String, required: true, default: '1'} //todo: set real user id or user schema
+    user: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User'}
 });
 
 UserSchema.pre('save', function (next) {

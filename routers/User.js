@@ -4,18 +4,18 @@ var router = require('express').Router();
 var debug = require('debug')('myclinic:router:user');
 var models = require('../models');
 var Msg = require('../include/Msg');
+var F = require('../include/F');
 
 router
     .param('id', function (req, res, next, id) {
-        debug(`param id: ${req.params.id}`);
-        models.User.findOne({_id: req.params.id}, function (err, user) {
+        debug(`param(id): ${id}`);
+        models.User.findById(id).exec(function (err, user) {
             if (err) {
                 return Msg.sendError(res, err.message);
             }
 
             // populate user object on request
             req.userObj = user;
-
             next();
         });
     })
@@ -24,29 +24,34 @@ router
         Msg.sendSuccess(res, '', req.userObj, 'User:');
     })
     .get('/', function (req, res) {
-        models.User.find().exec(function (err, users) {
-            if (err) {
-                return Msg.sendError(res, err.message);
-            }
+        models.User.find()
+            .sort({created: 1})
+            .populate('user', 'username lastName firstName middleName')
+            .exec(function (err, users) {
+                if (err) {
+                    return Msg.sendError(res, err.message);
+                }
 
-            Msg.sendSuccess(res, '', users, 'List of users:');
-        });
+                Msg.sendSuccess(res, '', users, 'List of users:');
+            });
     })
     .post('/', function (req, res) {
         let user = models.User.sortPermissions(req.body);
 
         // create model and fill fields from request body
         let newUser = new models.User(user);
+        newUser.created = new Date();
+        newUser.user = req.user._id;
 
         // try to save partner
-        newUser.save(function (err) {
+        newUser.save(function (err, user) {
             // if there is error, send it and stop handler with return
             if (err) {
                 return Msg.sendError(res, err.message);
             }
 
             // all right, show success message
-            Msg.sendSuccess(res, 'Данные успешно сохранены.');
+            Msg.sendSuccess(res, 'Данные успешно сохранены.', {userId: user._id});
         });
     })
     .put('/:id', function (req, res) {

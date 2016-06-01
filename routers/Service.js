@@ -54,7 +54,7 @@ router
         });
     })
     .get('/:id', function (req, res) {
-        req.service.populate('user', 'username lastName firstName middleName');
+        //req.service.populate('user', 'username lastName firstName middleName');
         Msg.sendSuccess(res, '', req.service, 'Service:');
     })
     .get('/', function (req, res) {

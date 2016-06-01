@@ -17,6 +17,7 @@
         <th>Email</th>
         <th>Привилегии</th>
         <th>Дата регистрации</th>
+        <th>Пользователь</th>
         <th></th>
         <th class="text-center">
             <button ng-click="reloadPage()" class="btn btn-xs btn-info" title="Обновить">
@@ -46,6 +47,7 @@
             </ul>
         </td>
         <td>{{ user.created | date:'medium' }}</td>
+        <td title="{{ user.user.fullName }}">{{ user.user.username }}</td>
         <td class="text-center" title="{{ user.state.title }}">
             <i class="fa fa-fw"
                ng-class="{'fa-check text-success':user.state._id=='active','fa-ban text-danger':user.state._id=='blocked'}"></i>

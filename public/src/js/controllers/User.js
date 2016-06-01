@@ -37,8 +37,8 @@ angular.module('MyClinic')
                             // close confirmation window
                             modal.hide();
 
-                            if (resp.code == 'success') {
-                                $state.go('userList');
+                            if (resp.userId) {
+                                $state.go('userEdit', {id: resp.userId});
                             }
                         });
                     }
