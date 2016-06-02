@@ -70,24 +70,9 @@
         <td class="text-right">{{ rec.totalPayed | number }}</td>
         <td class="text-right">{{ rec.totalDebt | number }}</td>
         <td class="text-center">
-            <div class="btn-group btn-group-xs">
-                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
-                    <i class="fa fa-fw fa-bars"></i> <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-right">
-                    <li>
-                        <a href ng-click="startPay(rec)">
-                            <i class="fa fa-fw fa-list"></i> Оплатить
-                        </a>
-                    </li>
-                    <li>
-                        <a ui-sref="cashPay({ patientService : rec })">
-                            <i class="fa fa-fw fa-search"></i> Открыть
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            <button ng-click="startPay(rec)" class="btn btn-xs btn-success" title="Оплатить">
+                <i class="fa fa-fw fa-credit-card"></i>
+            </button>
         </td>
     </tr>
     </tbody>

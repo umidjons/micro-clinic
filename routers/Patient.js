@@ -7,6 +7,16 @@ var sugar = require('sugar');
 var debug = require('debug')('myclinic:router:patient');
 
 router
+    .param('id', function (req, res, next, id) {
+        models.Patient.findById(id, function (err, patient) {
+            if (err) {
+                return Msg.sendError(res, err);
+            }
+
+            req.patient = patient;
+            next();
+        });
+    })
     .post('/search',
         function (req, res, next) {
             debug(`Search params: ${req.body}`);
@@ -42,6 +52,7 @@ router
                 .find(condition)
                 .limit(20)
                 .sort(sort)
+                .populate('user', 'username lastName firstName middleName')
                 .lean()
                 .exec(function (err, patients) {
                     if (err) {
@@ -62,11 +73,10 @@ router
             });
         })
     .get('/:id', function (req, res) {
-        models.Patient.findOne({_id: req.params.id}, function (err, patient) {
+        req.patient.populate('user', 'username lastName firstName middleName', function (err, patient) {
             if (err) {
                 return Msg.sendError(res, err);
             }
-
             Msg.sendSuccess(res, '', patient, 'Patient:');
         });
     })
@@ -105,6 +115,7 @@ router
                 .skip(skip)
                 .limit(pageSize)
                 .sort({created: -1})
+                .populate('user', 'username lastName firstName middleName')
                 .lean()
                 .exec(function (err, patients) {
                     if (err) {
@@ -124,6 +135,7 @@ router
         let newPatient = new models.Patient(req.body);
         newPatient.created = new Date();
         newPatient.lastVisit = newPatient.created;
+        newPatient.user = req.user._id;
 
         // try to save patient
         newPatient.save(function (err, savedPatient) {
@@ -137,27 +149,49 @@ router
         });
     })
     .put('/:id', function (req, res) {
-        //debug(`Request body: ${req.body}`);
-        debug(`id: ${req.params.id}`);
+        debug(`Updating patient with id: ${req.params.id}`);
 
-        models.Patient.update({_id: req.params.id}, req.body, function (err, raw) {
+        // merge existing data with modified data
+        req.patient = Object.assign(req.patient, req.body);
+
+        req.patient.save(function (err, patient) {
             if (err) {
                 return Msg.sendError(res, err);
             }
 
-            Msg.sendSuccess(res, 'Данные успешно сохранены.', req.body);
+            Msg.sendSuccess(res, 'Данные успешно сохранены.', patient);
         });
     })
-    .delete('/:id', function (req, res) {
-        debug(`id: ${req.params.id}`);
+    .delete('/:id',
+        function (req, res, next) {
+            debug(`Checking patient services before deleting. Patient id: ${req.params.id}`);
+            models.PatientService.count({patientId: req.params.id, 'pays.0': {$exists: true}})
+                .exec(function (err, srvCount) {
+                    if (err) {
+                        return Msg.sendError(res, err);
+                    }
 
-        models.Patient.remove({_id: req.params.id}, function (err) {
-            if (err) {
-                return Msg.sendError(res, err);
-            }
+                    debug(`Payed patient services count: ${srvCount}`);
 
-            Msg.sendSuccess(res, 'Запись удален!');
+                    if (srvCount > 0) {
+                        return Msg.sendError(res, 'Нельзя удалить пациента с оплаченными услугами.');
+                    }
+
+                    next();
+                });
+        },
+        function (req, res) {
+            debug(`Deleting patient with id: ${req.params.id}`);
+
+            req.patient.remove(function (err) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+
+                //todo: Delete related patient services
+
+                Msg.sendSuccess(res, 'Запись удален!');
+            });
         });
-    });
 
 module.exports = router;

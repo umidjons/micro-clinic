@@ -17,7 +17,7 @@ var CashSchema = mongoose.Schema({
     amount: {type: Number, min: 0, required: true},
     state: stateSchema,
     created: {type: Date, required: true, default: new Date()},
-    userId: {type: String, required: true, default: '1'} //todo: set real user id or user schema
+    user: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User'}
 });
 
 /**
@@ -25,7 +25,7 @@ var CashSchema = mongoose.Schema({
  * @param {array} patSrvList array of PatientService models
  * @param {function} cb callback function with one parameter - error.
  */
-CashSchema.statics.preparePays = function (patSrvList, cb) {
+CashSchema.statics.preparePays = function (user, patSrvList, cb) {
     if (!patSrvList || patSrvList.length == 0) {
         return cb('Данные не указаны!');
     }
@@ -61,7 +61,7 @@ CashSchema.statics.preparePays = function (patSrvList, cb) {
                 }
 
                 pay.created = time;
-                pay.userId = 1; // todo: set currently logged in user's id (or model)
+                pay.user = user._id;
 
                 // set pay state
                 pay.state = {_id: 'payed', title: 'Оплачен'};
@@ -110,11 +110,12 @@ CashSchema.statics.savePays = function (patSrvList, cb) {
 
 /**
  * Generates & saves pays for given patient's pending services.
+ * @param {object} user currently logged in user
  * @param {object} payInfo payment info in format
  *   {patientId: XXX, payType: XXX, totalDebt: XXX, total: XXX, totalCash: XXX, totalCashless: XXX, debt: XXX}
  * @param {function} cb callback function with one parameter - error.
  */
-CashSchema.statics.payAll = function (payInfo, cb) {
+CashSchema.statics.payAll = function (user, payInfo, cb) {
     models.PatientService.pendingServicesOf(payInfo.patientId, function (err, patientServices) {
         if (err) {
             return cb(err);
@@ -148,7 +149,7 @@ CashSchema.statics.payAll = function (payInfo, cb) {
                     amount: amount,
                     payType: payInfo.payType,
                     created: time,
-                    userId: 1, // todo: set currently logged in user's id (or model)
+                    user: user._id,
                     state: {_id: 'payed', title: 'Оплачен'}
                 });
 
@@ -185,7 +186,7 @@ CashSchema.statics.payAll = function (payInfo, cb) {
                     amount: amount,
                     payType: {_id: 'cashless', title: 'Безналичные'},
                     created: time,
-                    userId: 1, // todo: set currently logged in user's id (or model)
+                    user: user._id,
                     state: {_id: 'payed', title: 'Оплачен'}
                 });
 
@@ -222,7 +223,7 @@ CashSchema.statics.payAll = function (payInfo, cb) {
                         amount: amount,
                         payType: {_id: 'cash', title: 'Наличные'},
                         created: time,
-                        userId: 1, // todo: set currently logged in user's id (or model)
+                        user: user._id,
                         state: {_id: 'payed', title: 'Оплачен'}
                     });
 

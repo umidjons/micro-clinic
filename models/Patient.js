@@ -23,7 +23,7 @@ var PatientSchema = mongoose.Schema({
     company: {type: String, maxlength: 200},
     lastVisit: {type: Date, required: true},
     created: {type: Date, required: true},
-    userId: {type: String, required: true, default: '1'} //todo: set real user id or user schema
+    user: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User'}
 });
 
 PatientSchema.index({lastName: 1, firstName: 1, middleName: 1, dateOfBirth: 1}, {unique: true});
@@ -61,8 +61,18 @@ PatientSchema.statics.fillAdditions = function (patients, cb) {
 };
 
 PatientSchema.statics.setLastVisit = function (patientId, visitDateTime, cb) {
-    Patient.update({_id: patientId}, {$set: {lastVisit: visitDateTime}}, function (err, raw) {
-        cb(err, raw);
+    Patient.findById(patientId, function (err, patient) {
+        if (err) {
+            return cb(err);
+        }
+        patient.lastVisit = visitDateTime;
+        patient.save(function (err, pat) {
+            if (err) {
+                return cb(err);
+            }
+
+            cb(null, pat);
+        });
     });
 };
 

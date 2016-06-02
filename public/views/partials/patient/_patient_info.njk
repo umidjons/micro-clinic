@@ -47,5 +47,14 @@
         <td class="cell-title">Адрес:</td>
         <td colspan="9">{{ patient.address }}</td>
     </tr>
+
+    <tr>
+        <td class="cell-title">Дата регистрации:</td>
+        <td>{{ patient.created | date: 'medium' }}</td>
+        <td class="cell-title">Последняя посещения:</td>
+        <td>{{ patient.lastVisit | date: 'medium' }}</td>
+        <td class="cell-title">Пользователь:</td>
+        <td title="{{ patient.user.fullName }}">{{ patient.user.username }}</td>
+    </tr>
     </tbody>
 </table>

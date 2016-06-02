@@ -8,18 +8,28 @@ var mongoose = require('mongoose');
 var F = require('../include/F');
 
 router
-    .get('/:id', function (req, res) {
-        debug(`id: ${req.params.id}`);
-        models.PatientService.findOne({_id: req.params.id}, function (err, patientService) {
+    .param('id', function (req, res, next, id) {
+        debug(`param(id): ${id}`);
+        models.PatientService.findById(id, function (err, patSrv) {
             if (err) {
                 return Msg.sendError(res, err);
             }
 
-            Msg.sendSuccess(res, '', patientService, 'Patient:');
+            req.patientService = patSrv;
+            next();
+        });
+    })
+    .get('/:id', function (req, res) {
+        req.patientService.populate('user', 'username lastName firstName middleName', function (err, patSrv) {
+            if (err) {
+                return Msg.sendError(res, err);
+            }
+            Msg.sendSuccess(res, '', patSrv, 'Patient Service:');
         });
     })
     .get('/for/:patientId', function (req, res) {
         debug(`patientId: ${req.params.patientId}`);
+        // do not populate user attribute, because it is unnecessary here
         models.PatientService.find({patientId: req.params.patientId}, function (err, patientServices) {
             if (err) {
                 return Msg.sendError(res, err);
@@ -42,8 +52,6 @@ router
                 return Msg.sendError(res, 'Услуги не указаны');
             }
 
-            // todo: set currently logged in user's id (or model)
-            let user = 1;
             let time = new Date();
             for (let srv of req.body.services) {
                 // keep original service id
@@ -52,7 +60,8 @@ router
                 // delete _id, because it belongs to the service, not patient service
                 delete srv._id;
 
-                srv.userId = user;
+                // currently logged in user
+                srv.user = req.user._id;
 
                 // there is already 'created' field from Service model, we MUST override it
                 srv.created = time;
@@ -72,14 +81,12 @@ router
             models.PatientService.create(req.body.services, function (err, patientServices) {
                 // if there is error, send it and stop handler with return
                 if (err) {
-                    console.log('Err:', err);
                     return Msg.sendError(res, err);
                 }
 
                 // update last visit
-                models.Patient.setLastVisit(req.body.patientId, req.body.services[0].created, function (err, raw) {
+                models.Patient.setLastVisit(req.body.patientId, req.body.services[0].created, function (err, patient) {
                     if (err) {
-                        console.log('Err on setting last visit date and time:', err);
                         return Msg.sendError(res, err);
                     }
 
@@ -90,14 +97,8 @@ router
         }
     )
     .put('/:id', function (req, res) {
-        var patSrv = req.body;
-        var id = req.params.id;
-
-        debug(`id: ${id}`);
-        debug(F.inspect(patSrv, 'Patient service to update:', true));
-        //return Msg.sendSuccess(res, 'Данные успешно сохранены.');
-
-        models.PatientService.update({_id: id}, patSrv, function (err, raw) {
+        req.patientService = Object.assign(req.patientService, req.body);
+        req.patientService.save(function (err, patSrv) {
             if (err) {
                 return Msg.sendError(res, err);
             }
@@ -145,23 +146,16 @@ router
         function (req, res, next) {
             debug(`Checking patient service state before deleting. id=${req.params.id}`);
 
-            models.PatientService.findById({_id: req.params.id})
-                .exec(function (err, srv) {
-                    if (err) {
-                        return Msg.sendError(res, err);
-                    }
+            if (req.patientService.state._id != 'new') {
+                return Msg.sendError(res, `Нельзя удалить услугу в состоянии "${req.patientService.state.title}"`);
+            }
 
-                    if (srv.state._id != 'new') {
-                        return Msg.sendError(res, `Нельзя удалить услугу в состоянии "${srv.state.title}"`);
-                    }
-
-                    next();
-                });
+            next();
         },
         function (req, res) {
             debug(`Delete patient service id: ${req.params.id}`);
 
-            models.PatientService.remove({_id: req.params.id}, function (err) {
+            req.patientService.remove(function (err) {
                 if (err) {
                     return Msg.sendError(res, err);
                 }

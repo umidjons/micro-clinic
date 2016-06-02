@@ -34,7 +34,7 @@ var PatientServiceSchema = mongoose.Schema({
     },
     state: stateSchema,
     created: {type: Date, required: true, default: new Date()},
-    userId: {type: String, required: true, default: '1'} //todo: set real user id or user schema
+    user: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User'}
 });
 
 PatientServiceSchema.statics.pendingPatients = function (cb) {

@@ -55,9 +55,9 @@ router
     .post('/pay-all', function (req, res) {
         var payInfo = req.body.pay;
 
-        F.inspect(payInfo, 'Pay Info');
+        debug('Paying all patient services.' + F.inspect(payInfo, 'Pay Info', true));
 
-        models.Cash.payAll(payInfo, function (err) {
+        models.Cash.payAll(req.user, payInfo, function (err) {
             if (err) {
                 return Msg.sendError(res, err);
             }
@@ -67,7 +67,7 @@ router
     })
     .post('/', function (req, res, next) {
         var patSrvList = req.body.pendingServices;
-        models.Cash.preparePays(patSrvList, function (err) {
+        models.Cash.preparePays(req.user, patSrvList, function (err) {
             if (err) {
                 return Msg.sendError(err);
             }
@@ -75,7 +75,7 @@ router
         });
     }, function (req, res) {
         // output request body
-        F.inspect(req.body, 'Modified patient services:');
+        debug('Saving pays: ' + F.inspect(req.body, 'Modified patient services:', true));
 
         models.Cash.savePays(req.body.pendingServices, function (err) {
             if (err) {
