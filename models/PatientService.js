@@ -88,6 +88,8 @@ PatientServiceSchema.statics.payedPatients = function (startDate, endDate, cb) {
     startDate.setHours(0, 0, 0, 0);
     endDate.setHours(23, 59, 59, 999);
 
+    //todo: implement total by refund
+
     PatientService.aggregate([
         //db.patientservices.aggregate([
         {
@@ -101,7 +103,25 @@ PatientServiceSchema.statics.payedPatients = function (startDate, endDate, cb) {
         {
             $group: {
                 _id: {patientId: '$patientId', 'payTime': '$pays.created'},
-                payAmount: {$sum: '$pays.amount'}
+                payAmount: {$sum: '$pays.amount'},
+                payAmountCash: {
+                    $sum: {
+                        $cond: [
+                            {$eq: ['$pays.payType._id', 'cash']},
+                            '$pays.amount',
+                            0
+                        ]
+                    }
+                },
+                payAmountCashless: {
+                    $sum: {
+                        $cond: [
+                            {$eq: ['$pays.payType._id', 'cashless']},
+                            '$pays.amount',
+                            0
+                        ]
+                    }
+                }
             }
         },
         {
@@ -124,7 +144,9 @@ PatientServiceSchema.statics.payedPatients = function (startDate, endDate, cb) {
                 patientId: '$_id.patientId',
                 patient: '$patient',
                 payTime: '$_id.payTime',
-                payAmount: '$payAmount'
+                payAmount: '$payAmount',
+                payAmountCash: '$payAmountCash',
+                payAmountCashless: '$payAmountCashless'
             }
         }
     ], function (err, records) {
