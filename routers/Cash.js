@@ -57,6 +57,25 @@ router
                 return Msg.sendError(res, 'Необходимые данные для распечатки чека не найдены.');
             }
 
+            // 'include cash' flag doesn't set, so exclude cash type pays
+            if (!(1 * req.query.ic)) {
+                debug('"ic" query parameter is not set, so exclude cash type pays.');
+                records = records.filter(function (rec) {
+                    return rec.pays.payType._id != 'cash';
+                });
+            }
+
+            if (!(1 * req.query.icl)) {
+                debug('"icl" query parameter is not set, so exclude cashless type pays.');
+                records = records.filter(function (rec) {
+                    return rec.pays.payType._id != 'cashless';
+                });
+            }
+
+            if (!records || !records.length) {
+                return Msg.sendError(res, 'После фильтрации оплаты по типу необходимые данные для распечатки чека не найдены.');
+            }
+
             models.Patient.findById(req.params.patientId, function (err, patient) {
                 if (err) {
                     return Msg.sendError(res, err);
@@ -102,12 +121,12 @@ router
 
         debug('Paying all patient services.' + F.inspect(payInfo, 'Pay Info', true));
 
-        models.Cash.payAll(req.user, payInfo, function (err) {
+        models.Cash.payAll(req.user, payInfo, function (err, payTime) {
             if (err) {
                 return Msg.sendError(res, err);
             }
 
-            return Msg.sendSuccess(res, 'Данные успешно сохранены.');
+            return Msg.sendSuccess(res, 'Данные успешно сохранены.', {payTime: payTime});
         });
     })
     .post('/', function (req, res, next) {

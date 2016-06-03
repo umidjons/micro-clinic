@@ -48,6 +48,30 @@
                             <label class="req">Долг после оплаты</label>
                             <input ng-model="Pay.debt" class="form-control" readonly required>
                         </div>
+
+                        <div class="checkbox">
+                            <label>
+                                <input ng-model="Pay.check.print" type="checkbox"> Печатать чек
+                            </label>
+                        </div>
+
+                        <div class="checkbox" ng-class="{'disabled': !Pay.check.print}">
+                            <label>
+                                <input ng-model="Pay.check.includeCash"
+                                       ng-disabled="!Pay.check.print"
+                                       ng-required="Pay.check.print && !Pay.check.includeCashless"
+                                       type="checkbox"> Включить в чек наличные оплаты
+                            </label>
+                        </div>
+
+                        <div class="checkbox" ng-class="{'disabled': !Pay.check.print}">
+                            <label>
+                                <input ng-model="Pay.check.includeCashless"
+                                       ng-disabled="!Pay.check.print"
+                                       ng-required="Pay.check.print && !Pay.check.includeCash"
+                                       type="checkbox"> Включить в чек безналичные оплаты
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>

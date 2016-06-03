@@ -264,7 +264,7 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
             if (err) {
                 return cb(err);
             }
-            return cb();
+            return cb(null, time);
         });
     });
 };

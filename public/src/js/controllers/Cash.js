@@ -16,6 +16,11 @@
                     container: 'body',
                     backdrop: 'static',
                     controller: function () {
+                        this.check = {
+                            print: true, // true - print check
+                            includeCash: true, // true - include cash type pays into check
+                            includeCashless: false // true - include cashless type pays into check
+                        };
                         this.type = undefined;
                         this.totalMax = patientService.totalDebt;
                         this.total = patientService.totalDebt;
@@ -64,16 +69,33 @@
                                     };
 
                                     cash.$payAll(function (resp) {
-                                        if (resp.code == 'success') {
+                                        if (resp.payTime) {
                                             // close modal & aside
                                             modal.hide();
                                             asidePay.hide();
-                                            // reload page
-                                            $state.transitionTo('cashList', null, {
-                                                reload: true,
-                                                inherit: false,
-                                                notify: true
-                                            });
+
+                                            if (ctrl.check.print) {
+                                                Cash.printCheck(
+                                                    patientService.patient._id,
+                                                    resp.payTime,
+                                                    ctrl.check.includeCash,
+                                                    ctrl.check.includeCashless,
+                                                    function () {
+                                                        // reload page
+                                                        $state.transitionTo('cashList', null, {
+                                                            reload: true,
+                                                            inherit: false,
+                                                            notify: true
+                                                        });
+                                                    });
+                                            } else {
+                                                // reload page
+                                                $state.transitionTo('cashList', null, {
+                                                    reload: true,
+                                                    inherit: false,
+                                                    notify: true
+                                                });
+                                            }
                                         }
                                     });
                                 }
@@ -194,7 +216,7 @@
 
             init();
         })
-        .controller('CashRegCtrl', function ($scope, $state, Cash) {
+        .controller('CashRegCtrl', function ($scope, $state, $aside, Msg, Cash) {
             $scope.filter = {
                 startDate: Date.create('today'),
                 endDate: Date.create('today')
@@ -220,28 +242,39 @@
             };
 
             $scope.printCheck = function (pay) {
-                Cash.printCheck({
-                    patientId: pay.patientId,
-                    payTime: pay.payTime
-                }, function (resp) {
-                    if (resp.checkContent) {
-                        // open print window
-                        let windowOptions = [
-                            "width=800",
-                            "height=600",
-                            "menubar=0",
-                            "toolbar=0",
-                            "location=0",
-                            "status=0",
-                            "resizable=0",
-                            "scrollbars=0",
-                            "modal=on"
-                        ].join(",");
-                        let popupWindow = window.open(null, 'printWindow', windowOptions);
-                        popupWindow.document.open();
-                        popupWindow.document.write(resp.checkContent);
-                        popupWindow.document.close();
-                    }
+                // create and show aside, also keep it in a property
+                let asideCheck = $aside({
+                    scope: $scope,
+                    templateUrl: 'partials/cash/_aside_check.html',
+                    title: 'Распечатка чека',
+                    container: 'body',
+                    backdrop: 'static',
+                    controller: function () {
+                        this.check = {
+                            includeCash: true, // true - include cash type pays into check
+                            includeCashless: false // true - include cashless type pays into check
+                        };
+                        this.fullName = pay.patient.lastName + ' ' + pay.patient.firstName + ' '
+                            + pay.patient.middleName;
+
+                        let ctrl = this;
+
+                        this.print = function () {
+                            // close aside
+                            asideCheck.hide();
+
+                            Cash.printCheck(
+                                pay.patientId,
+                                pay.payTime,
+                                ctrl.check.includeCash,
+                                ctrl.check.includeCashless,
+                                function () {
+                                    Msg.success('Распечатка чека завершена.');
+                                });
+                        };
+                    },
+                    controllerAs: 'Check',
+                    show: true
                 });
             };
 

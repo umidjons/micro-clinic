@@ -1,0 +1,46 @@
+<div class="aside" tabindex="-1" role="dialog" style="max-width: 60%;">
+    <div class="aside-dialog">
+        <div class="aside-content" ng-form="formCheck">
+
+            <div class="aside-header" ng-show="title">
+                <button type="button" class="close" ng-click="$hide()">&times;</button>
+                <h4 class="aside-title" ng-bind="title"></h4>
+            </div>
+
+            <div class="aside-body">
+                <div class="col-sm-12">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label>ФИО</label>
+                            <p class="form-control-static bold text-success">{{ Check.fullName }}</p>
+                        </div>
+
+                        <div class="checkbox">
+                            <label>
+                                <input ng-model="Check.check.includeCash"
+                                       type="checkbox"> Включить в чек наличные оплаты
+                            </label>
+                        </div>
+
+                        <div class="checkbox">
+                            <label>
+                                <input ng-model="Check.check.includeCashless"
+                                       type="checkbox"> Включить в чек безналичные оплаты
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="aside-footer">
+                <button type="button" class="btn btn-danger" ng-click="$hide()">Отмена</button>
+                <button ng-click="Check.print()"
+                        ng-disabled="formCheck.$invalid || !(Check.check.includeCash || Check.check.includeCashless)"
+                        class="btn btn-success">
+                    <i class="fa fa-fw fa-print"></i> Печатать чек
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

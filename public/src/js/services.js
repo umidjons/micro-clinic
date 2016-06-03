@@ -422,7 +422,7 @@
             return Modal;
         })
         .factory('Cash', function ($resource) {
-            return $resource(
+            var CashResource = $resource(
                 '/cash/:id',
                 {id: '@_id'},
                 {
@@ -453,12 +453,45 @@
                         method: 'POST',
                         url: '/cash/pay-all'
                     },
-                    printCheck: {
+                    getCheck: {
                         method: 'GET',
                         url: '/cash/registry/print-check/:patientId/:payTime'
                     }
                 }
             );
+
+            CashResource.printCheck = function (patientId, payTime, includeCash, includeCashless, cb) {
+                CashResource.getCheck({
+                    patientId: patientId,
+                    payTime: payTime,
+                    ic: 1 * includeCash,
+                    icl: 1 * includeCashless
+                }, function (resp) {
+                    if (resp.checkContent) {
+                        // open print window
+                        let windowOptions = [
+                            "width=800",
+                            "height=600",
+                            "menubar=0",
+                            "toolbar=0",
+                            "location=0",
+                            "status=0",
+                            "resizable=0",
+                            "scrollbars=0",
+                            "modal=on"
+                        ].join(",");
+                        let popupWindow = window.open(null, 'printWindow', windowOptions);
+                        popupWindow.document.open();
+                        popupWindow.document.write(resp.checkContent);
+                        popupWindow.document.close();
+                    }
+                    if (angular.isFunction(cb)) {
+                        cb();
+                    }
+                });
+            };
+
+            return CashResource;
         })
         .factory('PayType', function () {
             return {
