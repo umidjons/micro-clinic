@@ -3,6 +3,7 @@
 var mongoose = require('mongoose');
 var async = require('async');
 var stateSchema = require('./State').StateSchema;
+var branchSchema = require('./Branch').BranchSchema;
 var models = require('.');
 var F = require('../include/F');
 var debug = require('debug')('myclinic:model:cash');
@@ -15,6 +16,7 @@ var PayTypeSchema = mongoose.Schema({
 var CashSchema = mongoose.Schema({
     payType: PayTypeSchema,
     amount: {type: Number, min: 0, required: true},
+    branch: {type: branchSchema, required: true},
     state: stateSchema,
     created: {type: Date, required: true, default: new Date()},
     user: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User'}
@@ -62,6 +64,7 @@ CashSchema.statics.preparePays = function (user, patSrvList, cb) {
 
                 pay.created = time;
                 pay.user = user._id;
+                pay.branch = user.branch;
 
                 // set pay state
                 pay.state = {_id: 'payed', title: 'Оплачен'};
@@ -98,7 +101,7 @@ CashSchema.statics.savePays = function (patSrvList, cb) {
         function (err) {
             if (err) {
                 // One of the patient service has error, stop all processing
-                console.log('Err:', err);
+                debug(F.inspect(err, 'Err:', true));
                 return cb(err);
             } else {
                 // all patient services successfully saved
@@ -149,6 +152,7 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
                     amount: amount,
                     payType: payInfo.payType,
                     created: time,
+                    branch: user.branch,
                     user: user._id,
                     state: {_id: 'payed', title: 'Оплачен'}
                 });
@@ -186,6 +190,7 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
                     amount: amount,
                     payType: {_id: 'cashless', title: 'Безналичные'},
                     created: time,
+                    branch: user.branch,
                     user: user._id,
                     state: {_id: 'payed', title: 'Оплачен'}
                 });
@@ -223,6 +228,7 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
                         amount: amount,
                         payType: {_id: 'cash', title: 'Наличные'},
                         created: time,
+                        branch: user.branch,
                         user: user._id,
                         state: {_id: 'payed', title: 'Оплачен'}
                     });

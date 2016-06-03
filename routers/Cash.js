@@ -53,6 +53,10 @@ router
                 return Msg.sendError(res, err);
             }
 
+            if (!records || !records.length) {
+                return Msg.sendError(res, 'Необходимые данные для распечатки чека не найдены.');
+            }
+
             models.Patient.findById(req.params.patientId, function (err, patient) {
                 if (err) {
                     return Msg.sendError(res, err);
@@ -67,7 +71,7 @@ router
                 res.render('partials/cash/check',
                     {
                         payTime: F.formatDateTime(req.params.payTime),
-                        branch: req.user.branch.title,
+                        branch: records[0].pays.branch.title,
                         patient: patient,
                         records: records,
                         total: F.formatNumber(total)
