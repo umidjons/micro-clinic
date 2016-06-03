@@ -4,6 +4,7 @@ var bcrypt = require('bcrypt-nodejs');
 var mongoose = require('mongoose');
 require('mongoose-type-email');
 var stateSchema = require('./State').StateSchema;
+var branchSchema = require('./Branch').BranchSchema;
 var debug = require('debug')('myclinic:model:user');
 var F = require('../include/F');
 
@@ -20,6 +21,7 @@ var UserSchema = mongoose.Schema({
     state: stateSchema,
     // Permission object, attributes are permission names, values are true/false, e.g.: {"user:create":true}
     permissions: {},
+    branch: {type: branchSchema},
     created: {type: Date, required: true, default: new Date()},
     user: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User'}
 });
@@ -97,7 +99,7 @@ UserSchema.statics.sortPermissions = function (userJson) {
         let perms = {};
         Object.keys(userJson.permissions)
             .sort()
-            .forEach(function (permName, value) {
+            .forEach(function (permName) {
                 perms[permName] = userJson.permissions[permName];
             });
         userJson.permissions = perms;

@@ -47,7 +47,7 @@
         .factory('Auth', function ($http, $localStorage, $rootScope) {
             return {
                 login: function (username, password, branch, callback) {
-                    $http.post('/authenticate', {username: username, password: password})
+                    $http.post('/authenticate', {username: username, password: password, branch: branch})
                         .success(function (resp) {
                             if (resp.token) {
                                 $rootScope.$localStorage = $localStorage;
@@ -452,6 +452,10 @@
                     payAll: {
                         method: 'POST',
                         url: '/cash/pay-all'
+                    },
+                    printCheck: {
+                        method: 'GET',
+                        url: '/cash/registry/print-check/:patientId/:payTime'
                     }
                 }
             );

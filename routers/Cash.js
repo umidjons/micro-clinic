@@ -41,6 +41,47 @@ router
             Msg.sendSuccess(res, '', records);
         });
     })
+    .get('/registry/print-check/:patientId/:payTime', function (req, res) {
+        debug(`Print check. Patient id: ${req.params.patientId}. Pay time: ${req.params.payTime}`);
+
+        if (!req.params.patientId || !req.params.payTime) {
+            return Msg.sendError(res, 'Указаны неправильные параметры.');
+        }
+
+        models.PatientService.payDetails(req.params.patientId, req.params.payTime, function (err, records) {
+            if (err) {
+                return Msg.sendError(res, err);
+            }
+
+            models.Patient.findById(req.params.patientId, function (err, patient) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+
+                let total = 0;
+                for (let rec of records) {
+                    total += rec.pays.amount;
+                }
+
+                // send rendered check's content
+                res.render('partials/cash/check',
+                    {
+                        payTime: F.formatDateTime(req.params.payTime),
+                        branch: req.user.branch.title,
+                        patient: patient,
+                        records: records,
+                        total: F.formatNumber(total)
+                    },
+                    function (err, html) {
+                        if (err) {
+                            return Msg.sendError(res, err);
+                        }
+                        Msg.sendSuccess(res, '', {checkContent: html});
+                    }
+                );
+            });
+        });
+    })
     .post('/pending-services-of/:patientId', function (req, res) {
         debug(`patientId: ${req.params.patientId}`);
 

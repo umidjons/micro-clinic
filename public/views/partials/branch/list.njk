@@ -8,6 +8,7 @@
     <tr>
         <th>№</th>
         <th>Наименование</th>
+        <th>Коротко</th>
         <th>Тел</th>
         <th>Адрес</th>
         <th>Дата регистрации</th>
@@ -25,6 +26,7 @@
     <tr ng-repeat="branch in branches">
         <td class="text-right">{{ $index + 1 }}</td>
         <td>{{ branch.title }}</td>
+        <td>{{ branch.shortTitle }}</td>
         <td>{{ branch.phone }}</td>
         <td>{{ branch.address }}</td>
         <td>{{ branch.created | date:'medium' }}</td>

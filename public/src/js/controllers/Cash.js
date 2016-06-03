@@ -219,6 +219,32 @@
                 pay.payDetailsOpened = !pay.payDetailsOpened;
             };
 
+            $scope.printCheck = function (pay) {
+                Cash.printCheck({
+                    patientId: pay.patientId,
+                    payTime: pay.payTime
+                }, function (resp) {
+                    if (resp.checkContent) {
+                        // open print window
+                        let windowOptions = [
+                            "width=800",
+                            "height=600",
+                            "menubar=0",
+                            "toolbar=0",
+                            "location=0",
+                            "status=0",
+                            "resizable=0",
+                            "scrollbars=0",
+                            "modal=on"
+                        ].join(",");
+                        let popupWindow = window.open(null, 'printWindow', windowOptions);
+                        popupWindow.document.open();
+                        popupWindow.document.write(resp.checkContent);
+                        popupWindow.document.close();
+                    }
+                });
+            };
+
             $scope.resetSearch = function () {
                 $scope.sort = {by: undefined, reverse: false};
                 $scope.search = {};

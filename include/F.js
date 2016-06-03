@@ -1,6 +1,7 @@
 'use strict';
 
 var util = require('util');
+var sugar = require('sugar');
 
 class F {
 
@@ -16,6 +17,24 @@ class F {
             return prefix + ' ' + result;
         }
         console.log(prefix, result);
+    }
+
+    /**
+     * Formats date object as full date and time string.
+     * @param {Date} date Date object to format.
+     * @returns {*|String} Formatted string in <strong>dd.MM.yyyy HH:mm:ss</strong> format.
+     */
+    static formatDateTime(date) {
+        return Date.create(date).format('{dd}.{MM}.{yyyy} {HH}:{mm}:{ss}');
+    }
+
+    /**
+     * Formats number object.
+     * @param {Number} number Number to format.
+     * @returns {*|String} Formatted string in <strong>NNN NNN.NN</strong> format.
+     */
+    static formatNumber(number) {
+        return number.format(2, ' ');
     }
 }
 

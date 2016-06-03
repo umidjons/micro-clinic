@@ -3,6 +3,7 @@ var stateSchema = require('./State').StateSchema;
 
 var BranchSchema = mongoose.Schema({
     title: {type: String, required: true, maxlength: 100},
+    shortTitle: {type: String, required: true, maxlength: 50},
     address: {type: String, maxlength: 500},
     phone: {type: String, match: /^\d{5,12}$/},
     state: stateSchema,

@@ -11,7 +11,7 @@ var subSubCategorySchema = require('./ServiceSubSubCategory').ServiceSubSubCateg
 var sugar = require('sugar');
 
 var PatientServiceSchema = mongoose.Schema({
-    patientId: {type: mongoose.Schema.Types.ObjectId, required: true},
+    patientId: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Patient'},
     serviceId: {type: mongoose.Schema.Types.ObjectId, required: true},
     category: categorySchema,
     subcategory: subCategorySchema,

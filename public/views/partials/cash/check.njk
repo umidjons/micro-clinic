@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Чек</title>
+
+    <style>
+        body {
+            color: #000;
+            background: #fff;
+            font-size: 10px;
+            width: 56mm;
+            margin: 0;
+            border: 1px solid #000;
+        }
+
+        ol {
+            padding: 0 4.5mm;
+            margin: 0;
+            page-break-inside: avoid;
+        }
+
+        ol li {
+            padding: 0;
+            margin: 1px;
+        }
+
+        p {
+            padding: 0;
+            margin: 0;
+        }
+
+        @page {
+            margin: 5mm;
+        }
+    </style>
+</head>
+<body onload="window.print()" onafterprint="self.close()">
+####################################
+<p><strong>ФИО:</strong> {{{  patient.lastName }}} {{{  patient.firstName }}} {{{  patient.middleName }}}</p>
+<p><strong>Название клиники:</strong> {{{  branch }}}</p>
+<p><strong>Дата:</strong> {{{ payTime }}}</p>
+<ol>
+    {% for rec in records %}
+    <li>{{{ rec.title }}}</li>
+    {% endfor %}
+</ol>
+<p><strong>Общая сумма:</strong> {{{ total }}} сум</p>
+####################################
+</body>
+</html>

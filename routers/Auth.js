@@ -26,6 +26,10 @@ module.exports = function (app) {
             }
 
             if (user) { // success
+
+                // populate currently chosen branch - it will be available via req.user.branch
+                user.branch = jwtPayload.branch;
+
                 return done(null, user);
             } else { // no err, but user not found
                 return done(null, false);
@@ -38,6 +42,9 @@ module.exports = function (app) {
         .post('/authenticate', function (req, res) {
             var username = req.body.username;
             var password = req.body.password;
+            var branch = req.body.branch;
+
+            debug(F.inspect(branch, 'Branch:', true));
 
             models.User.findOne({username: username.toLowerCase()}, function (err, user) {
                 debug(F.inspect(err, 'Err:', true));
@@ -69,6 +76,9 @@ module.exports = function (app) {
 
                     // do not expose password
                     user.password = undefined;
+
+                    // set branch, this branch will be available on JWT
+                    user.branch = branch;
 
                     // generate token and response
                     let userJson = user.toJSON();
