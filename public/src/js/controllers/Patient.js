@@ -107,20 +107,35 @@
             };
 
         })
-        .controller('PatientsCtrl', function ($scope, Modal, Patient, Pager) {
+        .controller('PatientsCtrl', function ($scope, Modal, Patient, Pager, Branch) {
             $scope.pagination = Pager.new();
             $scope.todaysOnly = 1;
+            $scope.branches = Branch.query();
+
+            $scope.filter = {
+                branch: undefined,
+                by: function (branch) {
+                    $scope.filter.branch = branch;
+                    $scope.reloadPage();
+                }
+            };
 
             $scope.pageChanged = function () {
                 $scope.reloadPage();
             };
 
             $scope.reloadPage = function () {
-                Patient.query({
-                        p: $scope.pagination.current,
-                        ps: $scope.pagination.pageSize,
-                        today: $scope.todaysOnly
-                    },
+                let params = {
+                    p: $scope.pagination.current,
+                    ps: $scope.pagination.pageSize,
+                    today: $scope.todaysOnly
+                };
+
+                if ($scope.filter.branch) {
+                    params.branch = $scope.filter.branch._id;
+                }
+
+                Patient.query(params,
                     function (patients, headers) {
                         $scope.patients = patients;
                         $scope.pagination.total = headers('X-Total-Items');

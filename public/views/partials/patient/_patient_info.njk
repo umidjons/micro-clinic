@@ -55,6 +55,8 @@
         <td>{{ patient.lastVisit | date: 'medium' }}</td>
         <td class="cell-title">Пользователь:</td>
         <td title="{{ patient.user.fullName }}">{{ patient.user.username }}</td>
+        <td class="cell-title">Филиал:</td>
+        <td>{{ patient.branch.shortTitle }}</td>
     </tr>
     </tbody>
 </table>

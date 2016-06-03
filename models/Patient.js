@@ -23,7 +23,8 @@ var PatientSchema = mongoose.Schema({
     company: {type: String, maxlength: 200},
     lastVisit: {type: Date, required: true},
     created: {type: Date, required: true},
-    user: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User'}
+    user: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User'},
+    branch: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Branch'}
 });
 
 PatientSchema.index({lastName: 1, firstName: 1, middleName: 1, dateOfBirth: 1}, {unique: true});

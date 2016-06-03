@@ -66,6 +66,8 @@
             <th>Тел</th>
             <th>Адрес</th>
             <th>Дата регистрации</th>
+            <th>Пользователь</th>
+            <th>Филиал</th>
             <th>Последнее посещение</th>
             <th>Долг</th>
             <th class="text-center">
@@ -90,6 +92,10 @@
             <td>{{ pat.cellPhone }}</td>
             <td>{{ pat.address }}</td>
             <td>{{ pat.created | date:'medium' }}</td>
+            <td title="{{ pat.user.lastName + ' ' + pat.user.firstName + ' ' + pat.user.middleName }}">
+                {{ pat.user.username }}
+            </td>
+            <td>{{ pat.branch.shortTitle }}</td>
             <td>{{ pat.lastVisit | date:'medium' }}</td>
             <td class="text-right">{{ pat.debt | number:2 }}</td>
             <td class="text-center">

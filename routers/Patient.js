@@ -53,6 +53,7 @@ router
                 .limit(20)
                 .sort(sort)
                 .populate('user', 'username lastName firstName middleName')
+                .populate('branch', 'shortTitle')
                 .lean()
                 .exec(function (err, patients) {
                     if (err) {
@@ -73,12 +74,14 @@ router
             });
         })
     .get('/:id', function (req, res) {
-        req.patient.populate('user', 'username lastName firstName middleName', function (err, patient) {
-            if (err) {
-                return Msg.sendError(res, err);
-            }
-            Msg.sendSuccess(res, '', patient, 'Patient:');
-        });
+        req.patient
+            .populate('user', 'username lastName firstName middleName')
+            .populate('branch', 'shortTitle', function (err, patient) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+                Msg.sendSuccess(res, '', patient, 'Patient:');
+            });
     })
     .get('/',
         function (req, res, next) {
@@ -90,6 +93,11 @@ router
                 let beginOfDay = Date.create('today').beginningOfDay();
                 let endOfDay = Date.create('today').endOfDay();
                 req.condition = {lastVisit: {$gte: beginOfDay, $lte: endOfDay}};
+            }
+
+            if (req.query.branch) {
+                // filter by branch id
+                req.condition.branch = req.query.branch;
             }
 
             // calculate count of patients
@@ -116,6 +124,7 @@ router
                 .limit(pageSize)
                 .sort({created: -1})
                 .populate('user', 'username lastName firstName middleName')
+                .populate('branch', 'shortTitle')
                 .lean()
                 .exec(function (err, patients) {
                     if (err) {
@@ -136,6 +145,7 @@ router
         newPatient.created = new Date();
         newPatient.lastVisit = newPatient.created;
         newPatient.user = req.user._id;
+        newPatient.branch = req.user.branch._id;
 
         // try to save patient
         newPatient.save(function (err, savedPatient) {
