@@ -8,7 +8,9 @@ var F = require('../include/F');
 
 router
     .post('/pending-patients', function (req, res) {
-        models.PatientService.pendingPatients(function (err, records) {
+        debug(F.inspect(req.body.branch, 'Filter pending patients by branch:', true));
+
+        models.PatientService.pendingPatients(req.body.branch, function (err, records) {
             if (err) {
                 return Msg.sendError(res, err);
             }
@@ -107,14 +109,18 @@ router
     })
     .post('/pending-services-of/:patientId', function (req, res) {
         debug(`patientId: ${req.params.patientId}`);
+        debug(`branch: ${req.query.branch}`);
 
-        models.PatientService.pendingServicesOf(req.params.patientId, function (err, patientServices) {
-            if (err) {
-                return Msg.sendError(res, err);
-            }
+        models.PatientService.pendingServicesOf(
+            req.query.branch,
+            req.params.patientId,
+            function (err, patientServices) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
 
-            Msg.sendSuccess(res, '', patientServices, 'List of patient services:');
-        });
+                Msg.sendSuccess(res, '', patientServices, 'List of patient services:');
+            });
     })
     .post('/pay-all', function (req, res) {
         var payInfo = req.body.pay;

@@ -119,7 +119,7 @@ CashSchema.statics.savePays = function (patSrvList, cb) {
  * @param {function} cb callback function with one parameter - error.
  */
 CashSchema.statics.payAll = function (user, payInfo, cb) {
-    models.PatientService.pendingServicesOf(payInfo.patientId, function (err, patientServices) {
+    models.PatientService.pendingServicesOf(payInfo.branch, payInfo.patientId, function (err, patientServices) {
         if (err) {
             return cb(err);
         }
@@ -137,8 +137,8 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
         // populating pays for each pending service
         for (let patSrv of patientServices) {
 
-            debug(F.inspect(patSrv, 'Patient Service=', true));
-            debug(F.inspect(pType, 'Pay Type=', true));
+            //debug(F.inspect(patSrv, 'Patient Service=', true));
+            //debug(F.inspect(pType, 'Pay Type=', true));
 
             if (pType == 'cash' || pType == 'cashless') {
                 // determine amount

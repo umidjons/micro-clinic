@@ -19,6 +19,8 @@
                 <th>Состояние</th>
                 <th>Партнёр</th>
                 <th>Дата</th>
+                <th>Пользователь</th>
+                <th>Филиал</th>
                 <th class="text-right">
                     <div class="btn-group btn-group-xs">
                         <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
@@ -63,6 +65,8 @@
                 <td class="text-center">{{ selSrv.state.title }}</td>
                 <td>{{ selSrv.partner.code }}</td>
                 <td>{{ selSrv.created | date:'medium' }}</td>
+                <td title="{{ selSrv.user.fullName }}">{{ selSrv.user.username }}</td>
+                <td>{{ selSrv.branch.shortTitle }}</td>
 
                 <td class="text-right">
                     <div class="btn-group btn-group-xs">
@@ -120,9 +124,9 @@
                 <th class="text-right" colspan="4">Всего:</th>
                 <th class="text-right">{{ ServiceHelper.AssignedService.total('quantity') | number }}</th>
                 <th></th>
-                <th class="text-right">{{ ServiceHelper.AssignedService.total('price') | number }}</th>
-                <th class="text-right">{{ ServiceHelper.AssignedService.total('payed') | number }}</th>
-                <th class="text-right">{{ ServiceHelper.AssignedService.total('debt') | number }}</th>
+                <th class="text-right">{{ ServiceHelper.AssignedService.total('priceTotal') | number: 2 }}</th>
+                <th class="text-right">{{ ServiceHelper.AssignedService.total('payed') | number: 2 }}</th>
+                <th class="text-right">{{ ServiceHelper.AssignedService.total('debt') | number: 2 }}</th>
             </tr>
             </tfoot>
         </table>

@@ -20,23 +20,29 @@ router
         });
     })
     .get('/:id', function (req, res) {
-        req.patientService.populate('user', 'username lastName firstName middleName', function (err, patSrv) {
-            if (err) {
-                return Msg.sendError(res, err);
-            }
-            Msg.sendSuccess(res, '', patSrv, 'Patient Service:');
-        });
+        req.patientService
+            .populate('user', 'username lastName firstName middleName')
+            .populate('branch', 'shortTitle', function (err, patSrv) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+                Msg.sendSuccess(res, '', patSrv, 'Patient Service:');
+            });
     })
     .get('/for/:patientId', function (req, res) {
         debug(`patientId: ${req.params.patientId}`);
         // do not populate user attribute, because it is unnecessary here
-        models.PatientService.find({patientId: req.params.patientId}, function (err, patientServices) {
-            if (err) {
-                return Msg.sendError(res, err);
-            }
+        models.PatientService
+            .find({patientId: req.params.patientId})
+            .populate('user', 'username lastName firstName middleName')
+            .populate('branch', 'shortTitle')
+            .exec(function (err, patientServices) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
 
-            Msg.sendSuccess(res, '', patientServices, 'List of patient services:');
-        });
+                Msg.sendSuccess(res, '', patientServices, 'List of patient services:');
+            });
     })
     .post('/',
         function (req, res, next) {
@@ -62,6 +68,9 @@ router
 
                 // currently logged in user
                 srv.user = req.user._id;
+
+                // set branch
+                srv.branch = req.user.branch._id;
 
                 // there is already 'created' field from Service model, we MUST override it
                 srv.created = time;

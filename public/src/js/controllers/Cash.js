@@ -2,9 +2,26 @@
     'use strict';
 
     angular.module('MyClinic')
-        .controller('CashListCtrl', function ($scope, $aside, $state, Cash, PayType, Modal) {
+        .controller('CashListCtrl', function ($scope, $aside, $state, Cash, PayType, Modal, Branch) {
             $scope.payTypes = PayType.query();
-            $scope.records = Cash.pendingPatients();
+            $scope.records = [];
+            $scope.branches = Branch.query();
+
+            $scope.Filter = {
+                branch: $scope.$localStorage.currentUser.branch,
+                by: function (branch) {
+                    $scope.Filter.branch = branch;
+                    $scope.reloadPage();
+                }
+            };
+
+            $scope.reloadPage = function () {
+                let branch = $scope.Filter.branch ? $scope.Filter.branch._id : undefined;
+                $scope.records = Cash.pendingPatients({branch: branch});
+            };
+
+            // initial loading
+            $scope.reloadPage();
 
             $scope.startPay = function (patientService) {
 
@@ -58,7 +75,9 @@
                             Modal.confirm({
                                 okAction: function (modal) {
                                     var cash = new Cash();
+                                    let branch = $scope.Filter.branch ? $scope.Filter.branch._id : undefined;
                                     cash.pay = {
+                                        branch: branch,
                                         patientId: patientService.patient._id,
                                         totalDebt: patientService.totalDebt,
                                         payType: ctrl.type,
@@ -143,20 +162,25 @@
                     debt: 0
                 };
 
-                Cash.pendingServicesOf({patientId: $scope.patientService.patient._id}, function (resp) {
-                    $scope.pendingServices = resp;
-                    for (let srv of $scope.pendingServices) {
-                        srv.forPay = srv.debt;
-                        srv.debtAfterPay = 0;
+                Cash.pendingServicesOf(
+                    {
+                        branch: $scope.$localStorage.currentUser.branch._id,
+                        patientId: $scope.patientService.patient._id
+                    },
+                    function (resp) {
+                        $scope.pendingServices = resp;
+                        for (let srv of $scope.pendingServices) {
+                            srv.forPay = srv.debt;
+                            srv.debtAfterPay = 0;
 
-                        // add pays array
-                        srv.pays = [];
-                        srv.pays.push({
-                            payType: undefined,
-                            amount: srv.debt
-                        });
-                    }
-                });
+                            // add pays array
+                            srv.pays = [];
+                            srv.pays.push({
+                                payType: undefined,
+                                amount: srv.debt
+                            });
+                        }
+                    });
             };
 
             $scope.PendingServiceHelper = {
