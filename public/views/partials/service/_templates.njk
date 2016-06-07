@@ -1,5 +1,5 @@
-<fieldset>
-    <legend>Шаблоны</legend>
+<fieldset ng-if="tab.name=='templates'">
+    {#<legend>Шаблоны</legend>#}
 
     <div ng-repeat="tpl in service.templates" class="panel panel-success" bs-collapse start-collapsed="true">
 

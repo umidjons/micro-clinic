@@ -62,6 +62,18 @@
 
 </div>
 
+<ul class="nav nav-tabs">
+    <li ng-class="{'active':tab.name=='templates'}">
+        <a ng-click="tab.name='templates'" href="">Шаблоны</a>
+    </li>
+    <li ng-class="{'active':tab.name=='fields'}">
+        <a ng-click="tab.name='fields'" href="">Дополнительные поля</a>
+    </li>
+    <li ng-class="{'active':tab.name=='resfields'}">
+        <a ng-click="tab.name='resfields'" href="">Дополнительные поля результатов</a>
+    </li>
+</ul>
+
 {% include "partials/service/_templates.njk" %}
 
 {% include "partials/service/_fields.njk" %}

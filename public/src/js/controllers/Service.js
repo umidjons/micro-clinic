@@ -33,6 +33,7 @@
                                              Modal, State, ServiceCategory, Service, FieldType) {
             $scope.serviceCategories = ServiceCategory.query();
             $scope.states = State.query();
+            $scope.tab = {name: 'templates'};
 
             $scope.tinymceOptions = {
                 //language: 'ru_RU',

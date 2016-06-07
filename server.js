@@ -35,8 +35,8 @@ mongoose.connection.once('open', function () {
             tags: {
                 blockStart: '{%',
                 blockEnd: '%}',
-                commentStart: '<#',
-                commentEnd: '#>',
+                commentStart: '{#',
+                commentEnd: '#}',
                 variableStart: '{{{',
                 variableEnd: '}}}'
             }
