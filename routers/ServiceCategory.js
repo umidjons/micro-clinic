@@ -2,6 +2,7 @@
 
 var router = require('express').Router();
 var debug = require('debug')('myclinic:router:servicecategory');
+var slug = require('limax');
 var models = require('../models');
 var Msg = require('../include/Msg');
 var F = require('../include/F');
@@ -61,6 +62,7 @@ router
         // create model and fill fields from request body
         let newServiceCat = new models.ServiceCategory(req.body);
 
+        newServiceCat._id = slug(newServiceCat.title);
         newServiceCat.created = new Date();
         newServiceCat.user = req.user._id;
 
