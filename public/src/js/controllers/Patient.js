@@ -212,24 +212,33 @@
                                 case 'category':
                                     if (angular.isDefined(category)) {
                                         this.category = {title: category.title};
-                                        if (angular.isDefined(category.subcategories)) {
+                                        if (angular.isDefined(category.subcategories) && category.subcategories.length > 0) {
                                             $scope.subcategories = category.subcategories;
+                                        } else {
+                                            this.subcategory = undefined;
+                                            this.subsubcategory = undefined;
+                                            $scope.subcategories = [];
                                         }
                                     } else {
                                         this.category = undefined;
                                         this.subcategory = undefined;
                                         this.subsubcategory = undefined;
+                                        $scope.subcategories = [];
                                     }
                                     break;
                                 case 'subcategory':
                                     if (angular.isDefined(category)) {
                                         this.subcategory = {title: category.title};
-                                        if (angular.isDefined(category.subcategories)) {
+                                        if (angular.isDefined(category.subcategories) && category.subcategories.length > 0) {
                                             $scope.subsubcategories = category.subcategories;
+                                        } else {
+                                            this.subsubcategory = undefined;
+                                            $scope.subsubcategories = [];
                                         }
                                     } else {
                                         this.subcategory = undefined;
                                         this.subsubcategory = undefined;
+                                        $scope.subsubcategories = [];
                                     }
                                     break;
                                 case 'subsubcategory':

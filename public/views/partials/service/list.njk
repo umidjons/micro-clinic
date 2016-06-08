@@ -1,6 +1,47 @@
 <h3>Услуги</h3>
 
-<button ui-sref="serviceCreate" class="btn btn-success"><i class="fa fa-fw fa-plus"></i> Новая услуга</button>
+<p>
+    <button ui-sref="serviceCreate" class="btn btn-success"><i class="fa fa-fw fa-plus"></i> Новая услуга</button>
+</p>
+
+<button ng-click="filter.by(undefined, 'category')"
+        class="btn btn-xs btn-danger"
+        ng-class="{'active': filter.category == undefined}">Все
+</button>
+<button ng-repeat="cat in categories"
+        ng-click="filter.by(cat, 'category')"
+        class="btn btn-xs btn-danger"
+        ng-class="{'active': filter.category.title == cat.title}">
+    {{ cat.title }}
+</button>
+
+<br>
+
+<button ng-click="filter.by(undefined, 'subcategory')"
+        class="btn btn-xs btn-warning"
+        ng-class="{'active': filter.subcategory == undefined}">Все
+</button>
+<button ng-if="filter.category.title"
+        ng-repeat="subcat in subcategories"
+        ng-click="filter.by(subcat,'subcategory')"
+        class="btn btn-xs btn-warning"
+        ng-class="{'active': filter.subcategory.title == subcat.title}">
+    {{ subcat.title }}
+</button>
+
+<br>
+
+<button ng-click="filter.by(undefined, 'subsubcategory')"
+        class="btn btn-xs btn-info"
+        ng-class="{'active': filter.subsubcategory == undefined}">Все
+</button>
+<button ng-if="filter.subcategory.title"
+        ng-repeat="subsubcat in subsubcategories"
+        ng-click="filter.by(subsubcat,'subsubcategory')"
+        class="btn btn-xs btn-info"
+        ng-class="{'active': filter.subsubcategory.title == subsubcat.title}">
+    {{ subsubcat.title }}
+</button>
 
 <table class="table table-bordered table-striped table-hover table-condensed">
 
@@ -25,15 +66,9 @@
     </tr>
     <tr>
         <th></th>
-        <th>
-            <input ng-model="filter.category.title" maxlength="200" class="form-control">
-        </th>
-        <th>
-            <input ng-model="filter.subcategory.title" maxlength="200" class="form-control">
-        </th>
-        <th>
-            <input ng-model="filter.subsubcategory.title" maxlength="200" class="form-control">
-        </th>
+        <th></th>
+        <th></th>
+        <th></th>
         <th>
             <input ng-model="filter.title" maxlength="200" class="form-control">
         </th>
@@ -53,7 +88,13 @@
         <th></th>
         <th></th>
         <th></th>
-        <th></th>
+        <th class="text-right">
+            <button class="btn btn-xs btn-default"
+                    ng-click="filter.reset()"
+                    title="Очистить фильтр">
+                <i class="fa fa-fw fa-filter"></i><i class="fa fa-fw fa-remove"></i>
+            </button>
+        </th>
     </tr>
     </thead>
 

@@ -2,8 +2,80 @@
     'use strict';
 
     angular.module('MyClinic')
-        .controller('ServicesCtrl', function ($scope, Modal, Service, State) {
+        .controller('ServicesCtrl', function ($scope, Modal, Service, State, ServiceCategory) {
             $scope.states = State.query();
+            $scope.categories = ServiceCategory.query();
+
+            $scope.filter = {
+                category: undefined,
+                subcategory: undefined,
+                subsubcategory: undefined,
+                title: undefined,
+                price: undefined,
+                state: undefined,
+                reset: function () {
+                    this.category = undefined;
+                    this.subcategory = undefined;
+                    this.subsubcategory = undefined;
+                    this.title = undefined;
+                    this.price = undefined;
+                    this.state = undefined;
+                },
+                onChange: function () {
+                    if (angular.isDefined(this.category) && !this.category.title) {
+                        this.category = undefined;
+                    }
+                    if (angular.isDefined(this.subcategory) && !this.subcategory.title) {
+                        this.subcategory = undefined;
+                    }
+                    if (angular.isDefined(this.subsubcategory) && !this.subsubcategory.title) {
+                        this.subsubcategory = undefined;
+                    }
+                },
+                by: function (category, level) {
+                    switch (level) {
+                        case 'category':
+                            if (angular.isDefined(category)) {
+                                this.category = {title: category.title};
+                                if (angular.isDefined(category.subcategories) && category.subcategories.length > 0) {
+                                    $scope.subcategories = category.subcategories;
+                                } else {
+                                    this.subcategory = undefined;
+                                    this.subsubcategory = undefined;
+                                    $scope.subcategories = [];
+                                }
+                            } else {
+                                this.category = undefined;
+                                this.subcategory = undefined;
+                                this.subsubcategory = undefined;
+                                $scope.subcategories = [];
+                            }
+                            break;
+                        case 'subcategory':
+                            if (angular.isDefined(category)) {
+                                this.subcategory = {title: category.title};
+                                if (angular.isDefined(category.subcategories) && category.subcategories.length > 0) {
+                                    $scope.subsubcategories = category.subcategories;
+                                } else {
+                                    this.subsubcategory = undefined;
+                                    $scope.subsubcategories = [];
+                                }
+                            } else {
+                                this.subcategory = undefined;
+                                this.subsubcategory = undefined;
+                                $scope.subsubcategories = [];
+                            }
+                            break;
+                        case 'subsubcategory':
+                            if (angular.isDefined(category)) {
+                                this.subsubcategory = {title: category.title};
+                            } else {
+                                this.subsubcategory = undefined;
+                            }
+                            break;
+                    }
+                }
+            };
 
             $scope.reloadPage = function () {
                 $scope.services = Service.query({light: 1});
