@@ -35,7 +35,7 @@ router
             return Msg.sendError(res, 'Неправильная время оплаты!');
         }
 
-        models.PatientService.payDetails(req.params.patientId, req.body.payTime, function (err, records) {
+        models.PatientService.payDetails(req.params.patientId, req.body.payTime, false, function (err, records) {
             if (err) {
                 return Msg.sendError(res, err);
             }
@@ -50,7 +50,7 @@ router
             return Msg.sendError(res, 'Указаны неправильные параметры.');
         }
 
-        models.PatientService.payDetails(req.params.patientId, req.params.payTime, function (err, records) {
+        models.PatientService.payDetails(req.params.patientId, req.params.payTime, true, function (err, records) {
             if (err) {
                 return Msg.sendError(res, err);
             }

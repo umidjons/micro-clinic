@@ -124,6 +124,15 @@ PatientServiceSchema.statics.payedPatients = function (startDate, endDate, cb) {
                             0
                         ]
                     }
+                },
+                payAmountDiscount: {
+                    $sum: {
+                        $cond: [
+                            {$eq: ['$pays.payType._id', 'discount']},
+                            '$pays.amount',
+                            0
+                        ]
+                    }
                 }
             }
         },
@@ -149,7 +158,8 @@ PatientServiceSchema.statics.payedPatients = function (startDate, endDate, cb) {
                 payTime: '$_id.payTime',
                 payAmount: '$payAmount',
                 payAmountCash: '$payAmountCash',
-                payAmountCashless: '$payAmountCashless'
+                payAmountCashless: '$payAmountCashless',
+                payAmountDiscount: '$payAmountDiscount'
             }
         }
     ], function (err, records) {
@@ -162,23 +172,30 @@ PatientServiceSchema.statics.payedPatients = function (startDate, endDate, cb) {
 };
 
 
-PatientServiceSchema.statics.payDetails = function (patientId, dateTime, cb) {
+PatientServiceSchema.statics.payDetails = function (patientId, dateTime, isForCheck, cb) {
     dateTime = Date.create(dateTime);
+
+    let condition = {
+        'pays.created': dateTime
+    };
+
+    // if for printing check, then do not show discount and refund type pays
+    if (isForCheck) {
+        condition['pays.payType._id'] = {$nin: ['discount', 'refund']};
+    }
 
     PatientService.aggregate([
         //db.patientservices.aggregate([
         {
             $match: {
-                'pays.created': dateTime
+                'pays.created': dateTime // do not use 'condition' variable here
             }
         },
         {
             $unwind: '$pays'
         },
         {
-            $match: {
-                'pays.created': dateTime
-            }
+            $match: condition
         },
         {
             $lookup: {

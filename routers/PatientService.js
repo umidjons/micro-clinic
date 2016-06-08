@@ -72,6 +72,11 @@ router
                 // set branch
                 srv.branch = req.user.branch._id;
 
+                // set discount's state
+                if (srv.discount && srv.discount.type) {
+                    srv.discount.state = {_id: 'new', title: 'Новый'};
+                }
+
                 // there is already 'created' field from Service model, we MUST override it
                 srv.created = time;
 

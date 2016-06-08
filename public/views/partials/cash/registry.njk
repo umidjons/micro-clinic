@@ -141,11 +141,11 @@
 
     <tfoot>
     <tr>
-        <th rowspan="4" colspan="4" class="text-right" style="vertical-align: middle;">ИТОГО</th>
+        <th rowspan="5" colspan="4" class="text-right" style="vertical-align: middle;">ИТОГО</th>
     </tr>
     <tr>
-        <th class="text-right">Общая сумма:</th>
-        <th class="text-right">{{ F.total(records,'payAmount') | number: 2 }}</th>
+        <th class="text-right">Скидка:</th>
+        <th class="text-right">{{ F.total(records,'payAmountDiscount') | number: 2 }}</th>
     </tr>
     <tr>
         <th class="text-right">Наличные:</th>
@@ -154,6 +154,10 @@
     <tr>
         <th class="text-right">Безналичные:</th>
         <th class="text-right">{{ F.total(records,'payAmountCashless') | number: 2 }}</th>
+    </tr>
+    <tr>
+        <th class="text-right">Общая сумма:</th>
+        <th class="text-right">{{ F.total(records,'payAmount') | number: 2 }}</th>
     </tr>
     </tfoot>
 </table>

@@ -13,6 +13,15 @@ var PayTypeSchema = mongoose.Schema({
     title: {type: String, required: true}
 });
 
+/*
+ Available pay types:
+ { _id: 'cash', title: 'Наличные' }
+ { _id: 'cashless', title: 'Безналичные' }
+ { _id: 'separated', title: 'Наличный/Безналичный' }
+ { _id: 'discount', title: 'Скидка' } - internal
+ { _id: 'refund', title: 'Возврат' } - internal
+ */
+
 var CashSchema = mongoose.Schema({
     payType: PayTypeSchema,
     amount: {type: Number, min: 0, required: true},
@@ -86,6 +95,10 @@ CashSchema.statics.savePays = function (patSrvList, cb) {
         patSrvList, // array of patient services with pays
         function (patSrv, done) {
             models.PatientService.findById(patSrv._id, function (err, doc) {
+                // if there is discount, then we already generated discount pay for it, change its state to payed
+                if (patSrv.discount && patSrv.discount.state._id == 'new') {
+                    doc.discount.state = {_id: 'payed', title: 'Оплачен'};
+                }
                 doc.debt = patSrv.debt;
                 doc.payed = patSrv.payed;
                 doc.state = patSrv.state;
@@ -109,6 +122,28 @@ CashSchema.statics.savePays = function (patSrvList, cb) {
             }
         }
     );
+};
+
+CashSchema.statics.genDiscountPay = function (user, time, patSrv) {
+    // if there is discount, generate pay for it
+    if (patSrv.discount && patSrv.discount.type && patSrv.discount.state._id == 'new') {
+        let discountAmount = patSrv.discount.amount;
+
+        // if discount type is percent, calculate discount amount
+        if (patSrv.discount.type == 'percent') {
+            discountAmount = (patSrv.discount.amount * (patSrv.quantity * patSrv.price)) / 100;
+        }
+
+        patSrv.pays.push({
+            amount: discountAmount,
+            payType: {_id: 'discount', title: 'Скидка'},
+            created: time,
+            branch: user.branch,
+            user: user._id,
+            state: {_id: 'payed', title: 'Оплачен'}
+        });
+    }
+    return patSrv;
 };
 
 /**
@@ -147,6 +182,9 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
                     amount = payInfo.total;
                 }
 
+                // check for discount
+                Cash.genDiscountPay(user, time, patSrv);
+
                 // generate pay
                 patSrv.pays.push({
                     amount: amount,
@@ -184,6 +222,9 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
                 if (patSrv.debt > payInfo.totalCashless && payInfo.totalCashless > 0) {
                     amount = payInfo.totalCashless;
                 }
+
+                // check for discount
+                Cash.genDiscountPay(user, time, patSrv);
 
                 // generate pay
                 patSrv.pays.push({
