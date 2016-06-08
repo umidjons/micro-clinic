@@ -122,7 +122,7 @@ router
             models.Patient.find(req.condition)
                 .skip(skip)
                 .limit(pageSize)
-                .sort({created: -1})
+                .sort({lastVisit: -1, created: -1})
                 .populate('user', 'username lastName firstName middleName')
                 .populate('branch', 'shortTitle')
                 .lean()
