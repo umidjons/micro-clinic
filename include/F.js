@@ -36,6 +36,33 @@ class F {
     static formatNumber(number) {
         return number.format(2, ' ');
     }
+
+    /**
+     * Converts array of objects to object.
+     *
+     * @example
+     * Following array of objects
+     * <pre>
+     * [ 
+     *     { id: 'item1', title: 'Item 1' },
+     *     { id: 'item2', title: 'Item 2' } 
+     * ]
+     * </pre>
+     * becomes <pre>{ item1: 'Item 1', item2: 'Item 2' }</pre> object.
+     *
+     * @param {array} arr array of objects.
+     * @param {string} keyProp property of an object, which becomes keys of the resulting object.
+     * @param {string} valProp property of an object, which becomes value of the key property.
+     * @returns {{}} resulting object.
+     *
+     */
+    static array2object(arr, keyProp, valProp) {
+        let obj = {};
+        for (let item of arr) {
+            obj[item[keyProp]] = item[valProp];
+        }
+        return obj;
+    }
 }
 
 module.exports = F;

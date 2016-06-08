@@ -31,10 +31,7 @@ router
                 }
 
                 // id-s becomes keys, value-s becomes values
-                let config = {};
-                for (let cfg of settings) {
-                    config[cfg._id] = cfg.value;
-                }
+                let config = F.array2object(settings, '_id', 'value');
 
                 Msg.sendSuccess(res, '', config, 'Settings object:');
             });
@@ -46,7 +43,7 @@ router
             if (err) {
                 return Msg.sendError(res, err.message);
             }
-            return Msg.sendSuccess(res, 'Данные успешно сохранены.', req.body);
+            return Msg.sendSuccess(res, 'Параметры системы успешно сохранены.', req.body);
         });
     });
 
