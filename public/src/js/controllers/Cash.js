@@ -54,6 +54,9 @@
                                 ctrl.totalCash = 0;
                                 ctrl.totalCashless = 0;
                             }
+
+                            // if Cashless pay, by default do not print check
+                            ctrl.check.print = ctrl.type._id != 'cashless';
                         };
 
                         this.recalc = function (which) {
