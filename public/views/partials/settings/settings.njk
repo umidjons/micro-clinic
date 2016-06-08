@@ -1,0 +1,25 @@
+<h3>Параметры системы</h3>
+
+<form name="formSettings" class="form-horizontal" novalidate>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2 req">Сверх цена для нерезидентных:</label>
+        <div class="col-sm-1">
+            <div class="input-group">
+                <input type="number" ng-model="setting.foreignerOverPercent"
+                       class="form-control" min="0" max="100" required>
+                <span class="input-group-addon"><i class="fa fa-fw fa-percent"></i></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <button ui-sref="home" class="btn btn-danger">Отмена</button>
+            <button ng-click="saveSettings()" ng-disabled="formSettings.$invalid"
+                    class="btn btn-success">Сохранить
+            </button>
+        </div>
+    </div>
+
+</form>

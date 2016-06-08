@@ -82,6 +82,11 @@
                     templateUrl: 'partials/login.html',
                     controller: 'LoginCtrl'
                 })
+                .state('settings', {
+                    url: '/settings',
+                    templateUrl: 'partials/settings/settings.html',
+                    controller: 'SettingsCtrl'
+                })
                 .state('patientSearch', {
                     url: '/patient/search',
                     templateUrl: 'partials/patient/search.html',
@@ -243,5 +248,19 @@
         })
         .controller('HomeCtrl', function ($scope) {
 
+        })
+        .controller('SettingsCtrl', function ($scope, Setting, Modal) {
+            $scope.setting = Setting.query();
+
+            $scope.saveSettings = function () {
+                Modal.confirm({
+                    content: 'Сохранить параметры системы?',
+                    okAction: function (modal) {
+                        $scope.setting.$save(function () {
+                            modal.hide();
+                        });
+                    }
+                });
+            };
         });
 })();

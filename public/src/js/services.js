@@ -141,6 +141,15 @@
 
             return res;
         })
+        .factory('Setting', function ($resource) {
+            return $resource(
+                '/setting/:id',
+                {id: '@_id'},
+                {
+                    query: {method: 'GET', isArray: false}
+                }
+            );
+        })
         .factory('Partner', function ($resource) {
             return $resource(
                 '/partner/:id',
