@@ -172,8 +172,8 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
         // populating pays for each pending service
         for (let patSrv of patientServices) {
 
-            //debug(F.inspect(patSrv, 'Patient Service=', true));
-            //debug(F.inspect(pType, 'Pay Type=', true));
+            //debug(F.inspect(patSrv, '-------Patient Service=', true));
+            //debug(F.inspect(pType, '--------Pay Type=', true));
 
             if (pType == 'cash' || pType == 'cashless') {
                 // determine amount
@@ -294,6 +294,8 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
                         patientServicesWithPays.push(patSrv);
                         break;
                     }
+                } else {
+                    patientServicesWithPays.push(patSrv);
                 }
             }
         }

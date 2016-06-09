@@ -43,12 +43,12 @@
                         this.total = patientService.totalDebt;
                         this.debt = 0; // debt after pay
                         this.fullName = patientService.patient.lastName + ' ' + patientService.patient.firstName + ' '
-                            + patientService.patient.middleName;
+                            + (patientService.patient.middleName ? patientService.patient.middleName : '');
 
                         let ctrl = this;
 
                         this.typeChanged = function () {
-                            if (ctrl.type._id == 'separated') {
+                            if (ctrl.type && ctrl.type._id == 'separated') {
                                 ctrl.recalc();
                             } else {
                                 ctrl.totalCash = 0;
@@ -282,7 +282,7 @@
                             includeCashless: false // true - include cashless type pays into check
                         };
                         this.fullName = pay.patient.lastName + ' ' + pay.patient.firstName + ' '
-                            + pay.patient.middleName;
+                            + (pay.patient.middleName ? pay.patient.middleName : '');
 
                         let ctrl = this;
 

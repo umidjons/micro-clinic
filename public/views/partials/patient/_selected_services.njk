@@ -15,8 +15,8 @@
             <th>Подкатегория</th>
             <th>Под-подкатегория</th>
             <th>Услуга</th>
-            <th>Количество</th>
             <th>Скидка</th>
+            <th>Количество</th>
             <th>Стоимость</th>
             <th>Партнёр</th>
             <th class="text-right">
@@ -65,6 +65,13 @@
             <td>{{ selSrv.subcategory.title }}</td>
             <td>{{ selSrv.subsubcategory.title }}</td>
             <td>{{ selSrv.title }}</td>
+            <td class="text-right"
+                ng-dblclick="ServiceHelper.Service.openDiscount(selSrv)"
+                title="{{ selSrv.discount.note }}">
+                {{ selSrv.discount.amount || 0 | number: 2 }}
+                <span ng-if="selSrv.discount.type == 'percent'">%</span>
+                <span ng-if="selSrv.discount.type == 'amount'">сум</span>
+            </td>
             <td class="text-right col-sm-2">
                 <div class="input-group input-group-sm">
                     <span class="input-group-btn">
@@ -81,13 +88,6 @@
                         </button>
                     </span>
                 </div>
-            </td>
-            <td class="text-right"
-                ng-dblclick="ServiceHelper.Service.openDiscount(selSrv)"
-                title="{{ selSrv.discount.note }}">
-                {{ selSrv.discount.amount || 0 | number: 2 }}
-                <span ng-if="selSrv.discount.type == 'percent'">%</span>
-                <span ng-if="selSrv.discount.type == 'amount'">сум</span>
             </td>
             <td class="text-right">{{ selSrv.priceTotal | number: 2 }}</td>
             <td ng-dblclick="ServiceHelper.Service.openPartner(selSrv)">{{ selSrv.partner.code }}</td>
@@ -118,12 +118,24 @@
 
         <tfoot>
         <tr>
-            <th class="text-right" colspan="4">Всего:</th>
+            <th class="text-right" colspan="7">Сумма скидки:</th>
             <th></th>
+            <th class="text-right">{{ ServiceHelper.Service.total('discountPriceTotal') | number: 2 }}</th>
+        </tr>
+        <tr ng-if="patient.resident._id=='other'">
+            <th class="text-right" colspan="7">Сверх % нерезидентам:</th>
             <th></th>
+            <th class="text-right">{{ setting.foreignerOverPercent | number: 2 }} %</th>
+        </tr>
+        <tr ng-if="patient.resident._id=='other'">
+            <th class="text-right" colspan="7">Сверх сумма нерезидентам:</th>
+            <th></th>
+            <th class="text-right">{{ ServiceHelper.Service.total('overPriceTotal') | number: 2 }}</th>
+        </tr>
+        <tr>
+            <th class="text-right" colspan="7">Всего:</th>
             <th class="text-right">{{ ServiceHelper.Service.total('quantity') | number }}</th>
-            <th></th>
-            <th class="text-right">{{ ServiceHelper.Service.total('priceTotal') | number }}</th>
+            <th class="text-right">{{ ServiceHelper.Service.total('priceTotal') | number: 2 }}</th>
         </tr>
         </tfoot>
     </table>

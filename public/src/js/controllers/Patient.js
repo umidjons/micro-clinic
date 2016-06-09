@@ -165,12 +165,13 @@
         })
         .controller('PatientViewCtrl', function ($scope, $state, $stateParams, Patient, Service, PatientService,
                                                  ServiceCategory, Discount, PartnerSetter, Msg, Modal, Fields,
-                                                 $aside) {
+                                                 $aside, Setting) {
             $scope.Discount = Discount;
             $scope.Fields = Fields;
 
             $scope.services = Service.query();
             $scope.categories = ServiceCategory.query();
+            $scope.setting = Setting.query();
 
             $scope.ServiceHelper = {
                 getByCategory: function (catTitle) {
@@ -252,6 +253,7 @@
                         }
                     },
                     add: function (srv, qnt) {
+                        srv.overPercent = $scope.patient.resident._id == 'other' ? $scope.setting.foreignerOverPercent : 0;
                         var found = _.find($scope.patient.services, {_id: srv._id});
                         qnt = qnt || 1;
                         if (found) {

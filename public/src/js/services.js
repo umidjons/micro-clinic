@@ -129,14 +129,31 @@
             );
 
             res.recalc = function (srv) {
-                srv.priceTotal = srv.quantity * srv.price;
+                let price = srv.price;
+
+                // calculate over price for non-residents
+                if (srv.overPercent > 0) {
+                    srv.overPrice = srv.overPercent * 0.01 * price;
+                    price += srv.overPrice;
+                } else {
+                    srv.overPrice = 0;
+                }
+
+                // calculate discount price
+                srv.discountPrice = 0;
                 if (srv.discount && srv.discount.amount > 0) {
                     if (srv.discount.type == 'percent') {
-                        srv.priceTotal -= srv.priceTotal * 0.01 * srv.discount.amount;
+                        srv.discountPrice = srv.discount.amount * 0.01 * srv.price;
                     } else if (srv.discount.type == 'amount') {
-                        srv.priceTotal -= srv.discount.amount;
+                        srv.discountPrice = srv.discount.amount;
                     }
+                    price -= srv.discountPrice;
                 }
+
+                // calculate totals
+                srv.priceTotal = srv.quantity * price;
+                srv.overPriceTotal = srv.quantity * srv.overPrice;
+                srv.discountPriceTotal = srv.quantity * srv.discountPrice;
             };
 
             return res;
@@ -368,6 +385,7 @@
                     if (firstSrv.discount && 'amount' in firstSrv.discount) {
                         this.amount = firstSrv.discount.amount;
                         this.note = firstSrv.discount.note;
+                        this.type = firstSrv.discount.type;
                     } else {
                         this.amount = 0;
                         this.note = '';
