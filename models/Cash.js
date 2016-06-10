@@ -28,7 +28,9 @@ var CashSchema = mongoose.Schema({
     branch: {type: branchSchema, required: true},
     state: stateSchema,
     created: {type: Date, required: true, default: new Date()},
-    user: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User'}
+    user: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User'},
+    percentOfPartner: {type: Number, default: 0},
+    interestOfPartner: {type: Number, default: 0}
 });
 
 /**
@@ -124,6 +126,13 @@ CashSchema.statics.savePays = function (patSrvList, cb) {
     );
 };
 
+/**
+ * Generates discount type pay in the given patient's service.
+ * @param {object} user user object
+ * @param {date} time pay date and time
+ * @param {object} patSrv patient's service object
+ * @returns {*}
+ */
 CashSchema.statics.genDiscountPay = function (user, time, patSrv) {
     // if there is discount, generate pay for it
     if (patSrv.discount && patSrv.discount.type && patSrv.discount.state._id == 'new') {
@@ -144,6 +153,22 @@ CashSchema.statics.genDiscountPay = function (user, time, patSrv) {
         });
     }
     return patSrv;
+};
+
+/**
+ * Calculates partner's interest and fill appropriate fields in pay object.
+ * @param {object} pay pay object with amount
+ * @param {object} patSrv patient's service object
+ */
+CashSchema.statics.calcPartnerInterest = function (pay, patSrv) {
+    pay.percentOfPartner = 0;
+    pay.interestOfPartner = 0;
+
+    // if there is partner for this service and its percent is greater than zero, calculate partner's interest
+    if (patSrv.partner && patSrv.partner.percent > 0) {
+        pay.percentOfPartner = patSrv.partner.percent;
+        pay.interestOfPartner = pay.amount * 0.01 * pay.percentOfPartner;
+    }
 };
 
 /**
@@ -185,15 +210,19 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
                 // check for discount
                 Cash.genDiscountPay(user, time, patSrv);
 
-                // generate pay
-                patSrv.pays.push({
+                let pay = {
                     amount: amount,
                     payType: payInfo.payType,
                     created: time,
                     branch: user.branch,
                     user: user._id,
                     state: {_id: 'payed', title: 'Оплачен'}
-                });
+                };
+
+                Cash.calcPartnerInterest(pay, patSrv);
+
+                // generate pay
+                patSrv.pays.push(pay);
 
                 // decrease debt & increase payed
                 patSrv.debt -= amount;
@@ -226,15 +255,19 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
                 // check for discount
                 Cash.genDiscountPay(user, time, patSrv);
 
-                // generate pay
-                patSrv.pays.push({
+                let pay = {
                     amount: amount,
                     payType: {_id: 'cashless', title: 'Безналичные'},
                     created: time,
                     branch: user.branch,
                     user: user._id,
                     state: {_id: 'payed', title: 'Оплачен'}
-                });
+                };
+
+                Cash.calcPartnerInterest(pay, patSrv);
+
+                // generate pay
+                patSrv.pays.push(pay);
 
                 // decrease debt & increase payed
                 patSrv.debt -= amount;
@@ -264,15 +297,19 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
                         amount = payInfo.totalCash;
                     }
 
-                    // generate pay
-                    patSrv.pays.push({
+                    let pay = {
                         amount: amount,
                         payType: {_id: 'cash', title: 'Наличные'},
                         created: time,
                         branch: user.branch,
                         user: user._id,
                         state: {_id: 'payed', title: 'Оплачен'}
-                    });
+                    };
+
+                    Cash.calcPartnerInterest(pay, patSrv);
+
+                    // generate pay
+                    patSrv.pays.push(pay);
 
                     // decrease debt & increase payed
                     patSrv.debt -= amount;
