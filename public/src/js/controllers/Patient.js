@@ -113,7 +113,7 @@
             $scope.branches = Branch.query();
 
             $scope.filter = {
-                branch: undefined,
+                branch: $scope.$localStorage.currentUser.branch,
                 by: function (branch) {
                     $scope.filter.branch = branch;
                     $scope.reloadPage();

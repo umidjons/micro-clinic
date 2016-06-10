@@ -51,7 +51,11 @@
             <a href ng-click="changeSort('totalDebt')">Долг</a>
             <i ng-class="classSort('totalDebt')" class="fa fa-fw"></i>
         </th>
-        <th></th>
+        <th class="text-center">
+            <button ng-click="reloadPage()" class="btn btn-xs btn-info" title="Обновить">
+                <i class="fa fa-fw fa-refresh"></i>
+            </button>
+        </th>
     </tr>
 
     <tr>
