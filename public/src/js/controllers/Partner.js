@@ -75,5 +75,46 @@
             Partner.get({id: $stateParams.id}, function (partner) {
                 $scope.partner = partner;
             });
+        })
+        .controller('PartnerInterestCtrl', function ($scope, Partner) {
+            $scope.period = {
+                start: Date.create('the beginning of this month'),
+                end: Date.create('the end of this month')
+            };
+
+            $scope.refresh = function () {
+                $scope.records = Partner.interests({period: $scope.period});
+            };
+
+            $scope.resetSearch = function () {
+                $scope.sort = {by: undefined, reverse: false};
+                $scope.search = {};
+            };
+
+            $scope.changeSort = function (columnName) {
+                if (angular.isUndefined($scope.sort)) {
+                    $scope.sort = {by: undefined, reverse: false};
+                }
+                $scope.sort.by = columnName;
+                $scope.sort.reverse = !$scope.sort.reverse;
+            };
+
+            $scope.classSort = function (columnName) {
+                if (!$scope.sort) return '';
+                var class_ = $scope.sort.by == columnName;
+                if (!class_) return '';
+                return !$scope.sort.reverse ? 'fa-caret-up' : 'fa-caret-down';
+            };
+
+            $scope.details = function (rec) {
+                if (angular.isUndefined(rec.details)) {
+                    Partner.interestDetails({partner: rec.partnerCode, period: $scope.period}, function (resp) {
+                        rec.details = resp;
+                    });
+                }
+                rec.detailsOpened = !rec.detailsOpened;
+            };
+
+            $scope.refresh();
         });
 })();

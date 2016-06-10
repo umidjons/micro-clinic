@@ -1,0 +1,147 @@
+<h1>Доля партнёров</h1>
+
+<div class="col-sm-4">
+    <form class="form-horizontal" novalidate>
+
+        <div class="form-group">
+            <label class="control-label col-sm-4 req">с</label>
+            <div class="col-sm-8">
+                <input ng-model="period.start"
+                       bs-datepicker
+                       data-autoclose="true"
+                       data-max-date="{{ period.end }}"
+                       class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-4 req">по</label>
+            <div class="col-sm-8">
+                <input ng-model="period.end"
+                       bs-datepicker
+                       data-autoclose="true"
+                       data-min-date="{{ period.start }}"
+                       class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-8">
+                <button ng-click="refresh()" class="btn btn-default">Обновить</button>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<table class="table table-bordered table-striped table-condensed">
+    <thead>
+    <tr>
+        <th>№</th>
+        <th>
+            <a href ng-click="changeSort('partnerCode')">Код</a>
+            <i ng-class="classSort('partnerCode')" class="fa fa-fw"></i>
+        </th>
+        <th>
+            <a href ng-click="changeSort('partner.lastName')">Фамилия</a>
+            <i ng-class="classSort('partner.lastName')" class="fa fa-fw"></i>
+        </th>
+        <th>
+            <a href ng-click="changeSort('partner.firstName')">Имя</a>
+            <i ng-class="classSort('partner.firstName')" class="fa fa-fw"></i>
+        </th>
+        <th>
+            <a href ng-click="changeSort('partner.middleName')">Отчество</a>
+            <i ng-class="classSort('partner.middleName')" class="fa fa-fw"></i>
+        </th>
+        <th>
+            <a href ng-click="changeSort('partner.cellPhone')">Тел</a>
+            <i ng-class="classSort('partner.cellPhone')" class="fa fa-fw"></i>
+        </th>
+        <th>
+            <a href ng-click="changeSort('partner.company')">Организация</a>
+            <i ng-class="classSort('partner.company')" class="fa fa-fw"></i>
+        </th>
+        <th>
+            <a href ng-click="changeSort('partnerInterest')">Доля (сум)</a>
+            <i ng-class="classSort('partnerInterest')" class="fa fa-fw"></i>
+        </th>
+        <th></th>
+    </tr>
+
+    <tr>
+        <th></th>
+        <th><input ng-model="search.partner.code" class="form-control"></th>
+        <th><input ng-model="search.partner.lastName" class="form-control"></th>
+        <th><input ng-model="search.partner.firstName" class="form-control"></th>
+        <th><input ng-model="search.partner.middleName" class="form-control"></th>
+        <th><input ng-model="search.partner.cellPhone" class="form-control"></th>
+        <th><input ng-model="search.partner.company" class="form-control"></th>
+        <th><input ng-model="search.partnerInterest" class="form-control"></th>
+        <th class="text-center">
+            <button ng-click="resetSearch()" title="Очистить фильтр" class="btn btn-xs btn-default">
+                <i class="fa fa-fw fa-filter"></i>
+                <i class="fa fa-fw fa-remove"></i>
+            </button>
+        </th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr ng-repeat-start="rec in records | orderBy: sort.by : sort.reverse | filter: search"
+        class="row-group-header"
+        ng-class="{'row-group-body':!rec.detailsOpened}"
+        ng-dblclick="details(rec)">
+        <td>{{ $index + 1 }}</td>
+        <td>{{ rec.partnerCode }}</td>
+        <td>{{ rec.partner.lastName }}</td>
+        <td>{{ rec.partner.firstName }}</td>
+        <td>{{ rec.partner.middleName }}</td>
+        <td>{{ rec.partner.cellPhone }}</td>
+        <td>{{ rec.partner.company }}</td>
+        <td class="text-right">{{ rec.partnerInterest | number: 2 }}</td>
+        <td class="text-center">
+            <button ng-click="details(rec)" title="Подробно" class="btn btn-xs btn-info">
+                <i class="fa fa-fw fa-search"></i>
+            </button>
+        </td>
+    </tr>
+
+    <tr ng-repeat-end class="row-group-body">
+        <td ng-if="rec.detailsOpened" colspan="9" class="cell-table">
+
+            <table class="table table-bordered table-condensed">
+                <thead>
+                <tr>
+                    <th class="col-sm-1">№</th>
+                    <th class="col-sm-2">Пациент</th>
+                    <th class="col-sm-2">Услуга</th>
+                    <th class="col-sm-2">Дата услуги</th>
+                    <th class="col-sm-1">Оплачен</th>
+                    <th class="col-sm-1">Доля</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="detail in rec.details">
+                    <td class="text-right">{{ $index + 1 }}</td>
+                    <td>{{ detail.patient.lastName + ' ' + detail.patient.firstName }}</td>
+                    <td>{{ detail.serviceTitle }}</td>
+                    <td>{{ detail.serviceTime | date: 'medium' }}</td>
+                    <td class="text-right">{{ detail.payed | number: 2 }}</td>
+                    <td class="text-right">{{ detail.partnerInterest | number: 2 }}</td>
+                </tr>
+                </tbody>
+            </table>
+
+        </td>
+    </tr>
+
+    </tbody>
+
+    <tfoot>
+    <tr>
+        <th colspan="7" class="text-right">ИТОГО</th>
+        <th class="text-right">{{ F.total(records,'partnerInterest') | number: 2 }}</th>
+    </tr>
+    </tfoot>
+</table>

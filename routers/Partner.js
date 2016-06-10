@@ -18,6 +18,37 @@ router
             next();
         });
     })
+    .post('/interests/details/:partnerCode', function (req, res) {
+        if (!req.body.period || !req.body.period.start || !req.body.period.end) {
+            return Msg.sendError(res, 'Неправильный период!');
+        }
+
+        models.Partner.interestsDetails(
+            req.body.period.start,
+            req.body.period.end,
+            req.params.partnerCode,
+            function (err, records) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+
+                Msg.sendSuccess(res, '', records);
+            }
+        );
+    })
+    .post('/interests', function (req, res) {
+        if (!req.body.period || !req.body.period.start || !req.body.period.end) {
+            return Msg.sendError(res, 'Неправильный период!');
+        }
+
+        models.Partner.interests(req.body.period.start, req.body.period.end, function (err, records) {
+            if (err) {
+                return Msg.sendError(res, err);
+            }
+
+            Msg.sendSuccess(res, '', records);
+        });
+    })
     .get('/:id', function (req, res) {
         req.partner.populate('user', 'username lastName firstName middleName');
         Msg.sendSuccess(res, '', req.partner, 'Partner:');

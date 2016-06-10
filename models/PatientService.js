@@ -86,23 +86,15 @@ PatientServiceSchema.statics.pendingPatients = function (branch, cb) {
 };
 
 PatientServiceSchema.statics.payedPatients = function (startDate, endDate, cb) {
-    startDate = startDate || 'today';
-    endDate = endDate || 'today';
-
-    startDate = Date.create(startDate);
-    endDate = Date.create(endDate);
-
-    startDate.setHours(0, 0, 0, 0);
-    endDate.setHours(23, 59, 59, 999);
+    var period = F.normalizePeriod(startDate, endDate);
 
     //todo: implement total by refund pay type
-    //todo: implement total by discount pay type
 
     PatientService.aggregate([
         //db.patientservices.aggregate([
         {
             $match: {
-                'pays.created': {$gte: startDate, $lte: endDate}
+                'pays.created': {$gte: period.start, $lte: period.end}
             }
         },
         {

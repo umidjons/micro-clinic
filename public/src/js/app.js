@@ -181,6 +181,11 @@
                     templateUrl: 'partials/partner/view.html',
                     controller: 'PartnerViewCtrl'
                 })
+                .state('partnerInterests', {
+                    url: '/partner/interests',
+                    templateUrl: 'partials/partner/interests.html',
+                    controller: 'PartnerInterestCtrl'
+                })
                 .state('userList', {
                     url: '/user/list',
                     templateUrl: 'partials/user/list.html',

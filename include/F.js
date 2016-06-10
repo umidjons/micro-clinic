@@ -43,9 +43,9 @@ class F {
      * @example
      * Following array of objects
      * <pre>
-     * [ 
+     * [
      *     { id: 'item1', title: 'Item 1' },
-     *     { id: 'item2', title: 'Item 2' } 
+     *     { id: 'item2', title: 'Item 2' }
      * ]
      * </pre>
      * becomes <pre>{ item1: 'Item 1', item2: 'Item 2' }</pre> object.
@@ -62,6 +62,29 @@ class F {
             obj[item[keyProp]] = item[valProp];
         }
         return obj;
+    }
+
+    /**
+     * Normalizes start date to the start of the day, end date to the end of the day
+     * and returns period object with start and end properties.
+     * @param {date} startDate start date
+     * @param {date} endDate end date
+     * @returns {object} {start: "normalized start date", end: "normalized end date"}
+     */
+    static normalizePeriod(startDate, endDate) {
+        startDate = startDate || 'today';
+        endDate = endDate || 'today';
+
+        startDate = Date.create(startDate);
+        endDate = Date.create(endDate);
+
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(23, 59, 59, 999);
+
+        return {
+            start: startDate,
+            end: endDate
+        };
     }
 }
 

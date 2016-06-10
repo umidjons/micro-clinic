@@ -5,6 +5,8 @@ require('mongoose-type-email');
 var stateSchema = require('./State').StateSchema;
 var models = require('.');
 var sugar = require('sugar');
+var F = require('../include/F');
+var debug = require('debug')('myclinic:model:partner');
 
 var PartnerSchema = mongoose.Schema({
     code: {type: String, required: true, maxlength: 50},
@@ -47,6 +49,132 @@ PartnerSchema.statics.incCode = function (cb) {
             }
             cb(null, newValue);
         });
+    });
+};
+
+PartnerSchema.statics.interests = function (startDate, endDate, cb) {
+    var period = F.normalizePeriod(startDate, endDate);
+
+    debug(F.inspect(period, 'Period to get partners interests:', true));
+
+    models.PatientService.aggregate([
+        //db.patientservices.aggregate([
+        {
+            $match: {
+                'partner': {$exists: true},
+                'pays.created': {$gte: period.start, $lte: period.end}
+            }
+        },
+        {
+            $unwind: '$pays'
+        },
+        {
+            $match: {
+                'pays.payType._id': {$in: ['cash', 'cashless']}
+            }
+        },
+        {
+            $group: {
+                _id: {partnerCode: '$partner.code'},
+                partnerInterest: {$sum: '$pays.interestOfPartner'}
+            }
+        },
+        {
+            $sort: {'_id.partnerCode': 1}
+        },
+        {
+            $lookup: {
+                from: 'partners',
+                localField: '_id.partnerCode',
+                foreignField: 'code',
+                as: 'partner'
+            }
+        },
+        {
+            $unwind: '$partner'
+        },
+        {
+            $project: {
+                _id: 0,
+                partnerCode: '$_id.partnerCode',
+                partner: '$partner',
+                partnerInterest: '$partnerInterest'
+            }
+        }
+    ], function (err, records) {
+        if (err) {
+            return cb(err);
+        }
+
+        cb(null, records);
+    });
+};
+
+PartnerSchema.statics.interestsDetails = function (startDate, endDate, partnerCode, cb) {
+    var period = F.normalizePeriod(startDate, endDate);
+
+    debug(F.inspect(period, "Period to get partner's interests details:", true));
+
+    models.PatientService.aggregate([
+        //db.patientservices.aggregate([
+        {
+            $match: {
+                'partner': {$exists: true},
+                'partner.code': partnerCode,
+                'pays.created': {$gte: period.start, $lte: period.end}
+            }
+        },
+        {
+            $unwind: '$pays'
+        },
+        {
+            $match: {
+                'pays.payType._id': {$in: ['cash', 'cashless']}
+            }
+        },
+        {
+            $group: {
+                _id: {
+                    partnerCode: '$partner.code',
+                    serviceTitle: '$title',
+                    patientId: '$patientId',
+                    serviceTime: '$created'
+                },
+                partnerInterest: {$sum: '$pays.interestOfPartner'},
+                payed: {$sum: '$payed'}
+            }
+        },
+        {
+            $sort: {'_id.serviceTime': 1}
+        },
+        {
+            $lookup: {
+                from: 'patients',
+                localField: '_id.patientId',
+                foreignField: '_id',
+                as: 'patient'
+            }
+        },
+        {
+            $unwind: '$patient'
+        },
+        {
+            $project: {
+                _id: 0,
+                partnerCode: '$_id.partnerCode',
+                serviceTitle: '$_id.serviceTitle',
+                serviceTime: '$_id.serviceTime',
+                patient: '$patient',
+                payed: '$payed',
+                partnerInterest: '$partnerInterest'
+            }
+        }
+    ], function (err, records) {
+        if (err) {
+            return cb(err);
+        }
+
+        cb(null, records);
     });
 };
 

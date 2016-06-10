@@ -174,6 +174,20 @@
                 {
                     update: {
                         method: 'PUT'
+                    },
+                    /**
+                     * @param {object} period period object in format {start: startDate, end: endDate}
+                     */
+                    interests: {
+                        method: 'POST',
+                        url: '/partner/interests',
+                        isArray: true
+                    },
+                    interestDetails: {
+                        method: 'POST',
+                        url: '/partner/interests/details/:partnerCode',
+                        isArray: true,
+                        params: {partnerCode: '@partner'}
                     }
                 }
             );
