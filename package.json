@@ -4,8 +4,10 @@
   "description": "Clinic Management System",
   "main": "server.js",
   "scripts": {
+    "start":"set DEBUG=myclinic:*,-myclinic:router:auth && nodemon -e js,css,njk",
     "test": "npm run test-app",
-    "test-app": "mocha tests"
+    "test-app": "mocha tests",
+    "debug":"node-debug --preload false server.js"
   },
   "author": "umidjons",
   "license": "ISC",
