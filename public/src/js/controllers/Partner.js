@@ -2,7 +2,7 @@
     'use strict';
 
     angular.module('MyClinic')
-        .controller('PartnerCtrl', function ($scope, $state, $stateParams, Modal, Partner, State) {
+        .controller('PartnerCtrl', function ($scope, $state, $stateParams, Modal, Partner, State, Setting) {
             $scope.states = State.query();
 
             if ($stateParams.id) {
@@ -11,6 +11,9 @@
                 });
             } else {
                 $scope.partner = new Partner();
+                Partner.getNextCode(function (newCode) {
+                    $scope.partner.code = newCode;
+                });
             }
 
             $scope.savePartner = function () {

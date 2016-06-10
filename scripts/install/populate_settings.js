@@ -11,6 +11,13 @@ mongoose.connection.once('open', function () {
             value: 15,
             comment: 'Значение задается в процентах',
             order: 1
+        },
+        {
+            _id: 'partnerCode',
+            title: 'Код нового партнёра',
+            value: '0001',
+            comment: 'Следующий код партнёра',
+            order: 2
         }
     ];
 

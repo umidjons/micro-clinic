@@ -51,8 +51,14 @@ router
                 return Msg.sendError(res, err);
             }
 
-            // all right, show success message
-            Msg.sendSuccess(res, 'Данные успешно сохранены.', {partnerId: partner._id});
+            // increment partner code on application settings
+            models.Partner.incCode(function (err) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+                // all right, show success message
+                Msg.sendSuccess(res, 'Данные успешно сохранены.', {partnerId: partner._id});
+            });
         });
     })
     .put('/:id', function (req, res) {

@@ -1,6 +1,10 @@
+'use strict';
+
 var mongoose = require('mongoose');
 require('mongoose-type-email');
 var stateSchema = require('./State').StateSchema;
+var models = require('.');
+var sugar = require('sugar');
 
 var PartnerSchema = mongoose.Schema({
     code: {type: String, required: true, maxlength: 50},
@@ -23,6 +27,28 @@ PartnerSchema.index({code: 1}, {unique: true});
 PartnerSchema.virtual('fullName').get(function () {
     return (this.lastName + ' ' + this.firstName + ' ' + this.middleName).trim();
 });
+
+/**
+ * Increments partner code in application settings.
+ * @param {callback} cb callback function with error and new code arguments.
+ */
+PartnerSchema.statics.incCode = function (cb) {
+    models.Setting.findById('partnerCode', function (err, setting) {
+        if (err) {
+            return cb(err);
+        }
+        let len = setting.value.length;
+        let currentValue = 1 * setting.value; // current value as number
+        let newValue = (++currentValue).pad(len);
+        setting.value = newValue;
+        setting.save(function (err) {
+            if (err) {
+                return cb(err);
+            }
+            cb(null, newValue);
+        });
+    });
+};
 
 PartnerSchema.set('toJSON', {virtuals: true});
 PartnerSchema.set('toObject', {virtuals: true});

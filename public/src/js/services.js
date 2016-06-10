@@ -167,8 +167,8 @@
                 }
             );
         })
-        .factory('Partner', function ($resource) {
-            return $resource(
+        .factory('Partner', function ($resource, Setting) {
+            var PartnerResource = $resource(
                 '/partner/:id',
                 {id: '@_id'},
                 {
@@ -177,6 +177,18 @@
                     }
                 }
             );
+
+            /**
+             * Retrieves partner code from settings
+             * @param {callback} cb callback with partner code argument
+             */
+            PartnerResource.getNextCode = function (cb) {
+                Setting.query(function (resp) {
+                    cb(resp.partnerCode);
+                });
+            };
+
+            return PartnerResource;
         })
         .factory('Branch', function ($resource) {
             return $resource(
