@@ -70,7 +70,8 @@ PartnerSchema.statics.interests = function (startDate, endDate, cb) {
         },
         {
             $match: {
-                'pays.payType._id': {$in: ['cash', 'cashless']}
+                'pays.payType._id': {$in: ['cash', 'cashless']},
+                'pays.state._id': 'payed'
             }
         },
         {
@@ -121,7 +122,8 @@ PartnerSchema.statics.interestsDetails = function (startDate, endDate, partnerCo
             $match: {
                 'partner': {$exists: true},
                 'partner.code': partnerCode,
-                'pays.created': {$gte: period.start, $lte: period.end}
+                'pays.created': {$gte: period.start, $lte: period.end},
+                'pays.state._id': 'payed'
             }
         },
         {
@@ -129,7 +131,8 @@ PartnerSchema.statics.interestsDetails = function (startDate, endDate, partnerCo
         },
         {
             $match: {
-                'pays.payType._id': {$in: ['cash', 'cashless']}
+                'pays.payType._id': {$in: ['cash', 'cashless']},
+                'pays.state._id': 'payed'
             }
         },
         {
@@ -141,7 +144,7 @@ PartnerSchema.statics.interestsDetails = function (startDate, endDate, partnerCo
                     serviceTime: '$created'
                 },
                 partnerInterest: {$sum: '$pays.interestOfPartner'},
-                payed: {$sum: '$payed'}
+                payed: {$sum: '$pays.amount'}
             }
         },
         {

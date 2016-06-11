@@ -22,13 +22,17 @@ router
         if (!req.body.startDate || !req.body.endDate) {
             return Msg.sendError(res, 'Неправильный период!');
         }
-        models.PatientService.payedPatients(req.body.startDate, req.body.endDate, function (err, records) {
-            if (err) {
-                return Msg.sendError(res, err);
-            }
+        models.PatientService.payedPatients(
+            req.body.branch,
+            req.body.startDate,
+            req.body.endDate,
+            function (err, records) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
 
-            Msg.sendSuccess(res, '', records);
-        });
+                Msg.sendSuccess(res, '', records);
+            });
     })
     .post('/registry/pay-details/:patientId', function (req, res) {
         if (!req.body.payTime) {
@@ -41,6 +45,24 @@ router
             }
 
             Msg.sendSuccess(res, '', records);
+        });
+    })
+    .post('/refund', function (req, res) {
+        if (!req.body.patientId || !req.body.payTime || !req.body.payAmount) {
+            return Msg.sendError(res, 'Указаны неправильные параметры');
+        }
+        let payInfo = {
+            branch: req.body.branch,
+            patientId: req.body.patientId,
+            payTime: req.body.payTime,
+            payAmount: req.body.payAmount
+        };
+        models.Cash.refund(req.user, payInfo, function (err) {
+            if (err) {
+                return Msg.sendError(res, err);
+            }
+
+            Msg.sendSuccess(res, 'Возврат денег успешно выполнен.', payInfo);
         });
     })
     .get('/registry/print-check/:patientId/:payTime', function (req, res) {

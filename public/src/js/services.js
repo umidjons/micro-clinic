@@ -509,6 +509,10 @@
                     getCheck: {
                         method: 'GET',
                         url: '/cash/registry/print-check/:patientId/:payTime'
+                    },
+                    refund: {
+                        method: 'POST',
+                        url: '/cash/refund'
                     }
                 }
             );

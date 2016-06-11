@@ -4,6 +4,17 @@
 
 <h1>Реестр оплат</h1>
 
+<button ng-click="filter.by(undefined)"
+        class="btn btn-xs btn-default"
+        ng-class="{'active': filter.branch == undefined}">Все филиалы
+</button>
+<button ng-repeat="b in branches"
+        ng-click="filter.by(b)"
+        class="btn btn-xs btn-default"
+        ng-class="{'active': filter.branch.shortTitle == b.shortTitle}">
+    {{ b.shortTitle }}
+</button>
+
 <div class="col-sm-4">
     <form class="form-horizontal" novalidate>
         <div class="form-group">
@@ -101,6 +112,9 @@
             <button ng-click="printCheck(rec)" title="Печать чека" class="btn btn-xs btn-default">
                 <i class="fa fa-fw fa-print"></i>
             </button>
+            <button ng-click="refund(rec)" title="Возврат" class="btn btn-xs btn-danger">
+                <i class="fa fa-fw fa-undo"></i>
+            </button>
         </td>
     </tr>
 
@@ -141,11 +155,15 @@
 
     <tfoot>
     <tr>
-        <th rowspan="5" colspan="4" class="text-right" style="vertical-align: middle;">ИТОГО</th>
+        <th rowspan="6" colspan="4" class="text-right" style="vertical-align: middle;">ИТОГО</th>
     </tr>
     <tr>
         <th class="text-right">Скидка:</th>
         <th class="text-right">{{ F.total(records,'payAmountDiscount') | number: 2 }}</th>
+    </tr>
+    <tr>
+        <th class="text-right">Возврат:</th>
+        <th class="text-right">{{ F.total(records,'payAmountRefund') | number: 2 }}</th>
     </tr>
     <tr>
         <th class="text-right">Наличные:</th>
@@ -156,8 +174,12 @@
         <th class="text-right">{{ F.total(records,'payAmountCashless') | number: 2 }}</th>
     </tr>
     <tr>
-        <th class="text-right">Общая сумма:</th>
-        <th class="text-right">{{ F.total(records,'payAmount') | number: 2 }}</th>
+        <th class="text-right">
+            [Наличные] + [Безналичные] - [Возврат] = Общая сумма:
+        </th>
+        <th class="text-right">{{ F.total(records,'payAmountCash')
+            + F.total(records,'payAmountCashless')
+            - F.total(records,'payAmountRefund') | number: 2 }}</th>
     </tr>
     </tfoot>
 </table>

@@ -243,16 +243,24 @@
 
             init();
         })
-        .controller('CashRegCtrl', function ($scope, $state, $aside, Msg, Cash) {
+        .controller('CashRegCtrl', function ($scope, $filter, $state, $aside, Msg, Cash, Modal, Branch) {
+            $scope.branches = Branch.query();
+
             $scope.filter = {
                 startDate: Date.create('today'),
-                endDate: Date.create('today')
+                endDate: Date.create('today'),
+                branch: $scope.$localStorage.currentUser.branch,
+                by: function (branch) {
+                    $scope.filter.branch = branch;
+                    $scope.refresh();
+                }
             };
 
             $scope.refresh = function () {
                 var params = {
                     startDate: $scope.filter.startDate,
-                    endDate: $scope.filter.endDate
+                    endDate: $scope.filter.endDate,
+                    branch: $scope.filter.branch ? $scope.filter.branch._id : undefined
                 };
                 Cash.registry(params, function (resp) {
                     $scope.records = resp;
@@ -323,6 +331,28 @@
                 var class_ = $scope.sort.by == columnName;
                 if (!class_) return '';
                 return !$scope.sort.reverse ? 'fa-caret-up' : 'fa-caret-down';
+            };
+
+            $scope.refund = function (pay) {
+                let msg = 'Возвращат ' + $filter('number')(pay.payAmount, 2) + ' сум?';
+
+                Modal.confirm({
+                    content: msg,
+                    okAction: function (modal) {
+                        var params = {
+                            branch: $scope.filter.branch ? $scope.filter.branch._id : undefined,
+                            patientId: pay.patientId,
+                            payTime: pay.payTime,
+                            payAmount: pay.payAmount
+                        };
+                        Cash.refund(params, function (resp) {
+                            console.log('Refund response:', resp);
+
+                            modal.hide();
+                            $scope.refresh();
+                        });
+                    }
+                });
             };
 
             $scope.refresh();

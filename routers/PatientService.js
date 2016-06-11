@@ -47,9 +47,6 @@ router
     .post('/',
         function (req, res, next) {
             // middleware to prepare patient services for save
-
-            //console.log('Request body 1:', req.body);
-
             if (!req.body.patientId) {
                 return Msg.sendError(res, 'Пациент не указан.');
             }
@@ -90,16 +87,14 @@ router
             next();
         },
         function (req, res) {
-            //console.log('Request body 2:', req.body);
-
-            models.PatientService.create(req.body.services, function (err, patientServices) {
+            models.PatientService.create(req.body.services, function (err) {
                 // if there is error, send it and stop handler with return
                 if (err) {
                     return Msg.sendError(res, err);
                 }
 
                 // update last visit
-                models.Patient.setLastVisit(req.body.patientId, req.body.services[0].created, function (err, patient) {
+                models.Patient.setLastVisit(req.body.patientId, req.body.services[0].created, function (err) {
                     if (err) {
                         return Msg.sendError(res, err);
                     }
@@ -112,7 +107,7 @@ router
     )
     .put('/:id', function (req, res) {
         req.patientService = Object.assign(req.patientService, req.body);
-        req.patientService.save(function (err, patSrv) {
+        req.patientService.save(function (err) {
             if (err) {
                 return Msg.sendError(res, err);
             }
@@ -143,11 +138,12 @@ router
                 });
         },
         function (req, res) {
+            // todo: do not actually remove patient services, which has pay, just change their state and do not show in views
             var ids = req.body.ids;
 
             debug(`Bulk deleting patient services. IDS: ${ids}`);
 
-            models.PatientService.remove({_id: {$in: ids}}, function (err, raw) {
+            models.PatientService.remove({_id: {$in: ids}}, function (err) {
                 if (err) {
                     return Msg.sendError(res, err);
                 }
@@ -167,6 +163,7 @@ router
             next();
         },
         function (req, res) {
+            // todo: do not actually remove patient services, which has pay, just change their state and do not show in views
             debug(`Delete patient service id: ${req.params.id}`);
 
             req.patientService.remove(function (err) {

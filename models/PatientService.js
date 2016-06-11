@@ -85,20 +85,26 @@ PatientServiceSchema.statics.pendingPatients = function (branch, cb) {
         });
 };
 
-PatientServiceSchema.statics.payedPatients = function (startDate, endDate, cb) {
+PatientServiceSchema.statics.payedPatients = function (branch, startDate, endDate, cb) {
     var period = F.normalizePeriod(startDate, endDate);
 
-    //todo: implement total by refund pay type
+    let ObjectId = mongoose.Types.ObjectId;
+    let condition = {'pays.created': {$gte: period.start, $lte: period.end}};
+
+    if (branch) {
+        condition['pays.branch._id'] = ObjectId(branch);
+    }
 
     PatientService.aggregate([
         //db.patientservices.aggregate([
         {
-            $match: {
-                'pays.created': {$gte: period.start, $lte: period.end}
-            }
+            $match: condition
         },
         {
             $unwind: '$pays'
+        },
+        {
+            $match: condition
         },
         {
             $group: {
@@ -130,6 +136,15 @@ PatientServiceSchema.statics.payedPatients = function (startDate, endDate, cb) {
                             0
                         ]
                     }
+                },
+                payAmountRefund: {
+                    $sum: {
+                        $cond: [
+                            {$eq: ['$pays.payType._id', 'refund']},
+                            '$pays.amount',
+                            0
+                        ]
+                    }
                 }
             }
         },
@@ -156,7 +171,8 @@ PatientServiceSchema.statics.payedPatients = function (startDate, endDate, cb) {
                 payAmount: '$payAmount',
                 payAmountCash: '$payAmountCash',
                 payAmountCashless: '$payAmountCashless',
-                payAmountDiscount: '$payAmountDiscount'
+                payAmountDiscount: '$payAmountDiscount',
+                payAmountRefund: '$payAmountRefund'
             }
         }
     ], function (err, records) {

@@ -2,6 +2,7 @@
 
 var mongoose = require('mongoose');
 var async = require('async');
+var sugar = require('sugar');
 var stateSchema = require('./State').StateSchema;
 var branchSchema = require('./Branch').BranchSchema;
 var models = require('.');
@@ -30,8 +31,17 @@ var CashSchema = mongoose.Schema({
     created: {type: Date, required: true, default: new Date()},
     user: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User'},
     percentOfPartner: {type: Number, default: 0},
-    interestOfPartner: {type: Number, default: 0}
+    interestOfPartner: {type: Number, default: 0},
+    refunded: {type: Date},
+    refundedUser: {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
 });
+
+/*
+ Available states:
+ { _id: 'payed', title: 'Оплачен' }
+ { _id: 'refunded', title: 'Возвращен' }
+ { _id: 'active', title: 'Активный' } - internal, used for refund pays
+ */
 
 /**
  * Prepares pays for the given patient services.
@@ -349,6 +359,143 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
     });
 };
 
+CashSchema.statics.refund = function (user, payInfo, cb) {
+    if (!payInfo.payAmount) {
+        cb('Нечего возвращать.');
+    }
+
+    let ObjectId = mongoose.Types.ObjectId;
+    let refundTime = Date.create();
+    let payTime = Date.create(payInfo.payTime);
+    let condition = {
+        'pays.payType._id': {$in: ['cash', 'cashless', 'discount']}
+    };
+    if (payInfo.branch) {
+        condition['pays.branch._id'] = ObjectId(payInfo.branch);
+    }
+
+    // check pay amount to refund
+    models.PatientService.aggregate([
+        //db.patientservices.aggregate([
+        {
+            $match: {'pays.created': payTime, patientId: ObjectId(payInfo.patientId)}
+        },
+        {
+            $unwind: '$pays'
+        },
+        {
+            $match: condition
+        },
+        {
+            $group: {
+                _id: {patientId: '$patientId', 'payTime': '$pays.created'},
+                payAmount: {$sum: '$pays.amount'}
+            }
+        }
+    ], function (err, records) {
+        if (err) {
+            return cb(err);
+        }
+
+        // if there is no records, return error
+        if (!records) {
+            return cb('Оплаты для возврата не найдены.');
+        }
+
+        // check pay amounts
+        if (records[0].payAmount != payInfo.payAmount) {
+            debug(
+                'Pays amount not matched.'
+                + F.inspect(payInfo, 'Params to search:', true)
+                + F.inspect(records, 'Found records:', true)
+            );
+            return cb('Сумма оплаты не совпадают.');
+        }
+
+        // prepare conditions to retrieve pays and do actual refunding
+        let cond = {patientId: payInfo.patientId, 'pays.created': payInfo.payTime};
+
+        // if there is branch, take into account it too
+        if (payInfo.branch) {
+            cond['pays.branch._id'] = payInfo.branch;
+        }
+
+        // contains changed patient services, which must be saved
+        let changedPatientServices = [];
+
+        models.PatientService
+            .find(cond)
+            .exec(function (err, patientServices) {
+                for (let patSrv of patientServices) {
+                    // by default mark patient service as unchanged
+                    let changed = false;
+
+                    // process each pay of this patient service
+                    for (let pay of patSrv.pays) {
+                        // pays is embedded array,
+                        // so it can contain other pays too,
+                        // therefore we have to check pay time and branch to identify
+                        // pays to refund
+                        if (Date.create(pay.created).is(payTime)) {
+                            // if branch given as condition, check pay's branch too
+                            // if branches doesn't match, ignore that pay
+                            if (payInfo.branch && pay.branch._id != payInfo.branch) {
+                                continue;
+                            }
+
+                            // change pay's state to refunded
+                            pay.state = {_id: 'refunded', title: 'Возвращен'};
+                            // set when pay is refunded
+                            pay.refunded = refundTime;
+                            // set who refunded pay
+                            pay.refundedUser = user._id;
+
+                            // discount type pays doesn't impact overall amount
+                            if (pay.payType._id != 'discount') {
+                                // increase debt
+                                patSrv.debt += pay.amount;
+                                // decrease payed
+                                patSrv.payed -= pay.amount;
+                            }
+
+                            // create refund pay
+                            patSrv.pays.push({
+                                payType: {_id: 'refund', title: 'Возврат'},
+                                amount: pay.amount,
+                                branch: pay.branch,
+                                state: {_id: 'active', title: 'Активный'},
+                                created: refundTime,
+                                user: user._id
+                            });
+
+                            // mark this patient service as changed
+                            changed = true;
+                        }
+                    }
+
+                    // gather changed patient services
+                    if (changed) {
+                        // if after refund no pays remains, mark this patient service as new
+                        if (patSrv.payed == 0) {
+                            patSrv.state = {_id: 'new', title: 'Новый'};
+                        } else if (patSrv.payed > 0) {
+                            // if after refund there are some pays, mark this service as partly payed
+                            patSrv.state = {_id: 'partlyPayed', title: 'Частично оплачен'};
+                        }
+                        changedPatientServices.push(patSrv);
+                    }
+                }
+
+                // if there are changed patient services, save them
+                if (changedPatientServices.length > 0) {
+                    return Cash.savePays(changedPatientServices, cb);
+                }
+
+                // I don't think control will be here, bu anyway will call callback
+                cb('Функция "Возврат" работает неправильно!');
+            });
+    });
+};
 var Cash = mongoose.model('Cash', CashSchema);
 
 module.exports.PayTypeSchema = PayTypeSchema;
