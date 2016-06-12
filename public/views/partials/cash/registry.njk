@@ -96,7 +96,7 @@
     <tbody>
     <tr ng-repeat-start="rec in records | orderBy: sort.by : sort.reverse | filter: search"
         class="row-group-header"
-        ng-class="{'row-group-body':!rec.payDetailsOpened}"
+        ng-class="{'row-group-body':!rec.payDetailsOpened,'warning':rec.isRefund,'danger':rec.payState._id=='refunded'}"
         ng-dblclick="details(rec)">
         <td>{{ $index + 1 }}</td>
         <td>{{ rec.patient.lastName }}</td>
@@ -109,10 +109,16 @@
             <button ng-click="details(rec)" title="Подробно" class="btn btn-xs btn-info">
                 <i class="fa fa-fw fa-search"></i>
             </button>
-            <button ng-click="printCheck(rec)" title="Печать чека" class="btn btn-xs btn-default">
+            <button ng-if="!rec.isRefund && rec.payState._id=='payed'"
+                    ng-click="printCheck(rec)"
+                    title="Печать чека"
+                    class="btn btn-xs btn-default">
                 <i class="fa fa-fw fa-print"></i>
             </button>
-            <button ng-click="refund(rec)" title="Возврат" class="btn btn-xs btn-danger">
+            <button ng-if="!rec.isRefund && rec.payState._id=='payed'"
+                    ng-click="refund(rec)"
+                    title="Возврат"
+                    class="btn btn-xs btn-danger">
                 <i class="fa fa-fw fa-undo"></i>
             </button>
         </td>
@@ -129,6 +135,8 @@
                     <th class="col-sm-2">Подкатегория</th>
                     <th class="col-sm-2">Под-подкатегория</th>
                     <th class="col-sm-2">Услуга</th>
+                    <th></th>
+                    <th></th>
                     <th class="col-sm-1">Сумма</th>
                     <th class="col-sm-1">Тип оплаты</th>
                     <th class="col-sm-1">Кассир</th>
@@ -141,9 +149,23 @@
                     <td>{{ pay.subcategory.title }}</td>
                     <td>{{ pay.subsubcategory.title }}</td>
                     <td>{{ pay.title }}</td>
+                    <td title="Состояние услуги: {{ pay.state.title }}">
+                        <i ng-if="pay.state._id == 'new'" class="fa fa-fw fa-file"></i>
+                        <i ng-if="pay.state._id == 'payed'" class="fa fa-fw fa-usd"></i>
+                        <i ng-if="pay.state._id == 'partlyPayed'" class="fa fa-fw fa-star-half-o"></i>
+                        <i ng-if="pay.state._id == 'completed'" class="fa fa-fw fa-file-text"></i>
+                    </td>
+                    <td title="Состояние оплаты: {{ pay.pays.state.title }}">
+                        <i ng-if="pay.pays.state._id == 'payed'" class="fa fa-fw fa-usd"></i>
+                        <i ng-if="pay.pays.state._id == 'completed'" class="fa fa-fw fa-file-text"></i>
+                        <i ng-if="pay.pays.state._id == 'refunded'" class="fa fa-fw fa-ban"></i>
+                        <i ng-if="pay.pays.state._id == 'active'" class="fa fa-fw fa-check"></i>
+                    </td>
                     <td class="text-right">{{ pay.pays.amount | number: 2 }}</td>
                     <td>{{ pay.pays.payType.title }}</td>
-                    <td>{{ pay.pays.userId }}</td>
+                    <td title="{{ pay.pays.cashier.lastName + ' ' + pay.pays.cashier.firstName }}">
+                        {{ pay.pays.cashier.username }}
+                    </td>
                 </tr>
                 </tbody>
             </table>

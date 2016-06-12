@@ -108,7 +108,7 @@ PatientServiceSchema.statics.payedPatients = function (branch, startDate, endDat
         },
         {
             $group: {
-                _id: {patientId: '$patientId', 'payTime': '$pays.created'},
+                _id: {patientId: '$patientId', 'payTime': '$pays.created', 'payState': '$pays.state'},
                 payAmount: {$sum: '$pays.amount'},
                 payAmountCash: {
                     $sum: {
@@ -168,11 +168,13 @@ PatientServiceSchema.statics.payedPatients = function (branch, startDate, endDat
                 patientId: '$_id.patientId',
                 patient: '$patient',
                 payTime: '$_id.payTime',
+                payState: '$_id.payState',
                 payAmount: '$payAmount',
                 payAmountCash: '$payAmountCash',
                 payAmountCashless: '$payAmountCashless',
                 payAmountDiscount: '$payAmountDiscount',
-                payAmountRefund: '$payAmountRefund'
+                payAmountRefund: '$payAmountRefund',
+                isRefund: {$cond: [{$gt: ['$payAmountRefund', 0]}, true, false]}
             }
         }
     ], function (err, records) {
@@ -220,6 +222,17 @@ PatientServiceSchema.statics.payDetails = function (patientId, dateTime, isForCh
         },
         {
             $unwind: '$patient'
+        },
+        {
+            $lookup: {
+                from: 'users',
+                localField: 'pays.user',
+                foreignField: '_id',
+                as: 'pays.cashier'
+            }
+        },
+        {
+            $unwind: '$pays.cashier'
         },
         {
             $sort: {

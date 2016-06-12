@@ -243,7 +243,7 @@
 
             init();
         })
-        .controller('CashRegCtrl', function ($scope, $filter, $state, $aside, Msg, Cash, Modal, Branch) {
+        .controller('CashRegCtrl', function ($scope, $filter, $q, $state, $aside, Msg, Cash, Modal, Branch) {
             $scope.branches = Branch.query();
 
             $scope.filter = {
@@ -268,12 +268,19 @@
             };
 
             $scope.details = function (pay) {
+                var deferred = $q.defer();
+
                 if (angular.isUndefined(pay.payDetails)) {
                     Cash.payDetails({patientId: pay.patientId, payTime: pay.payTime}, function (resp) {
                         pay.payDetails = resp;
+                        deferred.resolve(pay);
                     });
+                } else {
+                    deferred.resolve(pay);
                 }
                 pay.payDetailsOpened = !pay.payDetailsOpened;
+
+                return deferred.promise;
             };
 
             $scope.printCheck = function (pay) {
@@ -334,24 +341,42 @@
             };
 
             $scope.refund = function (pay) {
-                let msg = 'Возвращат ' + $filter('number')(pay.payAmount, 2) + ' сум?';
-
-                Modal.confirm({
-                    content: msg,
-                    okAction: function (modal) {
-                        var params = {
-                            branch: $scope.filter.branch ? $scope.filter.branch._id : undefined,
-                            patientId: pay.patientId,
-                            payTime: pay.payTime,
-                            payAmount: pay.payAmount
-                        };
-                        Cash.refund(params, function (resp) {
-                            console.log('Refund response:', resp);
-
-                            modal.hide();
-                            $scope.refresh();
-                        });
+                $scope.details(pay).then(function (pay) {
+                    // check each service state for this pay
+                    let canBeRefunded = true;
+                    for (let patSrv of pay.payDetails) {
+                        if (patSrv.state._id == 'completed') {
+                            canBeRefunded = false;
+                            break;
+                        }
                     }
+
+                    // check pay can be refunded
+                    if (!canBeRefunded) {
+                        Msg.error('Существуют оказанные услуги в состоянии заверщен. Оплату нельзя возвращать!');
+                        return;
+                    }
+
+                    let msg = 'Возвращат ' + $filter('number')(pay.payAmount, 2) + ' сум?';
+
+                    // start refund process
+                    Modal.confirm({
+                        content: msg,
+                        okAction: function (modal) {
+                            var params = {
+                                branch: $scope.filter.branch ? $scope.filter.branch._id : undefined,
+                                patientId: pay.patientId,
+                                payTime: pay.payTime,
+                                payAmount: pay.payAmount
+                            };
+                            Cash.refund(params, function (resp) {
+                                console.log('Refund response:', resp);
+
+                                modal.hide();
+                                $scope.refresh();
+                            });
+                        }
+                    });
                 });
             };
 
