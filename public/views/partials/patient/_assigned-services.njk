@@ -41,7 +41,8 @@
 
             <tbody>
 
-            <tr ng-repeat-start="selSrv in patient.services_assigned">
+            <tr ng-repeat-start="selSrv in patient.services_assigned"
+                ng-class="{'danger': selSrv.state._id=='removed'}">
                 <td class="text-center">
                     <input ng-if="selSrv.state._id=='new'" type="checkbox"
                            ng-change="ServiceHelper.AssignedMarker.onChange()"
@@ -85,7 +86,7 @@
                                     <i class="fa fa-fw fa-search"></i> Дополнительная информация
                                 </a>
                             </li>
-                            <li>
+                            <li ng-class="{'disabled': selSrv.state._id=='removed'}">
                                 <a href ng-click="openResult(selSrv)">
                                     <i class="fa fa-fw fa-sticky-note"></i> Результат
                                 </a>

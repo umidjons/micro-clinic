@@ -274,8 +274,9 @@ module.exports.PatientServiceSchema = PatientServiceSchema;
 
 /*
  * Available states:
- * {_id:'new', title:'Новый'}
- * {_id:'partlyPayed', title:'Частично оплачен'}
- * {_id:'payed', title:'Оплачен'}
- * {_id:'completed', title:'Завершен'}
+ * { _id: 'new',          title: 'Новый'            }
+ * { _id: 'partlyPayed',  title: 'Частично оплачен' }
+ * { _id: 'payed',        title: 'Оплачен'          }
+ * { _id: 'completed',    title: 'Завершен'         }
+ * { _id: 'removed',      title: 'Удален'           }
  */

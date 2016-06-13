@@ -6,6 +6,7 @@ var models = require('../models');
 var Msg = require('../include/Msg');
 var mongoose = require('mongoose');
 var F = require('../include/F');
+var async = require('async');
 
 router
     .param('id', function (req, res, next, id) {
@@ -82,7 +83,7 @@ router
                 srv.payed = 0;
                 srv.debt = srv.priceTotal;
 
-                srv.state = {_id: 'new', title: 'новая'};
+                srv.state = {_id: 'new', title: 'Новый'};
             }
             next();
         },
@@ -117,39 +118,124 @@ router
     })
     .post('/delete-bulk',
         function (req, res, next) {
-            debug(`Checking patient services states before bulk deleting. IDS: ${req.body.ids}`);
+            debug(`STEP 1. Checking patient services states, pays, results before bulk deleting. IDS: ${req.body.ids}`);
 
-            models.PatientService.find({_id: {$in: req.body.ids}, 'state._id': {$ne: 'new'}})
+            models.PatientService.find({_id: {$in: req.body.ids}})
                 .exec(function (err, services) {
                     if (err) {
                         return Msg.sendError(res, err);
                     }
 
-                    if (services.length > 0) {
-                        let msg = 'Следующих услуг удалить нельзя:\n';
-                        for (let srv of service) {
-                            msg.concat(`${srv.title} состояние - ${srv.state.title}\n`);
-                        }
-                        return Msg.sendError(res, msg);
+                    if (!services || !services.length) {
+                        return Msg.sendError(res, 'Услуги для удаления не найдены.');
                     }
+
+                    for (let srv of services) {
+                        // by default mark as removable
+                        srv.removeType = 'remove';
+
+                        // is there any completed service
+                        if (srv.state._id == 'completed') {
+                            return Msg.sendError(
+                                res,
+                                `Услугу ${srv.title} удалить нельзя. Состояние: ${srv.state.title}.`
+                            );
+                        }
+
+                        // is there any active pay
+                        if (srv.pays && srv.pays.length) {
+                            // there are pays, so mark as not removable
+                            srv.removeType = 'change-state';
+
+                            for (let pay of srv.pays) {
+                                if (pay.state._id == 'payed') {
+                                    return Msg.sendError(res, `У услуги ${srv.title} имеется активные оплаты.`);
+                                }
+                            }
+                        }
+
+                        // is there any result
+                        if (srv.result) {
+                            if (srv.result.fields && srv.result.fields.length) {
+                                for (let resFld of srv.result.fields) {
+                                    if (typeof resFld.value !== 'undefined' && resFld.value !== null && resFld.value !== '') {
+                                        return Msg.sendError(res, `У услуги ${srv.title} имеется заполненные результаты.`);
+                                    }
+                                }
+                            }
+
+                            if (srv.result.template && srv.result.content && srv.result.template.content != srv.result.content) {
+                                return Msg.sendError(res, `У услуги ${srv.title} имеется заполненные результаты.`);
+                            }
+                        }
+                    }
+
+                    req.services = services;
 
                     // all right
                     next();
                 });
         },
-        function (req, res) {
-            // todo: do not actually remove patient services, which has pay, just change their state and do not show in views
-            var ids = req.body.ids;
+        function (req, res, next) {
+            debug('STEP 2. Determining services for actual remove & update state.');
 
-            debug(`Bulk deleting patient services. IDS: ${ids}`);
+            req.servicesForSave = [];
+            req.servicesForRemove = [];
+            for (let srv of req.services) {
+                switch (srv.removeType) {
+                    case 'change-state':
+                        srv.state = {_id: 'removed', title: 'Удален'};
+                        req.servicesForSave.push(srv);
+                        break;
 
-            models.PatientService.remove({_id: {$in: ids}}, function (err) {
-                if (err) {
-                    return Msg.sendError(res, err);
+                    case 'remove':
+                        req.servicesForRemove.push(srv);
+                        break;
                 }
+            }
+            next();
+        },
+        function (req, res, next) {
+            debug('STEP 3. Changing patient services states as removed.');
 
-                Msg.sendSuccess(res, 'Записи удалены!');
-            });
+            if (req.servicesForSave.length) {
+                async.each(req.servicesForSave, function (patSrv, done) {
+                    patSrv.save(function (err) {
+                        if (err) {
+                            return done(err);
+                        }
+                        done();
+                    });
+                }, function (err) {
+                    if (err) {
+                        return Msg.sendError(res, err);
+                    }
+
+                    return next();
+                });
+            } else {
+                next();
+            }
+        },
+        function (req, res) {
+            debug('STEP 4. Actually remove patient services.');
+
+            if (req.servicesForRemove.length) {
+                async.each(req.servicesForRemove, function (patSrv, done) {
+                    patSrv.remove(function (err) {
+                        if (err) {
+                            return done(err);
+                        }
+
+                        done();
+                    });
+                }, function (err) {
+                    if (err) {
+                        return Msg.sendError(res, err);
+                    }
+                    Msg.sendSuccess(res, 'Записи удалены!');
+                })
+            }
         }
     )
     .delete('/:id',

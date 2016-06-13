@@ -154,6 +154,7 @@
                         <i ng-if="pay.state._id == 'payed'" class="fa fa-fw fa-usd"></i>
                         <i ng-if="pay.state._id == 'partlyPayed'" class="fa fa-fw fa-star-half-o"></i>
                         <i ng-if="pay.state._id == 'completed'" class="fa fa-fw fa-file-text"></i>
+                        <i ng-if="pay.state._id == 'removed'" class="fa fa-fw fa-remove"></i>
                     </td>
                     <td title="Состояние оплаты: {{ pay.pays.state.title }}">
                         <i ng-if="pay.pays.state._id == 'payed'" class="fa fa-fw fa-usd"></i>
