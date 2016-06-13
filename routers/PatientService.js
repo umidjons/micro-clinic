@@ -136,10 +136,7 @@ router
 
                         // is there any completed service
                         if (srv.state._id == 'completed') {
-                            return Msg.sendError(
-                                res,
-                                `Услугу ${srv.title} удалить нельзя. Состояние: ${srv.state.title}.`
-                            );
+                            return Msg.sendError(res, `Нельзя удалить услугу ${srv.title} в состоянии "${srv.state.title}"`);
                         }
 
                         // is there any active pay
@@ -240,25 +237,66 @@ router
     )
     .delete('/:id',
         function (req, res, next) {
-            debug(`Checking patient service state before deleting. id=${req.params.id}`);
+            debug(`STEP 1. Checking patient service state, pays, results before deleting. id=${req.params.id}`);
 
-            if (req.patientService.state._id != 'new') {
-                return Msg.sendError(res, `Нельзя удалить услугу в состоянии "${req.patientService.state.title}"`);
+            // by default mark as removable
+            req.patientService.removeType = 'remove';
+
+            // is there any completed service
+            if (req.patientService.state._id == 'completed') {
+                return Msg.sendError(res, `Нельзя удалить услугу ${req.patientService.title} в состоянии "${req.patientService.state.title}"`);
+            }
+
+            // is there any active pay
+            if (req.patientService.pays && req.patientService.pays.length) {
+                // there are pays, so mark as not removable
+                req.patientService.removeType = 'change-state';
+
+                for (let pay of req.patientService.pays) {
+                    if (pay.state._id == 'payed') {
+                        return Msg.sendError(res, `У услуги ${req.patientService.title} имеется активные оплаты.`);
+                    }
+                }
+            }
+
+            // is there any result
+            if (req.patientService.result) {
+                if (req.patientService.result.fields && req.patientService.result.fields.length) {
+                    for (let resFld of req.patientService.result.fields) {
+                        if (typeof resFld.value !== 'undefined' && resFld.value !== null && resFld.value !== '') {
+                            return Msg.sendError(res, `У услуги ${req.patientService.title} имеется заполненные результаты.`);
+                        }
+                    }
+                }
+
+                if (req.patientService.result.template && req.patientService.result.content
+                    && req.patientService.result.template.content != req.patientService.result.content) {
+                    return Msg.sendError(res, `У услуги ${req.patientService.title} имеется заполненные результаты.`);
+                }
             }
 
             next();
         },
         function (req, res) {
-            // todo: do not actually remove patient services, which has pay, just change their state and do not show in views
-            debug(`Delete patient service id: ${req.params.id}`);
-
-            req.patientService.remove(function (err) {
+            debug(`STEP 2. Delete patient service (actual remove or change state to removed. id: ${req.params.id}`);
+            let cb = function (err) {
                 if (err) {
                     return Msg.sendError(res, err);
                 }
 
                 Msg.sendSuccess(res, 'Запись удален!');
-            });
+            };
+
+            switch (req.patientService.removeType) {
+                case 'change-state':
+                    req.patientService.state = {_id: 'removed', title: 'Удален'};
+                    req.patientService.save(cb);
+                    break;
+
+                case 'remove':
+                    req.patientService.remove(cb);
+                    break;
+            }
         }
     );
 
