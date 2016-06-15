@@ -18,6 +18,13 @@ mongoose.connection.once('open', function () {
             value: '0001',
             comment: 'Следующий код партнёра',
             order: 2
+        },
+        {
+            _id: 'patientCode',
+            title: 'ID нового пациента',
+            value: '0000001',
+            comment: 'Следующий ID пациента',
+            order: 3
         }
     ];
 

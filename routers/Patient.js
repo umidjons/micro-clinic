@@ -151,16 +151,33 @@ router
         newPatient.lastVisit = newPatient.created;
         newPatient.user = req.user._id;
         newPatient.branch = req.user.branch._id;
-
-        // try to save patient
-        newPatient.save(function (err, savedPatient) {
-            // if there is error, send it and stop handler with return
+        
+        // get new patient code
+        models.Setting.findById('patientCode').exec(function (err, setting) {
             if (err) {
                 return Msg.sendError(res, err);
             }
 
-            // all right, show success message
-            Msg.sendSuccess(res, 'Данные успешно сохранены.', savedPatient);
+            // set new code
+            newPatient.code = setting.value;
+
+            // try to save patient
+            newPatient.save(function (err, savedPatient) {
+                // if there is error, send it and stop handler with return
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+
+                // increment patient code
+                models.Patient.incCode(function (err) {
+                    if (err) {
+                        return Msg.sendError(res, err);
+                    }
+                    
+                    // all right, show success message
+                    Msg.sendSuccess(res, 'Данные успешно сохранены.', savedPatient);
+                });
+            });
         });
     })
     .put('/:id', function (req, res) {

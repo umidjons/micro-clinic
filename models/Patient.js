@@ -6,8 +6,10 @@ var sexSchema = require('./Sex').SexSchema;
 var residentSchema = require('./Resident').ResidentSchema;
 var async = require('async');
 var PatientService = require('./PatientService').PatientService;
+var models = require('.');
 
 var PatientSchema = mongoose.Schema({
+    code: {type: String, required: true},
     firstName: {type: String, required: true, maxlength: 50},
     lastName: {type: String, required: true, maxlength: 50},
     middleName: {type: String, maxlength: 50},
@@ -67,6 +69,28 @@ PatientSchema.statics.setLastVisit = function (patientId, visitDateTime, cb) {
             }
 
             cb(null, pat);
+        });
+    });
+};
+
+/**
+ * Increments patient code in application settings.
+ * @param {callback} cb callback function with error and new code arguments.
+ */
+PatientSchema.statics.incCode = function (cb) {
+    models.Setting.findById('patientCode', function (err, setting) {
+        if (err) {
+            return cb(err);
+        }
+        let len = setting.value.length;
+        let currentValue = 1 * setting.value; // current value as number
+        let newValue = (++currentValue).pad(len);
+        setting.value = newValue;
+        setting.save(function (err) {
+            if (err) {
+                return cb(err);
+            }
+            cb(null, newValue);
         });
     });
 };

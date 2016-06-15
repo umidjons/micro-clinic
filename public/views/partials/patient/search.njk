@@ -58,6 +58,7 @@
         <thead>
         <tr>
             <th>№</th>
+            <th>ID</th>
             <th>Фамилия</th>
             <th>Имя</th>
             <th>Отчество</th>
@@ -81,6 +82,7 @@
         <tbody>
         <tr ng-repeat="pat in patients" ng-class="{'danger':pat.debt>0}">
             <td class="text-right">{{ $index + 1 }}</td>
+            <td>{{ pat.code }}</td>
             <td>{{ pat.lastName }}</td>
             <td>{{ pat.firstName }}</td>
             <td>{{ pat.middleName }}</td>
