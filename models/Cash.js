@@ -21,6 +21,7 @@ var PayTypeSchema = mongoose.Schema({
  { _id: 'separated', title: 'Наличный/Безналичный' }
  { _id: 'discount', title: 'Скидка' } - internal
  { _id: 'refund', title: 'Возврат' } - internal
+ { _id: 'company', title: 'Организация' } - internal
  */
 
 var CashSchema = mongoose.Schema({
@@ -137,6 +138,30 @@ CashSchema.statics.savePays = function (patSrvList, cb) {
 };
 
 /**
+ * Changes companies' balance for given list.
+ * @param {array} companies list in format [{companyId: nnn, amount: -nnn}, ...]
+ * @param {function} cb callback function with one parameter - error.
+ */
+CashSchema.statics.changeCompaniesBalance = function (companies, cb) {
+    // change all companies' balance
+    async.eachSeries(companies,
+        function (company, done) {
+            models.Company.incBalance(company.companyId, company.amount, function (err) {
+                if (err) {
+                    return done(err);
+                }
+                done();
+            });
+        },
+        function (err) {
+            if (err) {
+                return cb(err);
+            }
+            cb();
+        });
+};
+
+/**
  * Generates discount type pay in the given patient's service.
  * @param {object} user user object
  * @param {date} time pay date and time
@@ -201,8 +226,9 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
         var time = new Date();
 
         var patientServicesWithPays = [];
+        var companies = [];
 
-        let pType = payInfo.payType._id;
+        let pType = payInfo.payType ? payInfo.payType._id : undefined;
 
         // populating pays for each pending service
         for (let patSrv of patientServices) {
@@ -210,7 +236,66 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
             //debug(F.inspect(patSrv, '-------Patient Service=', true));
             //debug(F.inspect(pType, '--------Pay Type=', true));
 
-            if (pType == 'cash' || pType == 'cashless') {
+            // Pay by company
+            if (patSrv.company) {
+                let amount = patSrv.debt;
+
+                if (amount > payInfo.totalCompany) {
+                    return cb(`Сумма оплаты за счет организации пациента меньше чем долг за услуги ${patSrv.title}.`);
+                }
+
+                let pay = {
+                    amount: amount,
+                    payType: {_id: 'company', title: 'Организация'},
+                    created: time,
+                    branch: user.branch,
+                    user: user._id,
+                    state: {_id: 'payed', title: 'Оплачен'}
+                };
+
+                Cash.calcPartnerInterest(pay, patSrv);
+
+                // generate pay
+                patSrv.pays.push(pay);
+
+                // decrease debt & increase payed
+                patSrv.debt -= amount;
+                patSrv.payed += amount;
+
+                // change service state
+                if (patSrv.debt > 0) {
+                    patSrv.state = {_id: 'partlyPayed', title: 'Частично оплачен'};
+                } else {
+                    patSrv.state = {_id: 'payed', title: 'Оплачен'};
+                }
+
+                // decrease left amount
+                payInfo.totalCompany -= amount;
+
+                // decrease company's balance
+                companies.push({
+                    companyId: patSrv.company._id,
+                    amount: -amount
+                });
+
+                patientServicesWithPays.push(patSrv);
+
+                // if there are no more money, stop processing other services
+                if (payInfo.totalCompany <= 0) {
+                    // if there is other type of pays, continue processing them
+                    if (payInfo.total > 0) {
+                        continue;
+                    }
+
+                    // otherwise, stop processing
+                    break;
+                }
+            } else if (pType == 'cash' || pType == 'cashless') {
+                // if there is no more money, but there is company pays, continue processing other patient services
+                if (payInfo.total <= 0 && payInfo.totalCompany > 0) {
+                    continue;
+                }
+
                 // determine amount
                 let amount = patSrv.debt;
                 if (patSrv.debt > payInfo.total && payInfo.total > 0) {
@@ -251,12 +336,17 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
                 patientServicesWithPays.push(patSrv);
 
                 // if there are no more money, stop processing other services
-                if (payInfo.total <= 0) {
+                if (payInfo.total <= 0 && payInfo.totalCompany == 0) {
                     break;
                 }
 
 
             } else if (pType == 'separated') {
+                // if there is no more money, but there is company pays, continue processing other patient services
+                if (payInfo.total <= 0 && payInfo.totalCompany > 0) {
+                    continue;
+                }
+
                 let amount = patSrv.debt;
                 if (patSrv.debt > payInfo.totalCashless && payInfo.totalCashless > 0) {
                     amount = payInfo.totalCashless;
@@ -297,6 +387,13 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
                 // if there are no more money, stop processing other services
                 if (payInfo.total <= 0) {
                     patientServicesWithPays.push(patSrv);
+
+                    // if there is company pays, then continue processing patient services
+                    if (payInfo.totalCompany > 0) {
+                        continue;
+                    }
+
+                    // if there is no company pays, stop processing other services
                     break;
                 }
 
@@ -339,6 +436,13 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
                     // if there are no more money, stop processing other services
                     if (payInfo.total <= 0) {
                         patientServicesWithPays.push(patSrv);
+
+                        // if there is company pays, then continue processing patient services
+                        if (payInfo.totalCompany > 0) {
+                            continue;
+                        }
+
+                        // if there is no company pays, stop processing other services
                         break;
                     }
                 } else {
@@ -354,7 +458,18 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
             if (err) {
                 return cb(err);
             }
-            return cb(null, time);
+
+            // if there is companies with pending balance change, do it
+            if (companies.length > 0) {
+                Cash.changeCompaniesBalance(companies, function (err) {
+                    if (err) {
+                        return cb(err);
+                    }
+                    return cb(null, time);
+                });
+            } else {
+                return cb(null, time);
+            }
         });
     });
 };

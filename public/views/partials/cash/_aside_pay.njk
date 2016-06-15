@@ -14,7 +14,7 @@
                             <label>ФИО</label>
                             <p class="form-control-static bold text-success">{{ Pay.fullName }}</p>
                         </div>
-                        <div class="form-group">
+                        <div ng-if="!Pay.isByCompany" class="form-group">
                             <label class="req">Тип платежа</label>
                             <select ng-model="Pay.type" ng-options="pt.title for pt in payTypes"
                                     ng-change="Pay.typeChanged()"
@@ -23,7 +23,7 @@
                             </select>
                         </div>
 
-                        <div class="form-group">
+                        <div ng-if="!Pay.isByCompany" class="form-group">
                             <label class="req">Общая сумма</label>
                             <input ng-model="Pay.total" ng-change="Pay.recalc()"
                                    class="form-control"
@@ -42,6 +42,11 @@
                             <input ng-model="Pay.totalCash" ng-change="Pay.recalc('cash')"
                                    type="number" min="1" ng-max="Pay.total-Pay.totalCashless"
                                    class="form-control" required>
+                        </div>
+
+                        <div ng-if="Pay.totalCompany > 0" class="form-group">
+                            <label class="req">За счет организации пациента</label>
+                            <input ng-model="Pay.totalCompany" class="form-control" readonly required>
                         </div>
 
                         <div class="form-group">

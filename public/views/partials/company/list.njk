@@ -14,6 +14,7 @@
         <th>Дата регистрации</th>
         <th>Пользователь</th>
         <th></th>
+        <th>Баланс</th>
         <th class="text-center">
             <button ng-click="reloadPage()" class="btn btn-xs btn-info" title="Обновить">
                 <i class="fa fa-fw fa-refresh"></i>
@@ -35,6 +36,7 @@
             <i class="fa fa-fw"
                ng-class="{'fa-check text-success':company.state._id=='active','fa-ban text-danger':company.state._id=='blocked'}"></i>
         </td>
+        <td>{{ company.balance | number: 2 }}</td>
         <td class="text-center">
             <div class="btn-group btn-group-xs">
                 <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"

@@ -39,9 +39,11 @@
                             includeCashless: false // true - include cashless type pays into check
                         };
                         this.type = undefined;
-                        this.totalMax = patientService.totalDebt;
-                        this.total = patientService.totalDebt;
+                        this.totalMax = patientService.totalDebt - patientService.totalCompany;
+                        this.total = patientService.totalDebt - patientService.totalCompany;
+                        this.totalCompany = patientService.totalCompany;
                         this.debt = 0; // debt after pay
+                        this.isByCompany = this.total == 0 && this.totalCompany > 0;
                         this.fullName = patientService.patient.lastName + ' ' + patientService.patient.firstName + ' '
                             + (patientService.patient.middleName ? patientService.patient.middleName : '');
 
@@ -87,6 +89,7 @@
                                         total: ctrl.total,
                                         totalCash: ctrl.totalCash,
                                         totalCashless: ctrl.totalCashless,
+                                        totalCompany: ctrl.totalCompany,
                                         debt: ctrl.debt
                                     };
 

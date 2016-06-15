@@ -68,6 +68,15 @@ PatientServiceSchema.statics.pendingPatients = function (branch, cb) {
             totalPrice: {$sum: '$priceTotal'},
             totalPayed: {$sum: '$payed'},
             totalDebt: {$sum: '$debt'},
+            totalCompany: { // if company specified for patient service, then gather its debt into totalCompany
+                $sum: {
+                    $cond: [
+                        {$gt: ['$company', null]},
+                        '$debt',
+                        0
+                    ]
+                }
+            },
             lastService: {$max: '$created'}
         })
         .lookup({
