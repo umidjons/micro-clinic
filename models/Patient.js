@@ -34,7 +34,6 @@ PatientSchema.statics.fillAdditions = function (patients, cb) {
         patients,
         function (pat, done) {
             pat.debt = 0;
-            pat.lastVisit = null;
 
             PatientService.find({patientId: pat._id}, function (err, services) {
                 if (err) {
@@ -43,11 +42,6 @@ PatientSchema.statics.fillAdditions = function (patients, cb) {
                 for (let ps of services) {
                     // calculate debt
                     pat.debt += ps.debt;
-
-                    // set last visit date & time
-                    if (ps.created > pat.lastVisit) {
-                        pat.lastVisit = ps.created;
-                    }
                 }
                 done();
             });

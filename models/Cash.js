@@ -483,7 +483,7 @@ CashSchema.statics.refund = function (user, payInfo, cb) {
     let refundTime = Date.create();
     let payTime = Date.create(payInfo.payTime);
     let condition = {
-        'pays.payType._id': {$in: ['cash', 'cashless', 'discount']}
+        'pays.payType._id': {$in: ['cash', 'cashless', 'discount', 'company']}
     };
     if (payInfo.branch) {
         condition['pays.branch._id'] = ObjectId(payInfo.branch);

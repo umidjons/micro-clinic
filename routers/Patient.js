@@ -131,9 +131,14 @@ router
                         return Msg.sendError(res, err);
                     }
 
-                    req.patients = patients;
+                    models.Patient.fillAdditions(patients, function (err, patients) {
+                        if (err) {
+                            return Msg.sendError(res, err);
+                        }
 
-                    return Msg.sendSuccess(res, '', req.patients, 'List of patients:');
+                        req.patients = patients;
+                        return Msg.sendSuccess(res, '', req.patients, 'List of patients:');
+                    });
                 });
         }
     )
