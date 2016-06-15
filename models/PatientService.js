@@ -5,6 +5,7 @@ var categorySchema = require('./ServiceCategory').ServiceCategorySchema;
 var stateSchema = require('./State').StateSchema;
 var discountSchema = require('./Discount').DiscountSchema;
 var partnerSchema = require('./Partner').PartnerSchema;
+var companySchema = require('./Company').CompanySchema;
 var cashSchema = require('./Cash').CashSchema;
 var templateSchema = require('./Template').TemplateSchema;
 var serviceFieldSchema = require('./ServiceField').ServiceFieldSchema;
@@ -35,6 +36,7 @@ var PatientServiceSchema = mongoose.Schema({
     overPrice: {type: Number, default: 0}, // over price for non-residents, auto-calculates according to over percent
     overPriceTotal: {type: Number, default: 0},
     partner: partnerSchema,
+    company: companySchema,
     fields: [serviceFieldSchema],
     result: {
         fields: [serviceFieldSchema],

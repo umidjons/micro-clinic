@@ -86,24 +86,6 @@
             <td>{{ srv.title }}</td>
             <td class="text-right">{{ srv.price | number }}</td>
             <td class="text-right">
-                <button ng-click="ServiceHelper.Service.addByCat(srv,'category')"
-                        ng-disabled="!srv.category.title"
-                        class="btn btn-xs btn-danger"
-                        title="Добавить все услуги категории">
-                    <i class="fa fa-fw fa-plus"></i>
-                </button>
-                <button ng-click="ServiceHelper.Service.addByCat(srv,'subcategory')"
-                        ng-disabled="!srv.subcategory.title"
-                        class="btn btn-xs btn-warning"
-                        title="Добавить все услуги подкатегории">
-                    <i class="fa fa-fw fa-plus"></i>
-                </button>
-                <button ng-click="ServiceHelper.Service.addByCat(srv,'subsubcategory')"
-                        ng-disabled="!srv.subsubcategory.title"
-                        class="btn btn-xs btn-info"
-                        title="Добавить все услуги под-подкатегории">
-                    <i class="fa fa-fw fa-plus"></i>
-                </button>
                 <button ng-click="ServiceHelper.Service.add(srv)"
                         class="btn btn-xs btn-primary"
                         title="Добавить услугу">

@@ -337,6 +337,80 @@
 
             return PartnerSetter;
         })
+        .factory('CompanySetter', function ($aside, $rootScope, Company) {
+            var CompanySetter = {
+                companies: [],
+                company: undefined,
+                aside: null,
+                scope: null,
+                // fnCheckedServices() - return selected services,
+                // fnCheckedServices(true) - return count of selected services
+                fnSelectedServices: null
+            };
+
+            // retrieve companies
+            CompanySetter.companies = Company.query();
+
+            CompanySetter.open = function (fnSelectedServices) {
+                // create new scope
+                this.scope = $rootScope.$new(true);
+
+                // do available CompanySetter on the template
+                this.scope.CompanySetter = CompanySetter;
+
+                this.fnSelectedServices = fnSelectedServices;
+
+                // get selected services count
+                this.selServiceCount = this.fnSelectedServices(true);
+
+                // if only one service selected, then show its company on aside
+                // otherwise show aside without company selected
+                if (this.selServiceCount == 1) {
+                    var firstSrv = this.fnSelectedServices()[0];
+                    if ('company' in firstSrv) {
+                        this.company = firstSrv.company;
+                    }
+                } else {
+                    this.company = undefined;
+                }
+
+                // create and show aside, also keep it in a property
+                this.aside = $aside({
+                    scope: this.scope,
+                    templateUrl: 'partials/patient/_aside_company.html',
+                    title: 'Организация',
+                    container: 'body',
+                    backdrop: 'static',
+                    show: true
+                });
+            };
+
+            CompanySetter.set = function () {
+                var srvList = this.fnSelectedServices();
+                for (let srv of srvList) {
+                    srv.company = this.company;
+                }
+                this.aside.hide();
+            };
+
+            CompanySetter.reset = function () {
+                var srvList = this.fnSelectedServices();
+                for (let srv of srvList) {
+                    srv.company = undefined;
+                }
+                this.aside.hide();
+            };
+
+            CompanySetter.resetModel = function () {
+                this.company = undefined;
+            };
+
+            CompanySetter.allow = function () {
+                return this.selServiceCount > 0;
+            };
+
+            return CompanySetter;
+        })
         .factory('Discount', function ($aside, $rootScope) {
             var Discount = {
                 type: 'percent',

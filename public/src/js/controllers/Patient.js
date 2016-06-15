@@ -165,7 +165,7 @@
         })
         .controller('PatientViewCtrl', function ($scope, $state, $stateParams, Patient, Service, PatientService,
                                                  ServiceCategory, Discount, PartnerSetter, Msg, Modal, Fields,
-                                                 $aside, Setting) {
+                                                 $aside, Setting, CompanySetter) {
             $scope.Discount = Discount;
             $scope.Fields = Fields;
 
@@ -332,6 +332,13 @@
                             $scope.ServiceHelper.Marker.onChange();
                         }
                         $scope.openPartner();
+                    },
+                    openCompany: function (srv) {
+                        if (!srv.marked) {
+                            srv.marked = 1;
+                            $scope.ServiceHelper.Marker.onChange();
+                        }
+                        $scope.openCompany();
                     }
                 },
                 Marker: {
@@ -478,6 +485,14 @@
             $scope.openPartner = function () {
                 if ($scope.ServiceHelper.Marker.getMarked(true) > 0) {
                     PartnerSetter.open($scope.ServiceHelper.Marker.getMarked);
+                } else {
+                    Msg.error('Услуга не выбрана!');
+                }
+            };
+
+            $scope.openCompany = function () {
+                if ($scope.ServiceHelper.Marker.getMarked(true) > 0) {
+                    CompanySetter.open($scope.ServiceHelper.Marker.getMarked);
                 } else {
                     Msg.error('Услуга не выбрана!');
                 }

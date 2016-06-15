@@ -18,6 +18,7 @@
                 <th>Долг</th>
                 <th>Состояние</th>
                 <th>Партнёр</th>
+                <th>Организация</th>
                 <th>Дата</th>
                 <th>Пользователь</th>
                 <th>Филиал</th>
@@ -65,6 +66,7 @@
                 <td class="text-right">{{ selSrv.debt | number: 2 }}</td>
                 <td class="text-center">{{ selSrv.state.title }}</td>
                 <td>{{ selSrv.partner.code }}</td>
+                <td title="{{ selSrv.company.title }}">{{ selSrv.company.shortTitle }}</td>
                 <td>{{ selSrv.created | date:'medium' }}</td>
                 <td title="{{ selSrv.user.fullName }}">{{ selSrv.user.username }}</td>
                 <td>{{ selSrv.branch.shortTitle }}</td>

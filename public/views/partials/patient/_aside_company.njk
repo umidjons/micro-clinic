@@ -1,0 +1,53 @@
+<div class="aside" tabindex="-1" role="dialog" style="max-width: 60%;">
+    <div class="aside-dialog">
+        <div class="aside-content" ng-form="formCompany">
+
+            <div class="aside-header" ng-show="title">
+                <button type="button" class="close" ng-click="$hide()">&times;</button>
+                <h4 class="aside-title" ng-bind="title"></h4>
+            </div>
+
+            <div class="aside-body">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label>Организация</label>
+                        <div class="input-group">
+
+                            <ui-select ng-model="CompanySetter.company"
+                                       title="{{ company.title }}" allow-clear>
+                                <ui-select-match placeholder="Наименование организации...">
+                                    {{$select.selected.title}}
+                                </ui-select-match>
+                                <ui-select-choices
+                                        repeat="company in CompanySetter.companies | filter: {title: $select.search}">
+                                    <span>{{ company.title }}</span>
+                                </ui-select-choices>
+                            </ui-select>
+
+                            <span class="input-group-btn">
+                                <button ng-click="CompanySetter.resetModel()" title="сброс" class="btn btn-default">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="aside-footer">
+                <button type="button" class="btn btn-danger" ng-click="$hide()">Отмена</button>
+                <button ng-click="CompanySetter.reset()" ng-show="CompanySetter.allow()"
+                        ng-disabled="formCompany.$invalid" class="btn btn-danger">
+                    <i class="fa fa-fw fa-gift"></i>
+                    Удалить организацию с выделенных {{ CompanySetter.selServiceCount }} услуг
+                </button>
+                <button ng-click="CompanySetter.set()" ng-show="CompanySetter.allow()"
+                        ng-disabled="formCompany.$invalid" class="btn btn-success">
+                    <i class="fa fa-fw fa-gift"></i>
+                    Привязать организацию к выделенным {{ CompanySetter.selServiceCount }} услугам
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

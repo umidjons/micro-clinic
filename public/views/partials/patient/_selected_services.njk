@@ -19,6 +19,7 @@
             <th>Количество</th>
             <th>Стоимость</th>
             <th>Партнёр</th>
+            <th>Организация</th>
             <th class="text-right">
                 <div class="btn-group btn-group-xs">
                     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
@@ -39,6 +40,11 @@
                         <li>
                             <a href ng-click="openPartner()">
                                 <i class="fa fa-fw fa-user-plus"></i> Партнёр
+                            </a>
+                        </li>
+                        <li>
+                            <a href ng-click="openCompany()">
+                                <i class="fa fa-fw fa-building"></i> Организация
                             </a>
                         </li>
                     </ul>
@@ -91,6 +97,7 @@
             </td>
             <td class="text-right">{{ selSrv.priceTotal | number: 2 }}</td>
             <td ng-dblclick="ServiceHelper.Service.openPartner(selSrv)">{{ selSrv.partner.code }}</td>
+            <td ng-dblclick="ServiceHelper.Service.openCompany(selSrv)">{{ selSrv.company.title }}</td>
 
             <td class="text-right">
                 <button ng-click="ServiceHelper.Service.remove($index)"
@@ -109,7 +116,7 @@
             class="row-group-body">
             <td ng-if="selSrv.fields.length > 0"
                 class="cell-table"
-                colspan="11">
+                colspan="12">
                 {% include "partials/patient/_selected_services_fields.njk" %}
             </td>
         </tr>
