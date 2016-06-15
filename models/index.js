@@ -32,3 +32,5 @@ module.exports.BranchSchema = require('./Branch').BranchSchema;
 module.exports.Branch = require('./Branch').Branch;
 module.exports.SettingSchema = require('./Setting').SettingSchema;
 module.exports.Setting = require('./Setting').Setting;
+module.exports.CompanySchema = require('./Company').CompanySchema;
+module.exports.Company = require('./Company').Company;

@@ -95,6 +95,7 @@ mongoose.connection.once('open', function () {
         .use('/partner', routers.Partner)
         .use('/cash', routers.Cash)
         .use('/branch', routers.Branch)
+        .use('/company', routers.Company)
         .use('/setting', routers.Setting)
         .listen(app.get('port'), function () {
             console.log(`Listening on http://localhost:${app.get('port')}...`);

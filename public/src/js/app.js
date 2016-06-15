@@ -248,6 +248,21 @@
                     url: '/branch/edit/:id',
                     templateUrl: 'partials/branch/edit.html',
                     controller: 'BranchCtrl'
+                })
+                .state('companyList', {
+                    url: '/company/list',
+                    templateUrl: 'partials/company/list.html',
+                    controller: 'CompaniesCtrl'
+                })
+                .state('companyCreate', {
+                    url: '/company/create',
+                    templateUrl: 'partials/company/create.html',
+                    controller: 'CompanyCtrl'
+                })
+                .state('companyEdit', {
+                    url: '/company/edit/:id',
+                    templateUrl: 'partials/company/edit.html',
+                    controller: 'CompanyCtrl'
                 });
             $urlRouterProvider.otherwise('/');
         })

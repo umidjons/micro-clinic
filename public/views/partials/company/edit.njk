@@ -1,0 +1,21 @@
+<ol class="breadcrumb">
+    <li><a ui-sref="companyList">Организации</a></li>
+    <li><a ui-sref="companyCreate">Новая организация</a></li>
+</ol>
+
+<h3>Изменение организации</h3>
+
+<form name="formCompany" class="form-horizontal" novalidate>
+
+    {% include "partials/company/_form_fields.njk" %}
+
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <button ui-sref="companyList" class="btn btn-danger">Отмена</button>
+            <button ng-click="saveCompany()" ng-disabled="formCompany.$invalid" class="btn btn-success">
+                Сохранить
+            </button>
+        </div>
+    </div>
+
+</form>
