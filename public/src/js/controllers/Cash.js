@@ -6,6 +6,11 @@
             $scope.payTypes = PayType.query();
             $scope.records = [];
             $scope.branches = Branch.query();
+            $scope.todaysOnly = 1;
+            $scope.period = {
+                start: Date.create('the beginning of this month'),
+                end: Date.create('the end of this month')
+            };
 
             $scope.Filter = {
                 branch: $scope.$localStorage.currentUser.branch,
@@ -16,8 +21,20 @@
             };
 
             $scope.reloadPage = function () {
+                // determine period
+                let period = {};
+                if ($scope.todaysOnly) {
+                    period.start = Date.create();
+                    period.end = Date.create();
+                } else {
+                    period = angular.copy($scope.period);
+                }
+
+                // determine branch
                 let branch = $scope.Filter.branch ? $scope.Filter.branch._id : undefined;
-                $scope.records = Cash.pendingPatients({branch: branch});
+
+                // get records
+                $scope.records = Cash.pendingPatients({branch: branch, period: period});
             };
 
             // initial loading
@@ -81,6 +98,16 @@
                                 okAction: function (modal) {
                                     var cash = new Cash();
                                     let branch = $scope.Filter.branch ? $scope.Filter.branch._id : undefined;
+
+                                    // determine period
+                                    let period = {};
+                                    if ($scope.todaysOnly) {
+                                        period.start = Date.create();
+                                        period.end = Date.create();
+                                    } else {
+                                        period = angular.copy($scope.period);
+                                    }
+
                                     cash.pay = {
                                         branch: branch,
                                         patientId: patientService.patient._id,
@@ -90,7 +117,8 @@
                                         totalCash: ctrl.totalCash,
                                         totalCashless: ctrl.totalCashless,
                                         totalCompany: ctrl.totalCompany,
-                                        debt: ctrl.debt
+                                        debt: ctrl.debt,
+                                        period: period
                                     };
 
                                     cash.$payAll(function (resp) {

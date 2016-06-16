@@ -49,7 +49,7 @@ var PatientServiceSchema = mongoose.Schema({
     branch: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Branch'}
 });
 
-PatientServiceSchema.statics.pendingPatients = function (branch, cb) {
+PatientServiceSchema.statics.pendingPatients = function (branch, period, cb) {
     let ObjectId = mongoose.Types.ObjectId;
     let condition = {'state._id': {$in: ['new', 'partlyPayed']}};
 
@@ -58,10 +58,24 @@ PatientServiceSchema.statics.pendingPatients = function (branch, cb) {
         condition.branch = ObjectId(branch);
     }
 
+    // filter patient services by patient's last visit date
+    let conditionWithPeriod = Object.assign({}, condition);
+    if (period) {
+        period = F.normalizePeriod(period.start, period.end);
+        conditionWithPeriod['patient.lastVisit'] = {$gte: period.start, $lte: period.end};
+    }
+
     debug(F.inspect(condition, 'Condition to retrieve pending patient services for cash:', true));
 
     PatientService.aggregate()
         .match(condition)
+        .lookup({
+            from: 'patients',
+            localField: 'patientId',
+            foreignField: '_id',
+            as: 'patient'
+        })
+        .match(conditionWithPeriod)
         .group({
             _id: '$patientId', // _id is patient id
             quantity: {$sum: '$quantity'},

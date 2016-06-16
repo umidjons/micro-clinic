@@ -10,7 +10,7 @@ router
     .post('/pending-patients', function (req, res) {
         debug(F.inspect(req.body.branch, 'Filter pending patients by branch:', true));
 
-        models.PatientService.pendingPatients(req.body.branch, function (err, records) {
+        models.PatientService.pendingPatients(req.body.branch, req.body.period, function (err, records) {
             if (err) {
                 return Msg.sendError(res, err);
             }

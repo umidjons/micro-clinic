@@ -4,16 +4,61 @@
 
 <h1>Касса</h1>
 
-<button ng-click="Filter.by(undefined)"
-        class="btn btn-xs btn-default"
-        ng-class="{'active': Filter.branch == undefined}">Все филиалы
-</button>
-<button ng-repeat="b in branches"
-        ng-click="Filter.by(b)"
-        class="btn btn-xs btn-default"
-        ng-class="{'active': Filter.branch.shortTitle == b.shortTitle}">
-    {{ b.shortTitle }}
-</button>
+<div class="checkbox">
+    <label>
+        <input ng-model="todaysOnly" type="checkbox"
+               ng-true-value="1"
+               ng-false-value="0"
+               ng-change="reloadPage()"> Только сегодняшнее
+    </label>
+</div>
+
+<div ng-if="todaysOnly == 0" class="col-sm-4">
+    <form class="form-horizontal" novalidate>
+
+        <div class="form-group">
+            <label class="control-label col-sm-4 req">с</label>
+            <div class="col-sm-8">
+                <input ng-model="period.start"
+                       bs-datepicker
+                       data-autoclose="true"
+                       data-max-date="{{ period.end }}"
+                       class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-4 req">по</label>
+            <div class="col-sm-8">
+                <input ng-model="period.end"
+                       bs-datepicker
+                       data-autoclose="true"
+                       data-min-date="{{ period.start }}"
+                       class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-8">
+                <button ng-click="reloadPage()" class="btn btn-default">Показать</button>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<div class="col-sm-12">
+    <button ng-click="Filter.by(undefined)"
+            class="btn btn-xs btn-default"
+            ng-class="{'active': Filter.branch == undefined}">Все филиалы
+    </button>
+    <button ng-repeat="b in branches"
+            ng-click="Filter.by(b)"
+            class="btn btn-xs btn-default"
+            ng-class="{'active': Filter.branch.shortTitle == b.shortTitle}">
+        {{ b.shortTitle }}
+    </button>
+</div>
 
 <table class="table table-bordered table-striped table-condensed">
     <thead>

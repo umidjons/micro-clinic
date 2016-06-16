@@ -233,9 +233,6 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
         // populating pays for each pending service
         for (let patSrv of patientServices) {
 
-            //debug(F.inspect(patSrv, '-------Patient Service=', true));
-            //debug(F.inspect(pType, '--------Pay Type=', true));
-
             // Pay by company
             if (patSrv.company) {
                 let amount = patSrv.debt;
