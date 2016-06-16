@@ -19,6 +19,19 @@ router
                 next();
             });
     })
+    .post('/details/:id', function (req, res) {
+        if (!req.body.start || !req.body.end) {
+            return Msg.sendError(res, 'Неправильный период!');
+        }
+
+        models.Company.details(req.body.start, req.body.end, req.params.id, function (err, details) {
+            if (err) {
+                return Msg.sendError(res, err);
+            }
+
+            Msg.sendSuccess(res, '', details);
+        });
+    })
     .get('/:id', function (req, res) {
         Msg.sendSuccess(res, '', req.company, 'Company:');
     })

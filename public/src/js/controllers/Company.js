@@ -68,5 +68,29 @@
             };
 
             $scope.reloadPage();
+        })
+        .controller('CompanyDetailsCtrl', function ($scope, Company, $state, $stateParams, Msg) {
+            if ($stateParams.id) {
+                Company.get({id: $stateParams.id}, function (company) {
+                    $scope.company = company;
+                });
+            } else {
+                Msg.error('Организация не выбрана!');
+                $state.go('companyList');
+            }
+
+            $scope.filter = {
+                start: Date.create('the beginning of this month'),
+                end: Date.create('the end of this month')
+            };
+
+            $scope.refresh = function () {
+                $scope.filter.companyId = $scope.company._id;
+                $scope.records = Company.details($scope.filter);
+            };
+
+            $scope.resetSearch = function () {
+                $scope.search = {};
+            };
         });
 })();

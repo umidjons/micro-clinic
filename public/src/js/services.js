@@ -225,6 +225,12 @@
                 {
                     update: {
                         method: 'PUT'
+                    },
+                    details: {
+                        method: 'POST',
+                        url: '/company/details/:companyId',
+                        isArray: true,
+                        params: {'companyId': '@companyId'}
                     }
                 }
             );

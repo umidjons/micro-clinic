@@ -1,0 +1,87 @@
+<ol class="breadcrumb">
+    <li><a ui-sref="companyList">Организации</a></li>
+    <li><a ui-sref="companyEdit({id:company._id})">{{ company.title }}</a></li>
+    <li>Детализация</li>
+</ol>
+
+<h3>Детализация {{ company.title }}</h3>
+
+<div class="col-sm-4">
+    <form class="form-horizontal" novalidate>
+        <div class="form-group">
+            <label class="control-label col-sm-4 req">с</label>
+            <div class="col-sm-8">
+                <input ng-model="filter.start"
+                       bs-datepicker
+                       data-autoclose="true"
+                       data-max-date="{{ filter.end }}"
+                       class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4 req">по</label>
+            <div class="col-sm-8">
+                <input ng-model="filter.end"
+                       bs-datepicker
+                       data-autoclose="true"
+                       data-min-date="{{ filter.start }}"
+                       class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-8">
+                <button ng-click="refresh()" class="btn btn-default">Показать</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<table class="table table-bordered table-striped table-condensed">
+    <thead>
+    <tr>
+        <th>№</th>
+        <th>ID</th>
+        <th>Фамилия</th>
+        <th>Имя</th>
+        <th>Отчество</th>
+        <th>Услуга</th>
+        <th>Стоимость</th>
+        <th>Дата и время</th>
+    </tr>
+    <tr>
+        <th></th>
+        <th><input ng-model="search.code" class="form-control"></th>
+        <th><input ng-model="search.patientId.lastName" class="form-control"></th>
+        <th><input ng-model="search.patientId.firstName" class="form-control"></th>
+        <th><input ng-model="search.patientId.middleName" class="form-control"></th>
+        <th><input ng-model="search.title" class="form-control"></th>
+        <th></th>
+        <th class="text-center">
+            <button ng-click="resetSearch()" title="Очистить фильтр" class="btn btn-xs btn-default">
+                <i class="fa fa-fw fa-filter"></i>
+                <i class="fa fa-fw fa-remove"></i>
+            </button>
+        </th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr ng-repeat="rec in records | filter: search">
+        <td>{{ $index + 1 }}</td>
+        <td>{{ rec.code }}</td>
+        <td>{{ rec.patientId.lastName }}</td>
+        <td>{{ rec.patientId.firstName }}</td>
+        <td>{{ rec.patientId.middleName }}</td>
+        <td>{{ rec.title }}</td>
+        <td class="text-right">{{ rec.priceTotal | number: 2 }}</td>
+        <td>{{ rec.created | date: 'medium' }}</td>
+    </tr>
+    </tbody>
+
+    <tfoot>
+    <tr>
+        <th class="text-right" colspan="6">ИТОГО:</th>
+        <th class="text-right">{{ F.total(records, 'priceTotal') | number: 2 }}</th>
+    </tr>
+    </tfoot>
+</table>

@@ -38,16 +38,12 @@
         </td>
         <td>{{ company.balance | number: 2 }}</td>
         <td class="text-center">
-            <div class="btn-group btn-group-xs">
-                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
-                    <i class="fa fa-fw fa-bars"></i> <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-right">
-                    <li><a ui-sref="companyEdit({id:company._id})"><i class="fa fa-fw fa-edit"></i> Изменить</a></li>
-                    <li><a href ng-click="deleteCompany(company)"><i class="fa fa-fw fa-trash"></i> Удалить</a></li>
-                </ul>
-            </div>
+            <a ui-sref="companyEdit({id:company._id})" title="Изменить" class="btn btn-xs btn-info">
+                <i class="fa fa-fw fa-edit"></i></a>
+            <a href ng-click="deleteCompany(company)" title="Удалить" class="btn btn-xs btn-danger">
+                <i class="fa fa-fw fa-trash"></i></a>
+            <a ui-sref="companyDetails({id:company._id})" title="Детализация" class="btn btn-xs btn-info">
+                <i class="fa fa-fw fa-search"></i></a>
         </td>
     </tr>
     </tbody>

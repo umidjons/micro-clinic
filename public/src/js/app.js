@@ -263,6 +263,11 @@
                     url: '/company/edit/:id',
                     templateUrl: 'partials/company/edit.html',
                     controller: 'CompanyCtrl'
+                })
+                .state('companyDetails', {
+                    url: '/company/details/:id',
+                    templateUrl: 'partials/company/details.html',
+                    controller: 'CompanyDetailsCtrl'
                 });
             $urlRouterProvider.otherwise('/');
         })
