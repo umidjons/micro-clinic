@@ -79,7 +79,8 @@
 
         <tbody>
         <tr ng-repeat="srv in services | filter: ServiceHelper.Service.filter as filteredServices"
-            ng-dblclick="ServiceHelper.Service.add(srv)">
+            ng-dblclick="ServiceHelper.Service.add(srv)"
+            ng-class="{'success': srv.added}">
             <td>{{ srv.category.title }}</td>
             <td>{{ srv.subcategory.title }}</td>
             <td>{{ srv.subsubcategory.title }}</td>

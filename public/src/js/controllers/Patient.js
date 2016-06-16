@@ -253,6 +253,9 @@
                         }
                     },
                     add: function (srv, qnt) {
+                        // mark service as added
+                        srv.added = true;
+
                         srv.overPercent = $scope.patient.resident._id == 'other' ? $scope.setting.foreignerOverPercent : 0;
                         var found = _.find($scope.patient.services, {_id: srv._id});
                         qnt = qnt || 1;
@@ -296,16 +299,29 @@
                             this.add(service);
                         }
                     },
+                    unsetAddedProp: function (srvList) {
+                        if (srvList && srvList.length) {
+                            for (let srv of srvList) {
+                                let oSrv = _.find($scope.services, {_id: srv._id});
+                                if (oSrv) {
+                                    oSrv.added = false;
+                                }
+                            }
+                        }
+                    },
                     remove: function (idx) {
                         if (angular.isUndefined(idx)) {
                             if ($scope.ServiceHelper.Marker.getMarked(true) > 0) {
                                 var markedSrvList = $scope.ServiceHelper.Marker.getMarked();
                                 $scope.patient.services = _.difference($scope.patient.services, markedSrvList);
+                                this.unsetAddedProp(markedSrvList);
                             } else {
                                 Msg.error('Услуга не выбрана!');
                             }
                         } else {
-                            $scope.patient.services.splice(idx, 1);
+                            // remove service and set added property of the original service to the false
+                            let srvList = $scope.patient.services.splice(idx, 1);
+                            this.unsetAddedProp(srvList);
                         }
                         $scope.ServiceHelper.Marker.onChange();
                     },
