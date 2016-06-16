@@ -231,6 +231,22 @@
                         url: '/company/details/:companyId',
                         isArray: true,
                         params: {'companyId': '@companyId'}
+                    },
+                    pays: {
+                        method: 'GET',
+                        url: '/company/pays/:companyId',
+                        isArray: true,
+                        params: {'companyId': '@companyId'}
+                    },
+                    addPay: {
+                        method: 'POST',
+                        url: '/company/pay/:companyId',
+                        params: {'companyId': '@companyId'}
+                    },
+                    cancelPay: {
+                        method: 'DELETE',
+                        url: '/company/pay/:companyId/:payId',
+                        params: {'companyId': '@companyId', 'payId': '@payId'}
                     }
                 }
             );
@@ -679,9 +695,12 @@
         })
         .factory('F', function () {
             return {
-                total: function (objList, prop) {
+                total: function (objList, prop, fnFilter) {
                     if (objList) {
                         return _.reduce(objList, function (memo, obj) {
+                            if (angular.isFunction(fnFilter)) {
+                                return memo + (fnFilter(obj) ? obj[prop] : 0);
+                            }
                             return memo + obj[prop];
                         }, 0);
                     } else {
@@ -691,6 +710,12 @@
                 allowNulls: function (input, actual) {
                     if (actual === null) return true;
                     else return ('' + input).toLowerCase().indexOf(('' + actual).toLowerCase()) > -1;
+                },
+                formatDate: function (date) {
+                    return Date.create(date).format('{dd}.{MM}.{yyyy}');
+                },
+                formatNumber: function (number) {
+                    return number.format(2, ' ');
                 }
             };
         })

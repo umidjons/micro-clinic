@@ -268,6 +268,11 @@
                     url: '/company/details/:id',
                     templateUrl: 'partials/company/details.html',
                     controller: 'CompanyDetailsCtrl'
+                })
+                .state('companyPay', {
+                    url: '/company/pay/:id',
+                    templateUrl: 'partials/company/pay.html',
+                    controller: 'CompanyPayCtrl'
                 });
             $urlRouterProvider.otherwise('/');
         })

@@ -34,3 +34,5 @@ module.exports.SettingSchema = require('./Setting').SettingSchema;
 module.exports.Setting = require('./Setting').Setting;
 module.exports.CompanySchema = require('./Company').CompanySchema;
 module.exports.Company = require('./Company').Company;
+module.exports.DepositSchema = require('./Company').DepositSchema;
+module.exports.Deposit = require('./Company').Deposit;

@@ -92,5 +92,56 @@
             $scope.resetSearch = function () {
                 $scope.search = {};
             };
+        })
+        .controller('CompanyPayCtrl', function ($scope, F, Company, $state, $stateParams, Msg, Modal) {
+            $scope.refresh = function () {
+                Company.get({id: $stateParams.id}, function (company) {
+                    $scope.company = company;
+                    if ($scope.company.pays && $scope.company.pays.length > 1) {
+                        $scope.company.pays = _.sortBy($scope.company.pays, 'date').reverse();
+                    }
+                });
+            };
+
+            if ($stateParams.id) {
+                $scope.refresh();
+            } else {
+                Msg.error('Организация не выбрана!');
+                $state.go('companyList');
+            }
+
+            $scope.addFunds = function () {
+                let pay = angular.copy($scope.pay);
+                pay.companyId = $scope.company._id;
+                Modal.confirm({
+                    content: `Пополнить счет на ${F.formatNumber(pay.amount)} сум от ${F.formatDate(pay.date)}?`,
+                    okAction: function (modal) {
+                        Company.addPay(pay, function (resp) {
+                            $scope.pay = {};
+                            $scope.refresh();
+                            modal.hide();
+                        });
+                    }
+                });
+            };
+
+            $scope.cancelPay = function (payment) {
+                let pay = {};
+                pay.payId = payment._id;
+                pay.companyId = $scope.company._id;
+                Modal.confirm({
+                    content: `Отменить оплату ${F.formatNumber(payment.amount)} сум от ${F.formatDate(payment.date)}?`,
+                    okAction: function (modal) {
+                        Company.cancelPay(pay, function (resp) {
+                            $scope.refresh();
+                            modal.hide();
+                        });
+                    }
+                });
+            };
+
+            $scope.fnFilter = function (pay) {
+                return pay.amount > 0;
+            };
         });
 })();
