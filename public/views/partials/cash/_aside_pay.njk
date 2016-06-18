@@ -1,4 +1,4 @@
-<div class="aside" tabindex="-1" role="dialog" style="max-width: 60%;">
+<div class="aside" tabindex="-1" role="dialog" style="max-width: 40%;">
     <div class="aside-dialog">
         <div class="aside-content" ng-form="formPay">
 
@@ -10,10 +10,46 @@
             <div class="aside-body">
                 <div class="col-sm-12">
                     <div class="form-horizontal">
+
                         <div class="form-group">
                             <label>ФИО</label>
                             <p class="form-control-static bold text-success">{{ Pay.fullName }}</p>
                         </div>
+
+                        <div class="form-group">
+                            <label class="req">Скидка</label>
+                            <div class="input-group">
+                                <input ng-model="Pay.discount.amount"
+                                       ng-change="Pay.calcDiscount()"
+                                       type="number" class="form-control"
+                                       min="0" ng-max="Pay.discount.max" required>
+                                <div class="input-group-btn">
+                                    <button class="btn btn-default" data-toggle="dropdown">
+                                        <i ng-if="Pay.discount.type=='percent'" class="fa fa-fw fa-percent"></i>
+                                        <span ng-if="Pay.discount.type=='amount'">сум</span>
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-right">
+                                        <li>
+                                            <a href ng-click="Pay.setDiscountType('percent')">
+                                                <i class="fa fa-fw fa-percent"></i>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href ng-click="Pay.setDiscountType('amount')">сум</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label ng-class="{'req': Pay.discount.amount > 0}">Причина</label>
+                            <textarea ng-model="Pay.discount.note" class="form-control" maxlength="200"
+                                      ng-required="Pay.discount.amount > 0">
+                            </textarea>
+                        </div>
+
                         <div ng-if="!Pay.isByCompany" class="form-group">
                             <label class="req">Тип платежа</label>
                             <select ng-model="Pay.type" ng-options="pt.title for pt in payTypes"
@@ -44,14 +80,16 @@
                                    class="form-control" required>
                         </div>
 
-                        <div ng-if="Pay.totalCompany > 0" class="form-group">
+                        <div ng-if="Pay.totalCompanyMax > 0" class="form-group">
                             <label class="req">За счет организации пациента</label>
                             <input ng-model="Pay.totalCompany" class="form-control" readonly required>
                         </div>
 
                         <div class="form-group">
                             <label class="req">Долг после оплаты</label>
-                            <input ng-model="Pay.debt" class="form-control" readonly required>
+                            <input ng-model="Pay.debt" type="number"
+                                   min="0" ng-max="Pay.totalDebt"
+                                   class="form-control" readonly required>
                         </div>
 
                         <div class="checkbox">

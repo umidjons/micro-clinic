@@ -127,7 +127,7 @@
         <tr>
             <th class="text-right" colspan="7">Сумма скидки:</th>
             <th></th>
-            <th class="text-right">{{ ServiceHelper.Service.total('discountPriceTotal') | number: 2 }}</th>
+            <th class="text-right">{{ ServiceHelper.Service.total('discountPrice') | number: 2 }}</th>
         </tr>
         <tr ng-if="patient.resident._id=='other'">
             <th class="text-right" colspan="7">Сверх % нерезидентам:</th>

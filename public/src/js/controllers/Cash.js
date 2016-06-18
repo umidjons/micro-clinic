@@ -50,21 +50,100 @@
                     container: 'body',
                     backdrop: 'static',
                     controller: function () {
+                        // check options
                         this.check = {
                             print: true, // true - print check
                             includeCash: true, // true - include cash type pays into check
                             includeCashless: false // true - include cashless type pays into check
                         };
+
+                        // discount options
+                        this.discount = {
+                            type: 'percent',
+                            note: '',
+                            amount: 0,
+                            max: 100,
+                            sum: 0, // total discount amount in som
+                            sumCompany: 0 // company's total discount amount in som
+                        };
+
+                        // by default, pay type is not selected
                         this.type = undefined;
+
+                        // total debt - used to calculate max discount amount
+                        this.totalDebt = patientService.totalDebt;
+
+                        // original total amount, which never will be changed
                         this.totalMax = patientService.totalDebt - patientService.totalCompany;
                         this.total = patientService.totalDebt - patientService.totalCompany;
+
+                        // original total company amount, which never will be changed
+                        this.totalCompanyMax = patientService.totalCompany;
                         this.totalCompany = patientService.totalCompany;
-                        this.debt = 0; // debt after pay
+
+                        // debt after pay
+                        this.debt = 0;
+
+                        // is only company pay?
                         this.isByCompany = this.total == 0 && this.totalCompany > 0;
+
+                        // patient's full name
                         this.fullName = patientService.patient.lastName + ' ' + patientService.patient.firstName + ' '
                             + (patientService.patient.middleName ? patientService.patient.middleName : '');
 
                         let ctrl = this;
+
+                        this.setDiscountType = function (type) {
+                            this.discount.type = type;
+                            if (type == 'percent') {
+                                this.discount.max = 100; // max = 100%
+                            } else {
+                                this.discount.max = this.totalDebt; // max = total debt
+                            }
+                            this.calcDiscount();
+                        };
+
+                        this.calcDiscount = function () {
+                            switch (this.discount.type) {
+                                case 'percent':
+                                    if (this.totalMax > 0) {
+                                        this.discount.sum = this.totalMax * this.discount.amount * 0.01;
+                                        this.total = this.totalMax - this.discount.sum;
+                                    }
+                                    if (this.totalCompanyMax > 0) {
+                                        this.discount.sumCompany = this.totalCompanyMax * this.discount.amount * 0.01;
+                                        this.discount.sum += this.discount.sumCompany;
+                                        this.totalCompany = this.totalCompanyMax - this.discount.sumCompany;
+                                    }
+                                    break;
+
+                                case 'amount':
+                                    this.discount.sum = this.discount.amount;
+                                    let leftDiscount = this.discount.amount;
+                                    if (this.totalMax > 0) {
+                                        // if there is enough money to set discount,
+                                        // then calculate total amount taking into account discount amount
+                                        if (this.totalMax >= leftDiscount) {
+                                            this.total = this.totalMax - leftDiscount;
+                                            leftDiscount = 0;
+                                        } else {
+                                            // if discount amount > total pay amount
+                                            // set pay amount to 0
+                                            this.total = 0;
+                                            leftDiscount -= this.totalMax;
+                                        }
+                                    }
+                                    // if there is company amount, calculate total company's pay
+                                    // taking into account left discount amount
+                                    if (this.totalCompanyMax > 0) {
+                                        this.discount.sumCompany = leftDiscount;
+                                        this.totalCompany = this.totalCompanyMax - leftDiscount;
+                                    }
+                                    break;
+                            }
+
+                            this.recalc();
+                        };
 
                         this.typeChanged = function () {
                             if (ctrl.type && ctrl.type._id == 'separated') {
@@ -89,8 +168,12 @@
                                     ctrl.totalCash = ctrl.total - ctrl.totalCashless;
                                 }
                             }
+
                             // calculate debt
-                            ctrl.debt = ctrl.totalMax - ctrl.total;
+                            // Formula: debt = payAmount + companyPayAmount - discountAmount
+                            ctrl.debt = ctrl.totalMax - ctrl.total
+                                + ctrl.totalCompanyMax - ctrl.totalCompany
+                                - ctrl.discount.sum;
                         };
 
                         this.save = function () {
@@ -117,6 +200,7 @@
                                         totalCash: ctrl.totalCash,
                                         totalCashless: ctrl.totalCashless,
                                         totalCompany: ctrl.totalCompany,
+                                        discount: ctrl.discount,
                                         debt: ctrl.debt,
                                         period: period
                                     };

@@ -5,6 +5,7 @@ var async = require('async');
 var sugar = require('sugar');
 var stateSchema = require('./State').StateSchema;
 var branchSchema = require('./Branch').BranchSchema;
+var discountSchema = require('./Discount').DiscountSchema;
 var models = require('.');
 var F = require('../include/F');
 var debug = require('debug')('myclinic:model:cash');
@@ -34,7 +35,8 @@ var CashSchema = mongoose.Schema({
     percentOfPartner: {type: Number, default: 0},
     interestOfPartner: {type: Number, default: 0},
     refunded: {type: Date},
-    refundedUser: {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
+    refundedUser: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+    discount: discountSchema // original discount model
 });
 
 /*
@@ -171,23 +173,133 @@ CashSchema.statics.changeCompaniesBalance = function (companies, cb) {
 CashSchema.statics.genDiscountPay = function (user, time, patSrv) {
     // if there is discount, generate pay for it
     if (patSrv.discount && patSrv.discount.type && patSrv.discount.state._id == 'new') {
-        let discountAmount = patSrv.discount.amount;
+        // by default assume type='amount' and discount sum = discount amount
+        patSrv.discount.sum = patSrv.discount.amount;
 
-        // if discount type is percent, calculate discount amount
+        // if discount type is percent, calculate discount sum
         if (patSrv.discount.type == 'percent') {
-            discountAmount = (patSrv.discount.amount * (patSrv.quantity * patSrv.price)) / 100;
+            patSrv.discount.sum = (patSrv.discount.amount * (patSrv.quantity * (patSrv.price + patSrv.overPrice))) / 100;
         }
 
+        // this is saved only in pays[n].discount property
+        patSrv.discount.state = {_id: 'payed', title: 'Оплачен'};
+
         patSrv.pays.push({
-            amount: discountAmount,
+            amount: discount.sum,
             payType: {_id: 'discount', title: 'Скидка'},
             created: time,
             branch: user.branch,
             user: user._id,
-            state: {_id: 'payed', title: 'Оплачен'}
+            state: {_id: 'payed', title: 'Оплачен'},
+            discount: patSrv.discount
         });
     }
     return patSrv;
+};
+
+/**
+ * Generates discount.
+ * @param {object} user current user
+ * @param {Date} time pay date and time
+ * @param {object} payInfo pay info object
+ * @param {object} patSrv patient service
+ * @param {string} sumProperty possible values: 'sum' or 'sumCompany'
+ */
+CashSchema.statics.addDiscountPay = function (user, time, payInfo, patSrv, sumProperty) {
+    // determine amount
+    let amount = patSrv.debt;
+
+    // if there is discount, generate discount model & pay
+    if (payInfo.discount[sumProperty] > 0) {
+        // generate discount model
+        let discount = {};
+        discount.type = payInfo.discount.type;
+        discount.note = payInfo.discount.note;
+        discount.state = {_id: 'payed', title: 'Оплачен'};
+        discount.amount = payInfo.discount.amount; // amount % or amount sum
+
+        // determine discount sum
+        if (payInfo.discount[sumProperty] >= amount) {
+            // discount covers whole debt
+            discount.sum = amount;
+            // calculate left discount sum
+            payInfo.discount[sumProperty] -= amount;
+        } else {
+            // there is more debt than discount sum
+            // set all discount sum as discount sum in model
+            discount.sum = payInfo.discount[sumProperty];
+            // no left discount sum
+            payInfo.discount[sumProperty] = 0;
+        }
+
+        // generate discount pay
+        patSrv.pays.push({
+            amount: discount.sum,
+            payType: {_id: 'discount', title: 'Скидка'},
+            created: time,
+            branch: user.branch,
+            user: user._id,
+            state: {_id: 'payed', title: 'Оплачен'},
+            discount: discount
+        });
+
+        // increase discount price
+        patSrv.discountPrice += discount.sum;
+
+        // decrease total price
+        patSrv.priceTotal -= discount.sum;
+
+        // decrease debt & increase payed
+        patSrv.debt -= discount.sum;
+        patSrv.payed += discount.sum;
+    }
+};
+
+CashSchema.statics.addPay = function (user, time, payInfo, patSrv, totalProperty, payType) {
+    // determine amount
+    let amount = patSrv.debt;
+
+    if (amount > payInfo[totalProperty] && payInfo[totalProperty] > 0) {
+        amount = payInfo[totalProperty];
+    }
+
+    // check for discount
+    Cash.genDiscountPay(user, time, patSrv);
+
+    let pay = {
+        amount: amount,
+        payType: payType,
+        created: time,
+        branch: user.branch,
+        user: user._id,
+        state: {_id: 'payed', title: 'Оплачен'}
+    };
+
+    Cash.calcPartnerInterest(pay, patSrv);
+
+    // generate pay
+    patSrv.pays.push(pay);
+
+    // decrease debt & increase payed
+    patSrv.debt -= amount;
+    patSrv.payed += amount;
+
+    // change service state
+    if (patSrv.debt > 0) {
+        patSrv.state = {_id: 'partlyPayed', title: 'Частично оплачен'};
+    } else {
+        patSrv.state = {_id: 'payed', title: 'Оплачен'};
+    }
+
+    // decrease left amount
+    if (totalProperty == 'totalCashless' || totalProperty == 'totalCash' || totalProperty == 'totalCompany') {
+        payInfo[totalProperty] -= amount;
+    }
+    // total company amount is not in total value,
+    // for total company do not increase total to amount value
+    if (totalProperty != 'totalCompany') {
+        payInfo.total -= amount;
+    }
 };
 
 /**
@@ -210,7 +322,22 @@ CashSchema.statics.calcPartnerInterest = function (pay, patSrv) {
  * Generates & saves pays for given patient's pending services.
  * @param {object} user currently logged in user
  * @param {object} payInfo payment info in format
- *   {patientId: XXX, payType: XXX, totalDebt: XXX, total: XXX, totalCash: XXX, totalCashless: XXX, debt: XXX}
+ *   {
+ *     patientId: XXX,
+ *     payType: undefined | { _id: XXX, title: XXX },
+ *     totalDebt: XXX,
+ *     total: XXX,
+ *     totalCash: XXX,
+ *     totalCashless: XXX,
+ *     totalCompany: XXX,
+ *     discount: {
+ *       type: XXX, // percent | amount
+ *       amount: XXX, // XXX % or XXX som
+ *       sum: XXX, // calculated total discount amount in som
+ *       sumCompany: XXX // calculated company's discount amount in som
+ *     }
+ *     debt: XXX
+ *   }
  * @param {function} cb callback function with one parameter - error.
  */
 CashSchema.statics.payAll = function (user, payInfo, cb) {
@@ -230,44 +357,26 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
 
         let pType = payInfo.payType ? payInfo.payType._id : undefined;
 
+        // discount amount without company's discount amount
+        payInfo.discount.sum -= payInfo.discount.sumCompany;
+
         // populating pays for each pending service
         for (let patSrv of patientServices) {
 
             // Pay by company
             if (patSrv.company) {
-                let amount = patSrv.debt;
 
-                if (amount > payInfo.totalCompany) {
+                Cash.addDiscountPay(user, time, payInfo, patSrv, 'sumCompany');
+
+                if (patSrv.debt > payInfo.totalCompany) {
                     return cb(`Сумма оплаты за счет организации пациента меньше чем долг за услуги ${patSrv.title}.`);
                 }
 
-                let pay = {
-                    amount: amount,
-                    payType: {_id: 'company', title: 'Организация'},
-                    created: time,
-                    branch: user.branch,
-                    user: user._id,
-                    state: {_id: 'payed', title: 'Оплачен'}
-                };
+                // keep debt amount,
+                // debt amount is necessary to change company balance
+                let amount = patSrv.debt;
 
-                Cash.calcPartnerInterest(pay, patSrv);
-
-                // generate pay
-                patSrv.pays.push(pay);
-
-                // decrease debt & increase payed
-                patSrv.debt -= amount;
-                patSrv.payed += amount;
-
-                // change service state
-                if (patSrv.debt > 0) {
-                    patSrv.state = {_id: 'partlyPayed', title: 'Частично оплачен'};
-                } else {
-                    patSrv.state = {_id: 'payed', title: 'Оплачен'};
-                }
-
-                // decrease left amount
-                payInfo.totalCompany -= amount;
+                Cash.addPay(user, time, payInfo, patSrv, 'totalCompany', {_id: 'company', title: 'Организация'});
 
                 // decrease company's balance
                 companies.push({
@@ -279,8 +388,8 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
 
                 // if there are no more money, stop processing other services
                 if (payInfo.totalCompany <= 0) {
-                    // if there is other type of pays, continue processing them
-                    if (payInfo.total > 0) {
+                    // if there is other type of pays or discounts, continue processing them
+                    if (payInfo.total > 0 || payInfo.discount.sum > 0 || payInfo.discount.sumCompany > 0) {
                         continue;
                     }
 
@@ -288,105 +397,44 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
                     break;
                 }
             } else if (pType == 'cash' || pType == 'cashless') {
-                // if there is no more money, but there is company pays, continue processing other patient services
-                if (payInfo.total <= 0 && payInfo.totalCompany > 0) {
+                // if there is no more money, but there is company pays or company pay discount,
+                // continue processing other patient services
+                if (payInfo.total <= 0 && payInfo.discount.sum <= 0 &&
+                    (payInfo.totalCompany > 0 || payInfo.discount.sumCompany > 0)) {
                     continue;
                 }
 
-                // determine amount
-                let amount = patSrv.debt;
-                if (patSrv.debt > payInfo.total && payInfo.total > 0) {
-                    amount = payInfo.total;
-                }
+                Cash.addDiscountPay(user, time, payInfo, patSrv, 'sum');
 
-                // check for discount
-                Cash.genDiscountPay(user, time, patSrv);
-
-                let pay = {
-                    amount: amount,
-                    payType: payInfo.payType,
-                    created: time,
-                    branch: user.branch,
-                    user: user._id,
-                    state: {_id: 'payed', title: 'Оплачен'}
-                };
-
-                Cash.calcPartnerInterest(pay, patSrv);
-
-                // generate pay
-                patSrv.pays.push(pay);
-
-                // decrease debt & increase payed
-                patSrv.debt -= amount;
-                patSrv.payed += amount;
-
-                // change service state
-                if (patSrv.debt > 0) {
-                    patSrv.state = {_id: 'partlyPayed', title: 'Частично оплачен'};
-                } else {
-                    patSrv.state = {_id: 'payed', title: 'Оплачен'};
-                }
-
-                // decrease left amount
-                payInfo.total -= amount;
+                Cash.addPay(user, time, payInfo, patSrv, 'total', payInfo.payType);
 
                 patientServicesWithPays.push(patSrv);
 
-                // if there are no more money, stop processing other services
-                if (payInfo.total <= 0 && payInfo.totalCompany == 0) {
+                // if there are no more money or discount, stop processing other services
+                if (payInfo.total <= 0 && payInfo.totalCompany == 0 &&
+                    payInfo.discount.sum <= 0 && payInfo.discount.sumCompany <= 0) {
                     break;
                 }
 
 
             } else if (pType == 'separated') {
-                // if there is no more money, but there is company pays, continue processing other patient services
-                if (payInfo.total <= 0 && payInfo.totalCompany > 0) {
+                // if there is no more money, but there is company pays or company pay discount,
+                // continue processing other patient services
+                if (payInfo.total <= 0 && payInfo.discount.sum <= 0 &&
+                    (payInfo.totalCompany > 0 || payInfo.discount.sumCompany > 0)) {
                     continue;
                 }
 
-                let amount = patSrv.debt;
-                if (patSrv.debt > payInfo.totalCashless && payInfo.totalCashless > 0) {
-                    amount = payInfo.totalCashless;
-                }
+                Cash.addDiscountPay(user, time, payInfo, patSrv, 'sum');
 
-                // check for discount
-                Cash.genDiscountPay(user, time, patSrv);
+                Cash.addPay(user, time, payInfo, patSrv, 'totalCashless', {_id: 'cashless', title: 'Безналичные'});
 
-                let pay = {
-                    amount: amount,
-                    payType: {_id: 'cashless', title: 'Безналичные'},
-                    created: time,
-                    branch: user.branch,
-                    user: user._id,
-                    state: {_id: 'payed', title: 'Оплачен'}
-                };
-
-                Cash.calcPartnerInterest(pay, patSrv);
-
-                // generate pay
-                patSrv.pays.push(pay);
-
-                // decrease debt & increase payed
-                patSrv.debt -= amount;
-                patSrv.payed += amount;
-
-                // change service state
-                if (patSrv.debt > 0) {
-                    patSrv.state = {_id: 'partlyPayed', title: 'Частично оплачен'};
-                } else {
-                    patSrv.state = {_id: 'payed', title: 'Оплачен'};
-                }
-
-                // decrease left amount
-                payInfo.totalCashless -= amount;
-                payInfo.total -= amount;
-
-                // if there are no more money, stop processing other services
-                if (payInfo.total <= 0) {
+                // if there are no more money & discount, stop processing other services
+                if (payInfo.total <= 0 && payInfo.discount.sum <= 0) {
                     patientServicesWithPays.push(patSrv);
 
-                    // if there is company pays, then continue processing patient services
-                    if (payInfo.totalCompany > 0) {
+                    // if there is company pays or discount for company pays, then continue processing patient services
+                    if (payInfo.totalCompany > 0 || payInfo.discount.sumCompany > 0) {
                         continue;
                     }
 
@@ -396,46 +444,16 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
 
                 // if there is more debt, cover it from cash
                 if (patSrv.debt > 0) {
-                    amount = patSrv.debt;
-                    if (patSrv.debt > payInfo.totalCash && payInfo.totalCash > 0) {
-                        amount = payInfo.totalCash;
-                    }
 
-                    let pay = {
-                        amount: amount,
-                        payType: {_id: 'cash', title: 'Наличные'},
-                        created: time,
-                        branch: user.branch,
-                        user: user._id,
-                        state: {_id: 'payed', title: 'Оплачен'}
-                    };
-
-                    Cash.calcPartnerInterest(pay, patSrv);
-
-                    // generate pay
-                    patSrv.pays.push(pay);
-
-                    // decrease debt & increase payed
-                    patSrv.debt -= amount;
-                    patSrv.payed += amount;
-
-                    // change service state
-                    if (patSrv.debt > 0) {
-                        patSrv.state = {_id: 'partlyPayed', title: 'Частично оплачен'};
-                    } else {
-                        patSrv.state = {_id: 'payed', title: 'Оплачен'};
-                    }
-
-                    // decrease left amount
-                    payInfo.totalCash -= amount;
-                    payInfo.total -= amount;
+                    Cash.addPay(user, time, payInfo, patSrv, 'totalCash', {_id: 'cash', title: 'Наличные'});
 
                     // if there are no more money, stop processing other services
-                    if (payInfo.total <= 0) {
+                    if (payInfo.total <= 0 && payInfo.discount.sum <= 0) {
                         patientServicesWithPays.push(patSrv);
 
-                        // if there is company pays, then continue processing patient services
-                        if (payInfo.totalCompany > 0) {
+                        // if there is company pays or discount for company pays,
+                        // then continue processing patient services
+                        if (payInfo.totalCompany > 0 || payInfo.discount.sumCompany > 0) {
                             continue;
                         }
 

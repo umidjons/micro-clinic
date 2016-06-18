@@ -153,7 +153,7 @@
                 // calculate totals
                 srv.priceTotal = srv.quantity * price;
                 srv.overPriceTotal = srv.quantity * srv.overPrice;
-                srv.discountPriceTotal = srv.quantity * srv.discountPrice;
+                srv.discountPrice = srv.quantity * srv.discountPrice;
             };
 
             return res;

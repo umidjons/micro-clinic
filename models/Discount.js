@@ -3,7 +3,8 @@ var stateSchema = require('./State').StateSchema;
 
 var DiscountSchema = mongoose.Schema({
     type: {type: String, required: true, enum: ['percent', 'amount']},
-    amount: {type: Number, required: true, min: 0, max: 1000000},
+    amount: {type: Number, required: true, min: 0, max: 1000000}, // amount % or amount sum
+    sum: {type: Number, required: true, min: 0}, // discount calculated value (always sum)
     note: {type: String, maxlength: 200},
     state: {type: stateSchema, required: true}
 });

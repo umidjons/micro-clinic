@@ -31,7 +31,6 @@ var PatientServiceSchema = mongoose.Schema({
     pays: [cashSchema],
     discount: {type: discountSchema},
     discountPrice: {type: Number, default: 0},
-    discountPriceTotal: {type: Number, default: 0},
     overPercent: {type: Number, default: 0}, // over percent for non-residents
     overPrice: {type: Number, default: 0}, // over price for non-residents, auto-calculates according to over percent
     overPriceTotal: {type: Number, default: 0},
