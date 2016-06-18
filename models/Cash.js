@@ -171,7 +171,7 @@ CashSchema.statics.changeCompaniesBalance = function (companies, cb) {
  * @param {object} patSrv patient's service object
  * @returns {*}
  */
-CashSchema.statics.genDiscountPay = function (user, time, patSrv) {
+var genDiscountPay = function (user, time, patSrv) {
     // if there is discount, generate pay for it
     if (patSrv.discount && patSrv.discount.type && patSrv.discount.state._id == 'new') {
         // by default assume type='amount' and discount sum = discount amount
@@ -199,6 +199,21 @@ CashSchema.statics.genDiscountPay = function (user, time, patSrv) {
 };
 
 /**
+ * Gathers patient services in payInfo.patientServicesWithPays object.
+ * Patient service's ID becomes key, patient service itself becomes its value.
+ * If payInfo.patientServicesWithPays is undefined, initializes with empty object.
+ * @param {object} payInfo payment info object
+ * @param {object} patSrv patient services to gather
+ */
+var gatherPatSrvWithPays = function (payInfo, patSrv) {
+    // initialize patientServicesWithPays
+    payInfo.patientServicesWithPays = payInfo.patientServicesWithPays || {};
+    // keep patient service with pay(s),
+    // if it is already there, this statement will replace it
+    payInfo.patientServicesWithPays[patSrv._id] = patSrv;
+};
+
+/**
  * Generates discount.
  * @param {object} user current user
  * @param {Date} time pay date and time
@@ -206,7 +221,7 @@ CashSchema.statics.genDiscountPay = function (user, time, patSrv) {
  * @param {object} patSrv patient service
  * @param {string} sumProperty possible values: 'sum' or 'sumCompany'
  */
-CashSchema.statics.addDiscountPay = function (user, time, payInfo, patSrv, sumProperty) {
+var addDiscountPay = function (user, time, payInfo, patSrv, sumProperty) {
     // determine amount
     let amount = patSrv.debt;
 
@@ -255,10 +270,23 @@ CashSchema.statics.addDiscountPay = function (user, time, payInfo, patSrv, sumPr
         // decrease debt & increase payed
         patSrv.debt -= discount.sum;
         patSrv.payed += discount.sum;
+
+        gatherPatSrvWithPays(payInfo, patSrv);
     }
 };
 
-CashSchema.statics.addPay = function (user, time, payInfo, patSrv, totalProperty, payType) {
+var addPay = function (user, time, payInfo, patSrv, totalProperty, payType) {
+    // counter
+    //payInfo.counter = payInfo.counter || 0;
+    //payInfo.counter++;
+
+    // if not enough money, just return
+    if (payInfo[totalProperty] <= 0) {
+        //F.inspect(patSrv, `${payInfo.counter}. ----- RETURN PatientService:`);
+        //F.inspect(payInfo, `${payInfo.counter}. +++++ RETURN PayInfo:`);
+        return;
+    }
+
     // determine amount
     let amount = patSrv.debt;
 
@@ -267,7 +295,7 @@ CashSchema.statics.addPay = function (user, time, payInfo, patSrv, totalProperty
     }
 
     // check for discount
-    Cash.genDiscountPay(user, time, patSrv);
+    genDiscountPay(user, time, patSrv);
 
     let pay = {
         amount: amount,
@@ -278,7 +306,7 @@ CashSchema.statics.addPay = function (user, time, payInfo, patSrv, totalProperty
         state: {_id: 'payed', title: 'Оплачен'}
     };
 
-    Cash.calcPartnerInterest(pay, patSrv);
+    calcPartnerInterest(pay, patSrv);
 
     // generate pay
     patSrv.pays.push(pay);
@@ -303,6 +331,11 @@ CashSchema.statics.addPay = function (user, time, payInfo, patSrv, totalProperty
     if (totalProperty != 'totalCompany') {
         payInfo.total -= amount;
     }
+
+    gatherPatSrvWithPays(payInfo, patSrv);
+
+    //F.inspect(patSrv, `${payInfo.counter}. ----- PatientService:`);
+    //F.inspect(payInfo, `${payInfo.counter}. +++++ PayInfo:`);
 };
 
 /**
@@ -310,7 +343,7 @@ CashSchema.statics.addPay = function (user, time, payInfo, patSrv, totalProperty
  * @param {object} pay pay object with amount
  * @param {object} patSrv patient's service object
  */
-CashSchema.statics.calcPartnerInterest = function (pay, patSrv) {
+var calcPartnerInterest = function (pay, patSrv) {
     pay.percentOfPartner = 0;
     pay.interestOfPartner = 0;
 
@@ -355,7 +388,6 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
 
         var time = new Date();
 
-        var patientServicesWithPays = [];
         var companies = [];
 
         let pType = payInfo.payType ? payInfo.payType._id : undefined;
@@ -369,7 +401,7 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
             // Pay by company
             if (patSrv.company) {
 
-                Cash.addDiscountPay(user, time, payInfo, patSrv, 'sumCompany');
+                addDiscountPay(user, time, payInfo, patSrv, 'sumCompany');
 
                 if (patSrv.debt > payInfo.totalCompany) {
                     return cb(`Сумма оплаты за счет организации пациента меньше чем долг за услуги ${patSrv.title}.`);
@@ -379,15 +411,13 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
                 // debt amount is necessary to change company balance
                 let amount = patSrv.debt;
 
-                Cash.addPay(user, time, payInfo, patSrv, 'totalCompany', {_id: 'company', title: 'Организация'});
+                addPay(user, time, payInfo, patSrv, 'totalCompany', {_id: 'company', title: 'Организация'});
 
                 // decrease company's balance
                 companies.push({
                     companyId: patSrv.company._id,
                     amount: -amount
                 });
-
-                patientServicesWithPays.push(patSrv);
 
                 // if there are no more money, stop processing other services
                 if (payInfo.totalCompany <= 0) {
@@ -407,11 +437,9 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
                     continue;
                 }
 
-                Cash.addDiscountPay(user, time, payInfo, patSrv, 'sum');
+                addDiscountPay(user, time, payInfo, patSrv, 'sum');
 
-                Cash.addPay(user, time, payInfo, patSrv, 'total', payInfo.payType);
-
-                patientServicesWithPays.push(patSrv);
+                addPay(user, time, payInfo, patSrv, 'total', payInfo.payType);
 
                 // if there are no more money or discount, stop processing other services
                 if (payInfo.total <= 0 && payInfo.totalCompany == 0 &&
@@ -428,14 +456,12 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
                     continue;
                 }
 
-                Cash.addDiscountPay(user, time, payInfo, patSrv, 'sum');
+                addDiscountPay(user, time, payInfo, patSrv, 'sum');
 
-                Cash.addPay(user, time, payInfo, patSrv, 'totalCashless', {_id: 'cashless', title: 'Безналичные'});
+                addPay(user, time, payInfo, patSrv, 'totalCashless', {_id: 'cashless', title: 'Безналичные'});
 
                 // if there are no more money & discount, stop processing other services
                 if (payInfo.total <= 0 && payInfo.discount.sum <= 0) {
-                    patientServicesWithPays.push(patSrv);
-
                     // if there is company pays or discount for company pays, then continue processing patient services
                     if (payInfo.totalCompany > 0 || payInfo.discount.sumCompany > 0) {
                         continue;
@@ -448,12 +474,10 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
                 // if there is more debt, cover it from cash
                 if (patSrv.debt > 0) {
 
-                    Cash.addPay(user, time, payInfo, patSrv, 'totalCash', {_id: 'cash', title: 'Наличные'});
+                    addPay(user, time, payInfo, patSrv, 'totalCash', {_id: 'cash', title: 'Наличные'});
 
                     // if there are no more money, stop processing other services
                     if (payInfo.total <= 0 && payInfo.discount.sum <= 0) {
-                        patientServicesWithPays.push(patSrv);
-
                         // if there is company pays or discount for company pays,
                         // then continue processing patient services
                         if (payInfo.totalCompany > 0 || payInfo.discount.sumCompany > 0) {
@@ -463,13 +487,17 @@ CashSchema.statics.payAll = function (user, payInfo, cb) {
                         // if there is no company pays, stop processing other services
                         break;
                     }
-                } else {
-                    patientServicesWithPays.push(patSrv);
                 }
             }
         }
 
-        debug(F.inspect(patientServicesWithPays, 'patientServicesWithPays=', true));
+        //F.inspect(payInfo.patientServicesWithPays, 'PayInfo.patientServicesWithPays=');
+
+        // convert {pSrvId1: PatSrv1, pSrvId2: PatSrv2, ...} to [PatSrv1, PatSrv2, ...] array
+        let patientServicesWithPays = [];
+        for (let pSrvId in payInfo.patientServicesWithPays) {
+            patientServicesWithPays.push(payInfo.patientServicesWithPays[pSrvId]);
+        }
 
         // save patient services with pays
         Cash.savePays(patientServicesWithPays, function (err) {
