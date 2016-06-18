@@ -4,10 +4,10 @@
   "description": "Clinic Management System",
   "main": "server.js",
   "scripts": {
-    "start":"set DEBUG=myclinic:*,-myclinic:router:auth && nodemon -e js,css,njk",
+    "start": "set DEBUG=myclinic:*,-myclinic:router:auth && nodemon -e js,css,njk",
     "test": "npm run test-app",
     "test-app": "mocha tests",
-    "debug":"node-debug --preload false server.js"
+    "debug": "node-debug --preload false server.js"
   },
   "author": "umidjons",
   "license": "ISC",
@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "chai-http": "^2.0.1"
+    "chai-http": "^2.0.1",
+    "sinon": "^1.17.4"
   }
 }
