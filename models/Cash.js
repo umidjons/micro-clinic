@@ -48,7 +48,8 @@ var CashSchema = mongoose.Schema({
 
 /**
  * Prepares pays for the given patient services.
- * @param {array} patSrvList array of PatientService models
+ * @param {object} user user instance
+ * @param {Array} patSrvList array of PatientService models
  * @param {function} cb callback function with one parameter - error.
  */
 CashSchema.statics.preparePays = function (user, patSrvList, cb) {
@@ -101,7 +102,7 @@ CashSchema.statics.preparePays = function (user, patSrvList, cb) {
 
 /**
  * Saves patient services with pays.
- * @param {array} patSrvList array of PatientService models.
+ * @param {Array} patSrvList array of PatientService models.
  * @param {function} cb callback function with one parameter - error.
  */
 CashSchema.statics.savePays = function (patSrvList, cb) {
@@ -141,7 +142,7 @@ CashSchema.statics.savePays = function (patSrvList, cb) {
 
 /**
  * Changes companies' balance for given list.
- * @param {array} companies list in format [{companyId: nnn, amount: -nnn}, ...]
+ * @param {Array} companies list in format [{companyId: nnn, amount: -nnn}, ...]
  * @param {function} cb callback function with one parameter - error.
  */
 CashSchema.statics.changeCompaniesBalance = function (companies, cb) {
@@ -185,7 +186,7 @@ CashSchema.statics.genDiscountPay = function (user, time, patSrv) {
         patSrv.discount.state = {_id: 'payed', title: 'Оплачен'};
 
         patSrv.pays.push({
-            amount: discount.sum,
+            amount: patSrv.discount.sum,
             payType: {_id: 'discount', title: 'Скидка'},
             created: time,
             branch: user.branch,
@@ -240,7 +241,9 @@ CashSchema.statics.addDiscountPay = function (user, time, payInfo, patSrv, sumPr
             branch: user.branch,
             user: user._id,
             state: {_id: 'payed', title: 'Оплачен'},
-            discount: discount
+            discount: discount,
+            percentOfPartner: 0, // do not calculate partners' interest for discounts
+            interestOfPartner: 0
         });
 
         // increase discount price
