@@ -322,6 +322,10 @@ describe('Cash', function () {
 
                 // after all pay, there shouldn't be any left money
                 expect(payInfo.total).to.equal(0);
+                expect(payInfo.totalCash).to.equal(0);
+                expect(payInfo.totalCashless).to.equal(0);
+                expect(payInfo.totalCompany).to.equal(0);
+
                 cb(null, new Date());
             });
 
@@ -399,6 +403,10 @@ describe('Cash', function () {
 
                 // after all pay, there shouldn't be any left money
                 expect(payInfo.total).to.equal(0);
+                expect(payInfo.totalCash).to.equal(0);
+                expect(payInfo.totalCashless).to.equal(0);
+                expect(payInfo.totalCompany).to.equal(0);
+
                 cb(null, new Date());
             });
 
@@ -476,6 +484,10 @@ describe('Cash', function () {
 
                 // after all pay, there shouldn't be any left money
                 expect(payInfo.total).to.equal(0);
+                expect(payInfo.totalCash).to.equal(0);
+                expect(payInfo.totalCashless).to.equal(0);
+                expect(payInfo.totalCompany).to.equal(0);
+
                 cb(null, new Date());
             });
 
@@ -573,6 +585,10 @@ describe('Cash', function () {
 
                 // after all pay, there shouldn't be any left money
                 expect(payInfo.total).to.equal(0);
+                expect(payInfo.totalCash).to.equal(0);
+                expect(payInfo.totalCashless).to.equal(0);
+                expect(payInfo.totalCompany).to.equal(0);
+
                 cb(null, new Date());
             });
 
@@ -668,6 +684,9 @@ describe('Cash', function () {
 
                 // after all pay, there shouldn't be any left money
                 expect(payInfo.total).to.equal(0);
+                expect(payInfo.totalCash).to.equal(0);
+                expect(payInfo.totalCashless).to.equal(0);
+                expect(payInfo.totalCompany).to.equal(0);
                 cb(null, new Date());
             });
 
@@ -771,6 +790,9 @@ describe('Cash', function () {
 
                 // after all pay, there shouldn't be any left money
                 expect(payInfo.total).to.equal(0);
+                expect(payInfo.totalCash).to.equal(0);
+                expect(payInfo.totalCashless).to.equal(0);
+                expect(payInfo.totalCompany).to.equal(0);
                 cb(null, new Date());
             });
 
@@ -938,6 +960,7 @@ describe('Cash', function () {
                 expect(payInfo.total).to.equal(0);
                 expect(payInfo.totalCash).to.equal(0);
                 expect(payInfo.totalCashless).to.equal(0);
+                expect(payInfo.totalCompany).to.equal(0);
                 cb(null, new Date());
             });
 
@@ -1094,6 +1117,7 @@ describe('Cash', function () {
                 expect(payInfo.total).to.equal(0);
                 expect(payInfo.totalCash).to.equal(0);
                 expect(payInfo.totalCashless).to.equal(0);
+                expect(payInfo.totalCompany).to.equal(0);
                 cb(null, new Date());
             });
 
@@ -1270,6 +1294,9 @@ describe('Cash', function () {
 
                 // after all pay, there shouldn't be any left money
                 expect(payInfo.total).to.equal(0);
+                expect(payInfo.totalCash).to.equal(0);
+                expect(payInfo.totalCashless).to.equal(0);
+                expect(payInfo.totalCompany).to.equal(0);
                 cb(null, new Date());
             });
 
@@ -1485,6 +1512,9 @@ describe('Cash', function () {
 
                 // after all pay, there shouldn't be any left money
                 expect(payInfo.total).to.equal(0);
+                expect(payInfo.totalCash).to.equal(0);
+                expect(payInfo.totalCashless).to.equal(0);
+                expect(payInfo.totalCompany).to.equal(0);
                 cb(null, new Date());
             });
 
@@ -1671,7 +1701,7 @@ describe('Cash', function () {
                 totalDebt: 35000,
                 payType: {_id: 'cash', title: 'Наличные'},
                 total: 5000,
-                totalCash: 5000,
+                totalCash: 0,
                 totalCashless: 0,
                 totalCompany: 30000,
                 discount: {
@@ -1760,6 +1790,9 @@ describe('Cash', function () {
 
                 // after all pay, there shouldn't be any left money
                 expect(payInfo.total).to.equal(0);
+                expect(payInfo.totalCash).to.equal(0);
+                expect(payInfo.totalCashless).to.equal(0);
+                expect(payInfo.totalCompany).to.equal(0);
                 cb(null, new Date());
             });
 
@@ -1946,7 +1979,7 @@ describe('Cash', function () {
                 totalDebt: 35000,
                 payType: {_id: 'cash', title: 'Наличные'},
                 total: 4000,
-                totalCash: 4000,
+                totalCash: 0,
                 totalCashless: 0,
                 totalCompany: 30000,
                 discount: {
@@ -2035,6 +2068,9 @@ describe('Cash', function () {
 
                 // after all pay, there shouldn't be any left money
                 expect(payInfo.total).to.equal(0);
+                expect(payInfo.totalCash).to.equal(0);
+                expect(payInfo.totalCashless).to.equal(0);
+                expect(payInfo.totalCompany).to.equal(0);
                 cb(null, new Date());
             });
 
@@ -2054,15 +2090,1541 @@ describe('Cash', function () {
             expect(spyPayAll.getCall(0).args[0]).to.be.equal(user);
         });
 
-        it('cash and company payments with discount');
+        it('cash and company payments with discount', function (done) {
+            pendingPatients = [
+                /* 1 */
+                {
+                    "_id": ObjectId("5764c8051d9a46d00b8b6312"),
+                    "user": ObjectId("57483e928e061688284ceffb"),
+                    "category": {
+                        "_id": "ginekolog",
+                        "title": "Гинеколог",
+                        "shortTitle": "гинек.",
+                        "state": {
+                            "title": "Активный",
+                            "_id": "active"
+                        },
+                        "user": ObjectId("57483e928e061688284ceffb"),
+                        "created": ISODate("2016-05-08T02:17:17.445Z"),
+                        "subcategories": []
+                    },
+                    "title": "Осмотр пациента в динамике",
+                    "shortTitle": "осмотр в динамике",
+                    "state": {
+                        "_id": "new",
+                        "title": "Новый"
+                    },
+                    "__v": 0,
+                    "quantity": 1,
+                    "priceTotal": 10000,
+                    "company": {
+                        "user": ObjectId("57483e928e061688284ceffb"),
+                        "title": "Клевая организация",
+                        "shortTitle": "Клева",
+                        "address": "Ташкент",
+                        "phone": "1112233",
+                        "state": {
+                            "_id": "active",
+                            "title": "Активный"
+                        },
+                        "__v": 0,
+                        "_id": ObjectId("576229b9d11698941b998696"),
+                        "created": ISODate("2016-06-16T04:22:57.533Z"),
+                        "pays": [],
+                        "balance": 0
+                    },
+                    "serviceId": ObjectId("5756cac051033cfc17bc06e8"),
+                    "branch": ObjectId("574de8d09870f8f81b77ed1c"),
+                    "patientId": ObjectId("5764c7b41d9a46d00b8b6309"),
+                    "debt": 10000,
+                    "created": ISODate("2016-06-18T04:03:17.866Z"),
+                    "result": {
+                        "fields": []
+                    },
+                    "fields": [],
+                    "overPriceTotal": 0,
+                    "overPrice": 0,
+                    "overPercent": 0,
+                    "discountPrice": 0,
+                    "pays": [],
+                    "payed": 0,
+                    "price": 10000
+                },
+                /* 2 */
+                {
+                    "_id": ObjectId("5764c8051d9a46d00b8b6314"),
+                    "user": ObjectId("57483e928e061688284ceffb"),
+                    "category": {
+                        "_id": "ginekolog",
+                        "title": "Гинеколог",
+                        "shortTitle": "гинек.",
+                        "state": {
+                            "title": "Активный",
+                            "_id": "active"
+                        },
+                        "user": ObjectId("57483e928e061688284ceffb"),
+                        "created": ISODate("2016-05-08T02:17:17.445Z"),
+                        "subcategories": []
+                    },
+                    "title": "Первичный осмотр и консультация",
+                    "shortTitle": "перв.осмотр и консул",
+                    "state": {
+                        "_id": "new",
+                        "title": "Новый"
+                    },
+                    "__v": 0,
+                    "quantity": 1,
+                    "priceTotal": 20000,
+                    "company": {
+                        "user": ObjectId("57483e928e061688284ceffb"),
+                        "title": "Клевая организация",
+                        "shortTitle": "Клева",
+                        "address": "Ташкент",
+                        "phone": "1112233",
+                        "state": {
+                            "_id": "active",
+                            "title": "Активный"
+                        },
+                        "__v": 0,
+                        "_id": ObjectId("576229b9d11698941b998696"),
+                        "created": ISODate("2016-06-16T04:22:57.533Z"),
+                        "pays": [],
+                        "balance": 0
+                    },
+                    "serviceId": ObjectId("5756ca9c51033cfc17bc06e2"),
+                    "branch": ObjectId("574de8d09870f8f81b77ed1c"),
+                    "patientId": ObjectId("5764c7b41d9a46d00b8b6309"),
+                    "debt": 20000,
+                    "created": ISODate("2016-06-18T04:03:17.866Z"),
+                    "result": {
+                        "fields": []
+                    },
+                    "fields": [],
+                    "overPriceTotal": 0,
+                    "overPrice": 0,
+                    "overPercent": 0,
+                    "discountPrice": 0,
+                    "pays": [],
+                    "payed": 0,
+                    "price": 20000
+                },
+                /* 3 */
+                {
+                    "_id": ObjectId("5764c8051d9a46d00b8b6316"),
+                    "user": ObjectId("57483e928e061688284ceffb"),
+                    "category": {
+                        "_id": "ginekolog",
+                        "title": "Гинеколог",
+                        "shortTitle": "гинек.",
+                        "state": {
+                            "title": "Активный",
+                            "_id": "active"
+                        },
+                        "user": ObjectId("57483e928e061688284ceffb"),
+                        "created": ISODate("2016-05-08T02:17:17.445Z"),
+                        "subcategories": []
+                    },
+                    "title": "Консультация без осмотра",
+                    "shortTitle": "Консуль. без осмотра",
+                    "state": {
+                        "_id": "new",
+                        "title": "Новый"
+                    },
+                    "__v": 0,
+                    "quantity": 1,
+                    "priceTotal": 5000,
+                    "serviceId": ObjectId("5756ca4f51033cfc17bc06d6"),
+                    "branch": ObjectId("574de8d09870f8f81b77ed1c"),
+                    "patientId": ObjectId("5764c7b41d9a46d00b8b6309"),
+                    "debt": 5000,
+                    "created": ISODate("2016-06-18T04:03:17.866Z"),
+                    "result": {
+                        "fields": []
+                    },
+                    "fields": [],
+                    "overPriceTotal": 0,
+                    "overPrice": 0,
+                    "overPercent": 0,
+                    "discountPrice": 0,
+                    "pays": [],
+                    "payed": 0,
+                    "price": 5000
+                }
+            ];
+            let payInfo = {
+                branch: "574de8d09870f8f81b77ed1c",
+                patientId: "5764c7b41d9a46d00b8b6309",
+                totalDebt: 35000,
+                payType: {_id: 'cash', title: 'Наличные'},
+                total: 4500,
+                totalCash: 0,
+                totalCashless: 0,
+                totalCompany: 27000,
+                discount: {
+                    type: "percent",
+                    note: "some discount",
+                    amount: 10,
+                    max: 100,
+                    sum: 3500,
+                    sumCompany: 3000
+                },
+                debt: 0,
+                period: {start: "2016-06-18T04:13:51.080Z", end: "2016-06-18T04:13:51.080Z"}
+            };
 
-        it('separate and company payments with enough money');
+            // replace resulting callback
+            let cb = function (err, payTime) {
+                expect(err).to.be.null;
+                expect(payTime).not.to.be.null;
+                expect(payTime.toString()).to.equal(time.toString());
 
-        it('separate and company payments with not enough money');
+                done();
+            };
 
-        it('separate and company payments with discount and enough money');
+            sandbox.stub(models.Cash, 'changeCompaniesBalance', function (companies, cb) {
+                cb(null, new Date());
+            });
 
-        it('separate and company payments with discount and not enough money');
+            // replace models.Cash.savePays()
+            let stubSavePays = sandbox.stub(models.Cash, 'savePays', function (patientServicesWithPays, cb) {
+                //console.log('Cash.savePays() called');
+                //F.inspect(patientServicesWithPays, 'patientServicesWithPays:');
+
+                let srv1 = patientServicesWithPays[0];
+                expect(srv1.priceTotal).to.equal(7000);
+                expect(srv1.debt).to.equal(0);
+                expect(srv1.payed).to.equal(10000);
+                expect(srv1.state._id).to.equal('payed');
+                expect(srv1.pays).to.be.an('array').and.to.have.lengthOf(2);
+
+                // check first pay - discount type pay
+                let pay11 = srv1.pays[0];
+                expect(pay11.amount).to.equal(3000);
+                expect(pay11.payType._id).to.equal('discount');
+                expect(pay11.created.toString()).to.equal(time.toString());
+                expect(pay11.branch._id).to.equal('mybranch');
+                expect(pay11.user).to.equal('myuser');
+                expect(pay11.state._id).to.equal('payed');
+                expect(pay11.percentOfPartner).to.equal(0);
+                expect(pay11.interestOfPartner).to.equal(0);
+                // check discount object
+                expect(pay11).to.have.deep.property('discount.type', 'percent');
+                expect(pay11).to.have.deep.property('discount.note', 'some discount');
+                expect(pay11).to.have.deep.property('discount.state._id', 'payed');
+                expect(pay11).to.have.deep.property('discount.amount', 10);
+                expect(pay11).to.have.deep.property('discount.sum', 3000);
+
+                // check first pay - company type pay
+                let pay12 = srv1.pays[1];
+                expect(pay12.amount).to.equal(7000);
+                expect(pay12.payType._id).to.equal('company');
+                expect(pay12.created.toString()).to.equal(time.toString());
+                expect(pay12.branch._id).to.equal('mybranch');
+                expect(pay12.user).to.equal('myuser');
+                expect(pay12.state._id).to.equal('payed');
+                expect(pay12.percentOfPartner).to.equal(0);
+                expect(pay12.interestOfPartner).to.equal(0);
+
+                let srv2 = patientServicesWithPays[1];
+                expect(srv2.priceTotal).to.equal(20000);
+                expect(srv2.debt).to.equal(0);
+                expect(srv2.payed).to.equal(20000);
+                expect(srv2.state._id).to.equal('payed');
+                expect(srv2.pays).to.be.an('array').and.to.have.lengthOf(1);
+
+                // check first pay - company type pay
+                let pay21 = srv2.pays[0];
+                expect(pay21.amount).to.equal(20000);
+                expect(pay21.payType._id).to.equal('company');
+                expect(pay21.created.toString()).to.equal(time.toString());
+                expect(pay21.branch._id).to.equal('mybranch');
+                expect(pay21.user).to.equal('myuser');
+                expect(pay21.state._id).to.equal('payed');
+                expect(pay21.percentOfPartner).to.equal(0);
+                expect(pay21.interestOfPartner).to.equal(0);
+
+                let srv3 = patientServicesWithPays[2];
+                expect(srv3.priceTotal).to.equal(4500);
+                expect(srv3.debt).to.equal(0);
+                expect(srv3.payed).to.equal(5000);
+                expect(srv3.state._id).to.equal('payed');
+                expect(srv3.pays).to.be.an('array').and.to.have.lengthOf(2);
+
+                // check first pay - cash type pay
+                let pay31 = srv3.pays[0];
+                expect(pay31.amount).to.equal(500);
+                expect(pay31.payType._id).to.equal('discount');
+                expect(pay31.created.toString()).to.equal(time.toString());
+                expect(pay31.branch._id).to.equal('mybranch');
+                expect(pay31.user).to.equal('myuser');
+                expect(pay31.state._id).to.equal('payed');
+                expect(pay31.percentOfPartner).to.equal(0);
+                expect(pay31.interestOfPartner).to.equal(0);
+                // check discount object
+                expect(pay31).to.have.deep.property('discount.type', 'percent');
+                expect(pay31).to.have.deep.property('discount.note', 'some discount');
+                expect(pay31).to.have.deep.property('discount.state._id', 'payed');
+                expect(pay31).to.have.deep.property('discount.amount', 10);
+                expect(pay31).to.have.deep.property('discount.sum', 500);
+
+                // check first pay - cash type pay
+                let pay32 = srv3.pays[1];
+                expect(pay32.amount).to.equal(4500);
+                expect(pay32.payType._id).to.equal('cash');
+                expect(pay32.created.toString()).to.equal(time.toString());
+                expect(pay32.branch._id).to.equal('mybranch');
+                expect(pay32.user).to.equal('myuser');
+                expect(pay32.state._id).to.equal('payed');
+                expect(pay32.percentOfPartner).to.equal(0);
+                expect(pay32.interestOfPartner).to.equal(0);
+
+                // after all pay, there shouldn't be any left money
+                expect(payInfo.total).to.equal(0);
+                expect(payInfo.totalCash).to.equal(0);
+                expect(payInfo.totalCashless).to.equal(0);
+                expect(payInfo.totalCompany).to.equal(0);
+                cb(null, new Date());
+            });
+
+            // replace models.PatientService.pendingServicesOf() method
+            let stubPendingServicesOf = sandbox.stub(models.PatientService, 'pendingServicesOf');
+
+            // invokes 3rd argument as callback - cb(null, pendingPatients)
+            stubPendingServicesOf.onCall(0).callsArgWith(2, null, pendingPatients);
+
+            // spy models.Cash.payAll() method call
+            let spyPayAll = sandbox.spy(models.Cash, 'payAll');
+
+            // try to pay for all pending services
+            models.Cash.payAll(user, payInfo, cb);
+
+            expect(spyPayAll.called).to.be.true;
+            expect(spyPayAll.getCall(0).args[0]).to.be.equal(user);
+        });
+
+        it('separate and company payments with enough money', function (done) {
+            pendingPatients = [
+                /* 1 */
+                {
+                    "_id": ObjectId("5764c8051d9a46d00b8b6312"),
+                    "user": ObjectId("57483e928e061688284ceffb"),
+                    "category": {
+                        "_id": "ginekolog",
+                        "title": "Гинеколог",
+                        "shortTitle": "гинек.",
+                        "state": {
+                            "title": "Активный",
+                            "_id": "active"
+                        },
+                        "user": ObjectId("57483e928e061688284ceffb"),
+                        "created": ISODate("2016-05-08T02:17:17.445Z"),
+                        "subcategories": []
+                    },
+                    "title": "Осмотр пациента в динамике",
+                    "shortTitle": "осмотр в динамике",
+                    "state": {
+                        "_id": "new",
+                        "title": "Новый"
+                    },
+                    "__v": 0,
+                    "quantity": 1,
+                    "priceTotal": 10000,
+                    "company": {
+                        "user": ObjectId("57483e928e061688284ceffb"),
+                        "title": "Клевая организация",
+                        "shortTitle": "Клева",
+                        "address": "Ташкент",
+                        "phone": "1112233",
+                        "state": {
+                            "_id": "active",
+                            "title": "Активный"
+                        },
+                        "__v": 0,
+                        "_id": ObjectId("576229b9d11698941b998696"),
+                        "created": ISODate("2016-06-16T04:22:57.533Z"),
+                        "pays": [],
+                        "balance": 0
+                    },
+                    "serviceId": ObjectId("5756cac051033cfc17bc06e8"),
+                    "branch": ObjectId("574de8d09870f8f81b77ed1c"),
+                    "patientId": ObjectId("5764c7b41d9a46d00b8b6309"),
+                    "debt": 10000,
+                    "created": ISODate("2016-06-18T04:03:17.866Z"),
+                    "result": {
+                        "fields": []
+                    },
+                    "fields": [],
+                    "overPriceTotal": 0,
+                    "overPrice": 0,
+                    "overPercent": 0,
+                    "discountPrice": 0,
+                    "pays": [],
+                    "payed": 0,
+                    "price": 10000
+                },
+                /* 2 */
+                {
+                    "_id": ObjectId("5764c8051d9a46d00b8b6314"),
+                    "user": ObjectId("57483e928e061688284ceffb"),
+                    "category": {
+                        "_id": "ginekolog",
+                        "title": "Гинеколог",
+                        "shortTitle": "гинек.",
+                        "state": {
+                            "title": "Активный",
+                            "_id": "active"
+                        },
+                        "user": ObjectId("57483e928e061688284ceffb"),
+                        "created": ISODate("2016-05-08T02:17:17.445Z"),
+                        "subcategories": []
+                    },
+                    "title": "Первичный осмотр и консультация",
+                    "shortTitle": "перв.осмотр и консул",
+                    "state": {
+                        "_id": "new",
+                        "title": "Новый"
+                    },
+                    "__v": 0,
+                    "quantity": 1,
+                    "priceTotal": 20000,
+                    "company": {
+                        "user": ObjectId("57483e928e061688284ceffb"),
+                        "title": "Клевая организация",
+                        "shortTitle": "Клева",
+                        "address": "Ташкент",
+                        "phone": "1112233",
+                        "state": {
+                            "_id": "active",
+                            "title": "Активный"
+                        },
+                        "__v": 0,
+                        "_id": ObjectId("576229b9d11698941b998696"),
+                        "created": ISODate("2016-06-16T04:22:57.533Z"),
+                        "pays": [],
+                        "balance": 0
+                    },
+                    "serviceId": ObjectId("5756ca9c51033cfc17bc06e2"),
+                    "branch": ObjectId("574de8d09870f8f81b77ed1c"),
+                    "patientId": ObjectId("5764c7b41d9a46d00b8b6309"),
+                    "debt": 20000,
+                    "created": ISODate("2016-06-18T04:03:17.866Z"),
+                    "result": {
+                        "fields": []
+                    },
+                    "fields": [],
+                    "overPriceTotal": 0,
+                    "overPrice": 0,
+                    "overPercent": 0,
+                    "discountPrice": 0,
+                    "pays": [],
+                    "payed": 0,
+                    "price": 20000
+                },
+                /* 3 */
+                {
+                    "_id": ObjectId("5764c8051d9a46d00b8b6316"),
+                    "user": ObjectId("57483e928e061688284ceffb"),
+                    "category": {
+                        "_id": "ginekolog",
+                        "title": "Гинеколог",
+                        "shortTitle": "гинек.",
+                        "state": {
+                            "title": "Активный",
+                            "_id": "active"
+                        },
+                        "user": ObjectId("57483e928e061688284ceffb"),
+                        "created": ISODate("2016-05-08T02:17:17.445Z"),
+                        "subcategories": []
+                    },
+                    "title": "Консультация без осмотра",
+                    "shortTitle": "Консуль. без осмотра",
+                    "state": {
+                        "_id": "new",
+                        "title": "Новый"
+                    },
+                    "__v": 0,
+                    "quantity": 1,
+                    "priceTotal": 5000,
+                    "serviceId": ObjectId("5756ca4f51033cfc17bc06d6"),
+                    "branch": ObjectId("574de8d09870f8f81b77ed1c"),
+                    "patientId": ObjectId("5764c7b41d9a46d00b8b6309"),
+                    "debt": 5000,
+                    "created": ISODate("2016-06-18T04:03:17.866Z"),
+                    "result": {
+                        "fields": []
+                    },
+                    "fields": [],
+                    "overPriceTotal": 0,
+                    "overPrice": 0,
+                    "overPercent": 0,
+                    "discountPrice": 0,
+                    "pays": [],
+                    "payed": 0,
+                    "price": 5000
+                }
+            ];
+            let payInfo = {
+                branch: "574de8d09870f8f81b77ed1c",
+                patientId: "5764c7b41d9a46d00b8b6309",
+                totalDebt: 35000,
+                payType: {_id: 'separated', title: 'Наличный/Безналичный'},
+                total: 5000,
+                totalCash: 2000,
+                totalCashless: 3000,
+                totalCompany: 30000,
+                discount: {
+                    type: "percent",
+                    note: "",
+                    amount: 0,
+                    max: 100,
+                    sum: 0,
+                    sumCompany: 0
+                },
+                debt: 0,
+                period: {start: "2016-06-18T04:13:51.080Z", end: "2016-06-18T04:13:51.080Z"}
+            };
+
+            // replace resulting callback
+            let cb = function (err, payTime) {
+                expect(err).to.be.null;
+                expect(payTime).not.to.be.null;
+                expect(payTime.toString()).to.equal(time.toString());
+
+                done();
+            };
+
+            sandbox.stub(models.Cash, 'changeCompaniesBalance', function (companies, cb) {
+                cb(null, new Date());
+            });
+
+            // replace models.Cash.savePays()
+            let stubSavePays = sandbox.stub(models.Cash, 'savePays', function (patientServicesWithPays, cb) {
+                //console.log('Cash.savePays() called');
+                //F.inspect(patientServicesWithPays, 'patientServicesWithPays:');
+
+                let srv1 = patientServicesWithPays[0];
+                expect(srv1.priceTotal).to.equal(10000);
+                expect(srv1.debt).to.equal(0);
+                expect(srv1.payed).to.equal(10000);
+                expect(srv1.state._id).to.equal('payed');
+                expect(srv1.pays).to.be.an('array').and.to.have.lengthOf(1);
+
+                // check first pay - company type pay
+                let pay11 = srv1.pays[0];
+                expect(pay11.amount).to.equal(10000);
+                expect(pay11.payType._id).to.equal('company');
+                expect(pay11.created.toString()).to.equal(time.toString());
+                expect(pay11.branch._id).to.equal('mybranch');
+                expect(pay11.user).to.equal('myuser');
+                expect(pay11.state._id).to.equal('payed');
+                expect(pay11.percentOfPartner).to.equal(0);
+                expect(pay11.interestOfPartner).to.equal(0);
+
+                let srv2 = patientServicesWithPays[1];
+                expect(srv2.priceTotal).to.equal(20000);
+                expect(srv2.debt).to.equal(0);
+                expect(srv2.payed).to.equal(20000);
+                expect(srv2.state._id).to.equal('payed');
+                expect(srv2.pays).to.be.an('array').and.to.have.lengthOf(1);
+
+                // check first pay - company type pay
+                let pay21 = srv2.pays[0];
+                expect(pay21.amount).to.equal(20000);
+                expect(pay21.payType._id).to.equal('company');
+                expect(pay21.created.toString()).to.equal(time.toString());
+                expect(pay21.branch._id).to.equal('mybranch');
+                expect(pay21.user).to.equal('myuser');
+                expect(pay21.state._id).to.equal('payed');
+                expect(pay21.percentOfPartner).to.equal(0);
+                expect(pay21.interestOfPartner).to.equal(0);
+
+                let srv3 = patientServicesWithPays[2];
+                expect(srv3.priceTotal).to.equal(5000);
+                expect(srv3.debt).to.equal(0);
+                expect(srv3.payed).to.equal(5000);
+                expect(srv3.state._id).to.equal('payed');
+                expect(srv3.pays).to.be.an('array').and.to.have.lengthOf(2);
+
+                // check first pay - cashless type pay
+                let pay31 = srv3.pays[0];
+                expect(pay31.amount).to.equal(3000);
+                expect(pay31.payType._id).to.equal('cashless');
+                expect(pay31.created.toString()).to.equal(time.toString());
+                expect(pay31.branch._id).to.equal('mybranch');
+                expect(pay31.user).to.equal('myuser');
+                expect(pay31.state._id).to.equal('payed');
+                expect(pay31.percentOfPartner).to.equal(0);
+                expect(pay31.interestOfPartner).to.equal(0);
+
+                // check second pay - cash type pay
+                let pay32 = srv3.pays[1];
+                expect(pay32.amount).to.equal(2000);
+                expect(pay32.payType._id).to.equal('cash');
+                expect(pay32.created.toString()).to.equal(time.toString());
+                expect(pay32.branch._id).to.equal('mybranch');
+                expect(pay32.user).to.equal('myuser');
+                expect(pay32.state._id).to.equal('payed');
+                expect(pay32.percentOfPartner).to.equal(0);
+                expect(pay32.interestOfPartner).to.equal(0);
+
+                // after all pay, there shouldn't be any left money
+                expect(payInfo.total).to.equal(0);
+                expect(payInfo.totalCash).to.equal(0);
+                expect(payInfo.totalCashless).to.equal(0);
+                expect(payInfo.totalCompany).to.equal(0);
+                cb(null, new Date());
+            });
+
+            // replace models.PatientService.pendingServicesOf() method
+            let stubPendingServicesOf = sandbox.stub(models.PatientService, 'pendingServicesOf');
+
+            // invokes 3rd argument as callback - cb(null, pendingPatients)
+            stubPendingServicesOf.onCall(0).callsArgWith(2, null, pendingPatients);
+
+            // spy models.Cash.payAll() method call
+            let spyPayAll = sandbox.spy(models.Cash, 'payAll');
+
+            // try to pay for all pending services
+            models.Cash.payAll(user, payInfo, cb);
+
+            expect(spyPayAll.called).to.be.true;
+            expect(spyPayAll.getCall(0).args[0]).to.be.equal(user);
+        });
+
+        it('separate and company payments with not enough money', function (done) {
+            pendingPatients = [
+                /* 1 */
+                {
+                    "_id": ObjectId("5764c8051d9a46d00b8b6312"),
+                    "user": ObjectId("57483e928e061688284ceffb"),
+                    "category": {
+                        "_id": "ginekolog",
+                        "title": "Гинеколог",
+                        "shortTitle": "гинек.",
+                        "state": {
+                            "title": "Активный",
+                            "_id": "active"
+                        },
+                        "user": ObjectId("57483e928e061688284ceffb"),
+                        "created": ISODate("2016-05-08T02:17:17.445Z"),
+                        "subcategories": []
+                    },
+                    "title": "Осмотр пациента в динамике",
+                    "shortTitle": "осмотр в динамике",
+                    "state": {
+                        "_id": "new",
+                        "title": "Новый"
+                    },
+                    "__v": 0,
+                    "quantity": 1,
+                    "priceTotal": 10000,
+                    "company": {
+                        "user": ObjectId("57483e928e061688284ceffb"),
+                        "title": "Клевая организация",
+                        "shortTitle": "Клева",
+                        "address": "Ташкент",
+                        "phone": "1112233",
+                        "state": {
+                            "_id": "active",
+                            "title": "Активный"
+                        },
+                        "__v": 0,
+                        "_id": ObjectId("576229b9d11698941b998696"),
+                        "created": ISODate("2016-06-16T04:22:57.533Z"),
+                        "pays": [],
+                        "balance": 0
+                    },
+                    "serviceId": ObjectId("5756cac051033cfc17bc06e8"),
+                    "branch": ObjectId("574de8d09870f8f81b77ed1c"),
+                    "patientId": ObjectId("5764c7b41d9a46d00b8b6309"),
+                    "debt": 10000,
+                    "created": ISODate("2016-06-18T04:03:17.866Z"),
+                    "result": {
+                        "fields": []
+                    },
+                    "fields": [],
+                    "overPriceTotal": 0,
+                    "overPrice": 0,
+                    "overPercent": 0,
+                    "discountPrice": 0,
+                    "pays": [],
+                    "payed": 0,
+                    "price": 10000
+                },
+                /* 2 */
+                {
+                    "_id": ObjectId("5764c8051d9a46d00b8b6314"),
+                    "user": ObjectId("57483e928e061688284ceffb"),
+                    "category": {
+                        "_id": "ginekolog",
+                        "title": "Гинеколог",
+                        "shortTitle": "гинек.",
+                        "state": {
+                            "title": "Активный",
+                            "_id": "active"
+                        },
+                        "user": ObjectId("57483e928e061688284ceffb"),
+                        "created": ISODate("2016-05-08T02:17:17.445Z"),
+                        "subcategories": []
+                    },
+                    "title": "Первичный осмотр и консультация",
+                    "shortTitle": "перв.осмотр и консул",
+                    "state": {
+                        "_id": "new",
+                        "title": "Новый"
+                    },
+                    "__v": 0,
+                    "quantity": 1,
+                    "priceTotal": 20000,
+                    "company": {
+                        "user": ObjectId("57483e928e061688284ceffb"),
+                        "title": "Клевая организация",
+                        "shortTitle": "Клева",
+                        "address": "Ташкент",
+                        "phone": "1112233",
+                        "state": {
+                            "_id": "active",
+                            "title": "Активный"
+                        },
+                        "__v": 0,
+                        "_id": ObjectId("576229b9d11698941b998696"),
+                        "created": ISODate("2016-06-16T04:22:57.533Z"),
+                        "pays": [],
+                        "balance": 0
+                    },
+                    "serviceId": ObjectId("5756ca9c51033cfc17bc06e2"),
+                    "branch": ObjectId("574de8d09870f8f81b77ed1c"),
+                    "patientId": ObjectId("5764c7b41d9a46d00b8b6309"),
+                    "debt": 20000,
+                    "created": ISODate("2016-06-18T04:03:17.866Z"),
+                    "result": {
+                        "fields": []
+                    },
+                    "fields": [],
+                    "overPriceTotal": 0,
+                    "overPrice": 0,
+                    "overPercent": 0,
+                    "discountPrice": 0,
+                    "pays": [],
+                    "payed": 0,
+                    "price": 20000
+                },
+                /* 3 */
+                {
+                    "_id": ObjectId("5764c8051d9a46d00b8b6316"),
+                    "user": ObjectId("57483e928e061688284ceffb"),
+                    "category": {
+                        "_id": "ginekolog",
+                        "title": "Гинеколог",
+                        "shortTitle": "гинек.",
+                        "state": {
+                            "title": "Активный",
+                            "_id": "active"
+                        },
+                        "user": ObjectId("57483e928e061688284ceffb"),
+                        "created": ISODate("2016-05-08T02:17:17.445Z"),
+                        "subcategories": []
+                    },
+                    "title": "Консультация без осмотра",
+                    "shortTitle": "Консуль. без осмотра",
+                    "state": {
+                        "_id": "new",
+                        "title": "Новый"
+                    },
+                    "__v": 0,
+                    "quantity": 1,
+                    "priceTotal": 5000,
+                    "serviceId": ObjectId("5756ca4f51033cfc17bc06d6"),
+                    "branch": ObjectId("574de8d09870f8f81b77ed1c"),
+                    "patientId": ObjectId("5764c7b41d9a46d00b8b6309"),
+                    "debt": 5000,
+                    "created": ISODate("2016-06-18T04:03:17.866Z"),
+                    "result": {
+                        "fields": []
+                    },
+                    "fields": [],
+                    "overPriceTotal": 0,
+                    "overPrice": 0,
+                    "overPercent": 0,
+                    "discountPrice": 0,
+                    "pays": [],
+                    "payed": 0,
+                    "price": 5000
+                }
+            ];
+            let payInfo = {
+                branch: "574de8d09870f8f81b77ed1c",
+                patientId: "5764c7b41d9a46d00b8b6309",
+                totalDebt: 35000,
+                payType: {_id: 'separated', title: 'Наличный/Безналичный'},
+                total: 4000,
+                totalCash: 2000,
+                totalCashless: 2000,
+                totalCompany: 30000,
+                discount: {
+                    type: "percent",
+                    note: "",
+                    amount: 0,
+                    max: 100,
+                    sum: 0,
+                    sumCompany: 0
+                },
+                debt: 0,
+                period: {start: "2016-06-18T04:13:51.080Z", end: "2016-06-18T04:13:51.080Z"}
+            };
+
+            // replace resulting callback
+            let cb = function (err, payTime) {
+                expect(err).to.be.null;
+                expect(payTime).not.to.be.null;
+                expect(payTime.toString()).to.equal(time.toString());
+
+                done();
+            };
+
+            sandbox.stub(models.Cash, 'changeCompaniesBalance', function (companies, cb) {
+                cb(null, new Date());
+            });
+
+            // replace models.Cash.savePays()
+            let stubSavePays = sandbox.stub(models.Cash, 'savePays', function (patientServicesWithPays, cb) {
+                //console.log('Cash.savePays() called');
+                //F.inspect(patientServicesWithPays, 'patientServicesWithPays:');
+
+                let srv1 = patientServicesWithPays[0];
+                expect(srv1.priceTotal).to.equal(10000);
+                expect(srv1.debt).to.equal(0);
+                expect(srv1.payed).to.equal(10000);
+                expect(srv1.state._id).to.equal('payed');
+                expect(srv1.pays).to.be.an('array').and.to.have.lengthOf(1);
+
+                // check first pay - company type pay
+                let pay11 = srv1.pays[0];
+                expect(pay11.amount).to.equal(10000);
+                expect(pay11.payType._id).to.equal('company');
+                expect(pay11.created.toString()).to.equal(time.toString());
+                expect(pay11.branch._id).to.equal('mybranch');
+                expect(pay11.user).to.equal('myuser');
+                expect(pay11.state._id).to.equal('payed');
+                expect(pay11.percentOfPartner).to.equal(0);
+                expect(pay11.interestOfPartner).to.equal(0);
+
+                let srv2 = patientServicesWithPays[1];
+                expect(srv2.priceTotal).to.equal(20000);
+                expect(srv2.debt).to.equal(0);
+                expect(srv2.payed).to.equal(20000);
+                expect(srv2.state._id).to.equal('payed');
+                expect(srv2.pays).to.be.an('array').and.to.have.lengthOf(1);
+
+                // check first pay - company type pay
+                let pay21 = srv2.pays[0];
+                expect(pay21.amount).to.equal(20000);
+                expect(pay21.payType._id).to.equal('company');
+                expect(pay21.created.toString()).to.equal(time.toString());
+                expect(pay21.branch._id).to.equal('mybranch');
+                expect(pay21.user).to.equal('myuser');
+                expect(pay21.state._id).to.equal('payed');
+                expect(pay21.percentOfPartner).to.equal(0);
+                expect(pay21.interestOfPartner).to.equal(0);
+
+                let srv3 = patientServicesWithPays[2];
+                expect(srv3.priceTotal).to.equal(5000);
+                expect(srv3.debt).to.equal(1000);
+                expect(srv3.payed).to.equal(4000);
+                expect(srv3.state._id).to.equal('partlyPayed');
+                expect(srv3.pays).to.be.an('array').and.to.have.lengthOf(2);
+
+                // check first pay - cashless type pay
+                let pay31 = srv3.pays[0];
+                expect(pay31.amount).to.equal(2000);
+                expect(pay31.payType._id).to.equal('cashless');
+                expect(pay31.created.toString()).to.equal(time.toString());
+                expect(pay31.branch._id).to.equal('mybranch');
+                expect(pay31.user).to.equal('myuser');
+                expect(pay31.state._id).to.equal('payed');
+                expect(pay31.percentOfPartner).to.equal(0);
+                expect(pay31.interestOfPartner).to.equal(0);
+
+                // check second pay - cash type pay
+                let pay32 = srv3.pays[1];
+                expect(pay32.amount).to.equal(2000);
+                expect(pay32.payType._id).to.equal('cash');
+                expect(pay32.created.toString()).to.equal(time.toString());
+                expect(pay32.branch._id).to.equal('mybranch');
+                expect(pay32.user).to.equal('myuser');
+                expect(pay32.state._id).to.equal('payed');
+                expect(pay32.percentOfPartner).to.equal(0);
+                expect(pay32.interestOfPartner).to.equal(0);
+
+                // after all pay, there shouldn't be any left money
+                expect(payInfo.total).to.equal(0);
+                expect(payInfo.totalCash).to.equal(0);
+                expect(payInfo.totalCashless).to.equal(0);
+                expect(payInfo.totalCompany).to.equal(0);
+                cb(null, new Date());
+            });
+
+            // replace models.PatientService.pendingServicesOf() method
+            let stubPendingServicesOf = sandbox.stub(models.PatientService, 'pendingServicesOf');
+
+            // invokes 3rd argument as callback - cb(null, pendingPatients)
+            stubPendingServicesOf.onCall(0).callsArgWith(2, null, pendingPatients);
+
+            // spy models.Cash.payAll() method call
+            let spyPayAll = sandbox.spy(models.Cash, 'payAll');
+
+            // try to pay for all pending services
+            models.Cash.payAll(user, payInfo, cb);
+
+            expect(spyPayAll.called).to.be.true;
+            expect(spyPayAll.getCall(0).args[0]).to.be.equal(user);
+        });
+
+        it('separate and company payments with discount and enough money', function (done) {
+            pendingPatients = [
+                /* 1 */
+                {
+                    "_id": ObjectId("5764c8051d9a46d00b8b6312"),
+                    "user": ObjectId("57483e928e061688284ceffb"),
+                    "category": {
+                        "_id": "ginekolog",
+                        "title": "Гинеколог",
+                        "shortTitle": "гинек.",
+                        "state": {
+                            "title": "Активный",
+                            "_id": "active"
+                        },
+                        "user": ObjectId("57483e928e061688284ceffb"),
+                        "created": ISODate("2016-05-08T02:17:17.445Z"),
+                        "subcategories": []
+                    },
+                    "title": "Осмотр пациента в динамике",
+                    "shortTitle": "осмотр в динамике",
+                    "state": {
+                        "_id": "new",
+                        "title": "Новый"
+                    },
+                    "__v": 0,
+                    "quantity": 1,
+                    "priceTotal": 10000,
+                    "company": {
+                        "user": ObjectId("57483e928e061688284ceffb"),
+                        "title": "Клевая организация",
+                        "shortTitle": "Клева",
+                        "address": "Ташкент",
+                        "phone": "1112233",
+                        "state": {
+                            "_id": "active",
+                            "title": "Активный"
+                        },
+                        "__v": 0,
+                        "_id": ObjectId("576229b9d11698941b998696"),
+                        "created": ISODate("2016-06-16T04:22:57.533Z"),
+                        "pays": [],
+                        "balance": 0
+                    },
+                    "serviceId": ObjectId("5756cac051033cfc17bc06e8"),
+                    "branch": ObjectId("574de8d09870f8f81b77ed1c"),
+                    "patientId": ObjectId("5764c7b41d9a46d00b8b6309"),
+                    "debt": 10000,
+                    "created": ISODate("2016-06-18T04:03:17.866Z"),
+                    "result": {
+                        "fields": []
+                    },
+                    "fields": [],
+                    "overPriceTotal": 0,
+                    "overPrice": 0,
+                    "overPercent": 0,
+                    "discountPrice": 0,
+                    "pays": [],
+                    "payed": 0,
+                    "price": 10000
+                },
+                /* 2 */
+                {
+                    "_id": ObjectId("5764c8051d9a46d00b8b6314"),
+                    "user": ObjectId("57483e928e061688284ceffb"),
+                    "category": {
+                        "_id": "ginekolog",
+                        "title": "Гинеколог",
+                        "shortTitle": "гинек.",
+                        "state": {
+                            "title": "Активный",
+                            "_id": "active"
+                        },
+                        "user": ObjectId("57483e928e061688284ceffb"),
+                        "created": ISODate("2016-05-08T02:17:17.445Z"),
+                        "subcategories": []
+                    },
+                    "title": "Первичный осмотр и консультация",
+                    "shortTitle": "перв.осмотр и консул",
+                    "state": {
+                        "_id": "new",
+                        "title": "Новый"
+                    },
+                    "__v": 0,
+                    "quantity": 1,
+                    "priceTotal": 20000,
+                    "company": {
+                        "user": ObjectId("57483e928e061688284ceffb"),
+                        "title": "Клевая организация",
+                        "shortTitle": "Клева",
+                        "address": "Ташкент",
+                        "phone": "1112233",
+                        "state": {
+                            "_id": "active",
+                            "title": "Активный"
+                        },
+                        "__v": 0,
+                        "_id": ObjectId("576229b9d11698941b998696"),
+                        "created": ISODate("2016-06-16T04:22:57.533Z"),
+                        "pays": [],
+                        "balance": 0
+                    },
+                    "serviceId": ObjectId("5756ca9c51033cfc17bc06e2"),
+                    "branch": ObjectId("574de8d09870f8f81b77ed1c"),
+                    "patientId": ObjectId("5764c7b41d9a46d00b8b6309"),
+                    "debt": 20000,
+                    "created": ISODate("2016-06-18T04:03:17.866Z"),
+                    "result": {
+                        "fields": []
+                    },
+                    "fields": [],
+                    "overPriceTotal": 0,
+                    "overPrice": 0,
+                    "overPercent": 0,
+                    "discountPrice": 0,
+                    "pays": [],
+                    "payed": 0,
+                    "price": 20000
+                },
+                /* 3 */
+                {
+                    "_id": ObjectId("5764c8051d9a46d00b8b6316"),
+                    "user": ObjectId("57483e928e061688284ceffb"),
+                    "category": {
+                        "_id": "ginekolog",
+                        "title": "Гинеколог",
+                        "shortTitle": "гинек.",
+                        "state": {
+                            "title": "Активный",
+                            "_id": "active"
+                        },
+                        "user": ObjectId("57483e928e061688284ceffb"),
+                        "created": ISODate("2016-05-08T02:17:17.445Z"),
+                        "subcategories": []
+                    },
+                    "title": "Консультация без осмотра",
+                    "shortTitle": "Консуль. без осмотра",
+                    "state": {
+                        "_id": "new",
+                        "title": "Новый"
+                    },
+                    "__v": 0,
+                    "quantity": 1,
+                    "priceTotal": 5000,
+                    "serviceId": ObjectId("5756ca4f51033cfc17bc06d6"),
+                    "branch": ObjectId("574de8d09870f8f81b77ed1c"),
+                    "patientId": ObjectId("5764c7b41d9a46d00b8b6309"),
+                    "debt": 5000,
+                    "created": ISODate("2016-06-18T04:03:17.866Z"),
+                    "result": {
+                        "fields": []
+                    },
+                    "fields": [],
+                    "overPriceTotal": 0,
+                    "overPrice": 0,
+                    "overPercent": 0,
+                    "discountPrice": 0,
+                    "pays": [],
+                    "payed": 0,
+                    "price": 5000
+                }
+            ];
+            let payInfo = {
+                branch: "574de8d09870f8f81b77ed1c",
+                patientId: "5764c7b41d9a46d00b8b6309",
+                totalDebt: 35000,
+                payType: {_id: 'separated', title: 'Наличный/Безналичный'},
+                total: 4000,
+                totalCash: 1000,
+                totalCashless: 3000,
+                totalCompany: 20000,
+                discount: {
+                    type: "amount",
+                    note: "some discount",
+                    amount: 11000,
+                    max: 100,
+                    sum: 11000,
+                    sumCompany: 10000
+                },
+                debt: 0,
+                period: {start: "2016-06-18T04:13:51.080Z", end: "2016-06-18T04:13:51.080Z"}
+            };
+
+            // replace resulting callback
+            let cb = function (err, payTime) {
+                expect(err).to.be.null;
+                expect(payTime).not.to.be.null;
+                expect(payTime.toString()).to.equal(time.toString());
+
+                done();
+            };
+
+            sandbox.stub(models.Cash, 'changeCompaniesBalance', function (companies, cb) {
+                cb(null, new Date());
+            });
+
+            // replace models.Cash.savePays()
+            let stubSavePays = sandbox.stub(models.Cash, 'savePays', function (patientServicesWithPays, cb) {
+                //console.log('Cash.savePays() called');
+                //F.inspect(patientServicesWithPays, 'patientServicesWithPays:');
+
+                let srv1 = patientServicesWithPays[0];
+                expect(srv1.priceTotal).to.equal(0);
+                expect(srv1.debt).to.equal(0);
+                expect(srv1.payed).to.equal(10000);
+                expect(srv1.state._id).to.equal('payed');
+                expect(srv1.pays).to.be.an('array').and.to.have.lengthOf(2);
+
+                // check first pay - discount type pay
+                let pay11 = srv1.pays[0];
+                expect(pay11.amount).to.equal(10000);
+                expect(pay11.payType._id).to.equal('discount');
+                expect(pay11.created.toString()).to.equal(time.toString());
+                expect(pay11.branch._id).to.equal('mybranch');
+                expect(pay11.user).to.equal('myuser');
+                expect(pay11.state._id).to.equal('payed');
+                expect(pay11.percentOfPartner).to.equal(0);
+                expect(pay11.interestOfPartner).to.equal(0);
+                // check discount object
+                expect(pay11).to.have.deep.property('discount.type', 'amount');
+                expect(pay11).to.have.deep.property('discount.note', 'some discount');
+                expect(pay11).to.have.deep.property('discount.state._id', 'payed');
+                expect(pay11).to.have.deep.property('discount.amount', 11000);
+                expect(pay11).to.have.deep.property('discount.sum', 10000);
+
+                // check second pay - company type pay
+                let pay12 = srv1.pays[1];
+                expect(pay12.amount).to.equal(0);
+                expect(pay12.payType._id).to.equal('company');
+                expect(pay12.created.toString()).to.equal(time.toString());
+                expect(pay12.branch._id).to.equal('mybranch');
+                expect(pay12.user).to.equal('myuser');
+                expect(pay12.state._id).to.equal('payed');
+                expect(pay12.percentOfPartner).to.equal(0);
+                expect(pay12.interestOfPartner).to.equal(0);
+
+                let srv2 = patientServicesWithPays[1];
+                expect(srv2.priceTotal).to.equal(20000);
+                expect(srv2.debt).to.equal(0);
+                expect(srv2.payed).to.equal(20000);
+                expect(srv2.state._id).to.equal('payed');
+                expect(srv2.pays).to.be.an('array').and.to.have.lengthOf(1);
+
+                // check first pay - company type pay
+                let pay21 = srv2.pays[0];
+                expect(pay21.amount).to.equal(20000);
+                expect(pay21.payType._id).to.equal('company');
+                expect(pay21.created.toString()).to.equal(time.toString());
+                expect(pay21.branch._id).to.equal('mybranch');
+                expect(pay21.user).to.equal('myuser');
+                expect(pay21.state._id).to.equal('payed');
+                expect(pay21.percentOfPartner).to.equal(0);
+                expect(pay21.interestOfPartner).to.equal(0);
+
+                let srv3 = patientServicesWithPays[2];
+                expect(srv3.priceTotal).to.equal(4000);
+                expect(srv3.debt).to.equal(0);
+                expect(srv3.payed).to.equal(5000);
+                expect(srv3.state._id).to.equal('payed');
+                expect(srv3.pays).to.be.an('array').and.to.have.lengthOf(3);
+
+                // check first pay - discount type pay
+                let pay31 = srv3.pays[0];
+                expect(pay31.amount).to.equal(1000);
+                expect(pay31.payType._id).to.equal('discount');
+                expect(pay31.created.toString()).to.equal(time.toString());
+                expect(pay31.branch._id).to.equal('mybranch');
+                expect(pay31.user).to.equal('myuser');
+                expect(pay31.state._id).to.equal('payed');
+                expect(pay31.percentOfPartner).to.equal(0);
+                expect(pay31.interestOfPartner).to.equal(0);
+                // check discount object
+                expect(pay31).to.have.deep.property('discount.type', 'amount');
+                expect(pay31).to.have.deep.property('discount.note', 'some discount');
+                expect(pay31).to.have.deep.property('discount.state._id', 'payed');
+                expect(pay31).to.have.deep.property('discount.amount', 11000);
+                expect(pay31).to.have.deep.property('discount.sum', 1000);
+
+                // check second pay - cashless type pay
+                let pay32 = srv3.pays[1];
+                expect(pay32.amount).to.equal(3000);
+                expect(pay32.payType._id).to.equal('cashless');
+                expect(pay32.created.toString()).to.equal(time.toString());
+                expect(pay32.branch._id).to.equal('mybranch');
+                expect(pay32.user).to.equal('myuser');
+                expect(pay32.state._id).to.equal('payed');
+                expect(pay32.percentOfPartner).to.equal(0);
+                expect(pay32.interestOfPartner).to.equal(0);
+
+                // check third pay - cash type pay
+                let pay33 = srv3.pays[2];
+                expect(pay33.amount).to.equal(1000);
+                expect(pay33.payType._id).to.equal('cash');
+                expect(pay33.created.toString()).to.equal(time.toString());
+                expect(pay33.branch._id).to.equal('mybranch');
+                expect(pay33.user).to.equal('myuser');
+                expect(pay33.state._id).to.equal('payed');
+                expect(pay33.percentOfPartner).to.equal(0);
+                expect(pay33.interestOfPartner).to.equal(0);
+
+                // after all pay, there shouldn't be any left money
+                expect(payInfo.total).to.equal(0);
+                expect(payInfo.totalCash).to.equal(0);
+                expect(payInfo.totalCashless).to.equal(0);
+                expect(payInfo.totalCompany).to.equal(0);
+                cb(null, new Date());
+            });
+
+            // replace models.PatientService.pendingServicesOf() method
+            let stubPendingServicesOf = sandbox.stub(models.PatientService, 'pendingServicesOf');
+
+            // invokes 3rd argument as callback - cb(null, pendingPatients)
+            stubPendingServicesOf.onCall(0).callsArgWith(2, null, pendingPatients);
+
+            // spy models.Cash.payAll() method call
+            let spyPayAll = sandbox.spy(models.Cash, 'payAll');
+
+            // try to pay for all pending services
+            models.Cash.payAll(user, payInfo, cb);
+
+            expect(spyPayAll.called).to.be.true;
+            expect(spyPayAll.getCall(0).args[0]).to.be.equal(user);
+        });
+
+        it('separate and company payments with discount and not enough money', function (done) {
+            pendingPatients = [
+                /* 1 */
+                {
+                    "_id": ObjectId("5764c8051d9a46d00b8b6312"),
+                    "user": ObjectId("57483e928e061688284ceffb"),
+                    "category": {
+                        "_id": "ginekolog",
+                        "title": "Гинеколог",
+                        "shortTitle": "гинек.",
+                        "state": {
+                            "title": "Активный",
+                            "_id": "active"
+                        },
+                        "user": ObjectId("57483e928e061688284ceffb"),
+                        "created": ISODate("2016-05-08T02:17:17.445Z"),
+                        "subcategories": []
+                    },
+                    "title": "Осмотр пациента в динамике",
+                    "shortTitle": "осмотр в динамике",
+                    "state": {
+                        "_id": "new",
+                        "title": "Новый"
+                    },
+                    "__v": 0,
+                    "quantity": 1,
+                    "priceTotal": 10000,
+                    "company": {
+                        "user": ObjectId("57483e928e061688284ceffb"),
+                        "title": "Клевая организация",
+                        "shortTitle": "Клева",
+                        "address": "Ташкент",
+                        "phone": "1112233",
+                        "state": {
+                            "_id": "active",
+                            "title": "Активный"
+                        },
+                        "__v": 0,
+                        "_id": ObjectId("576229b9d11698941b998696"),
+                        "created": ISODate("2016-06-16T04:22:57.533Z"),
+                        "pays": [],
+                        "balance": 0
+                    },
+                    "serviceId": ObjectId("5756cac051033cfc17bc06e8"),
+                    "branch": ObjectId("574de8d09870f8f81b77ed1c"),
+                    "patientId": ObjectId("5764c7b41d9a46d00b8b6309"),
+                    "debt": 10000,
+                    "created": ISODate("2016-06-18T04:03:17.866Z"),
+                    "result": {
+                        "fields": []
+                    },
+                    "fields": [],
+                    "overPriceTotal": 0,
+                    "overPrice": 0,
+                    "overPercent": 0,
+                    "discountPrice": 0,
+                    "pays": [],
+                    "payed": 0,
+                    "price": 10000
+                },
+                /* 2 */
+                {
+                    "_id": ObjectId("5764c8051d9a46d00b8b6314"),
+                    "user": ObjectId("57483e928e061688284ceffb"),
+                    "category": {
+                        "_id": "ginekolog",
+                        "title": "Гинеколог",
+                        "shortTitle": "гинек.",
+                        "state": {
+                            "title": "Активный",
+                            "_id": "active"
+                        },
+                        "user": ObjectId("57483e928e061688284ceffb"),
+                        "created": ISODate("2016-05-08T02:17:17.445Z"),
+                        "subcategories": []
+                    },
+                    "title": "Первичный осмотр и консультация",
+                    "shortTitle": "перв.осмотр и консул",
+                    "state": {
+                        "_id": "new",
+                        "title": "Новый"
+                    },
+                    "__v": 0,
+                    "quantity": 1,
+                    "priceTotal": 20000,
+                    "company": {
+                        "user": ObjectId("57483e928e061688284ceffb"),
+                        "title": "Клевая организация",
+                        "shortTitle": "Клева",
+                        "address": "Ташкент",
+                        "phone": "1112233",
+                        "state": {
+                            "_id": "active",
+                            "title": "Активный"
+                        },
+                        "__v": 0,
+                        "_id": ObjectId("576229b9d11698941b998696"),
+                        "created": ISODate("2016-06-16T04:22:57.533Z"),
+                        "pays": [],
+                        "balance": 0
+                    },
+                    "serviceId": ObjectId("5756ca9c51033cfc17bc06e2"),
+                    "branch": ObjectId("574de8d09870f8f81b77ed1c"),
+                    "patientId": ObjectId("5764c7b41d9a46d00b8b6309"),
+                    "debt": 20000,
+                    "created": ISODate("2016-06-18T04:03:17.866Z"),
+                    "result": {
+                        "fields": []
+                    },
+                    "fields": [],
+                    "overPriceTotal": 0,
+                    "overPrice": 0,
+                    "overPercent": 0,
+                    "discountPrice": 0,
+                    "pays": [],
+                    "payed": 0,
+                    "price": 20000
+                },
+                /* 3 */
+                {
+                    "_id": ObjectId("5764c8051d9a46d00b8b6316"),
+                    "user": ObjectId("57483e928e061688284ceffb"),
+                    "category": {
+                        "_id": "ginekolog",
+                        "title": "Гинеколог",
+                        "shortTitle": "гинек.",
+                        "state": {
+                            "title": "Активный",
+                            "_id": "active"
+                        },
+                        "user": ObjectId("57483e928e061688284ceffb"),
+                        "created": ISODate("2016-05-08T02:17:17.445Z"),
+                        "subcategories": []
+                    },
+                    "title": "Консультация без осмотра",
+                    "shortTitle": "Консуль. без осмотра",
+                    "state": {
+                        "_id": "new",
+                        "title": "Новый"
+                    },
+                    "__v": 0,
+                    "quantity": 1,
+                    "priceTotal": 5000,
+                    "serviceId": ObjectId("5756ca4f51033cfc17bc06d6"),
+                    "branch": ObjectId("574de8d09870f8f81b77ed1c"),
+                    "patientId": ObjectId("5764c7b41d9a46d00b8b6309"),
+                    "debt": 5000,
+                    "created": ISODate("2016-06-18T04:03:17.866Z"),
+                    "result": {
+                        "fields": []
+                    },
+                    "fields": [],
+                    "overPriceTotal": 0,
+                    "overPrice": 0,
+                    "overPercent": 0,
+                    "discountPrice": 0,
+                    "pays": [],
+                    "payed": 0,
+                    "price": 5000
+                }
+            ];
+            let payInfo = {
+                branch: "574de8d09870f8f81b77ed1c",
+                patientId: "5764c7b41d9a46d00b8b6309",
+                totalDebt: 35000,
+                payType: {_id: 'separated', title: 'Наличный/Безналичный'},
+                total: 3000,
+                totalCash: 1000,
+                totalCashless: 2000,
+                totalCompany: 20000,
+                discount: {
+                    type: "amount",
+                    note: "some discount",
+                    amount: 11000,
+                    max: 100,
+                    sum: 11000,
+                    sumCompany: 10000
+                },
+                debt: 0,
+                period: {start: "2016-06-18T04:13:51.080Z", end: "2016-06-18T04:13:51.080Z"}
+            };
+
+            // replace resulting callback
+            let cb = function (err, payTime) {
+                expect(err).to.be.null;
+                expect(payTime).not.to.be.null;
+                expect(payTime.toString()).to.equal(time.toString());
+
+                done();
+            };
+
+            sandbox.stub(models.Cash, 'changeCompaniesBalance', function (companies, cb) {
+                cb(null, new Date());
+            });
+
+            // replace models.Cash.savePays()
+            let stubSavePays = sandbox.stub(models.Cash, 'savePays', function (patientServicesWithPays, cb) {
+                //console.log('Cash.savePays() called');
+                //F.inspect(patientServicesWithPays, 'patientServicesWithPays:');
+
+                let srv1 = patientServicesWithPays[0];
+                expect(srv1.priceTotal).to.equal(0);
+                expect(srv1.debt).to.equal(0);
+                expect(srv1.payed).to.equal(10000);
+                expect(srv1.state._id).to.equal('payed');
+                expect(srv1.pays).to.be.an('array').and.to.have.lengthOf(2);
+
+                // check first pay - discount type pay
+                let pay11 = srv1.pays[0];
+                expect(pay11.amount).to.equal(10000);
+                expect(pay11.payType._id).to.equal('discount');
+                expect(pay11.created.toString()).to.equal(time.toString());
+                expect(pay11.branch._id).to.equal('mybranch');
+                expect(pay11.user).to.equal('myuser');
+                expect(pay11.state._id).to.equal('payed');
+                expect(pay11.percentOfPartner).to.equal(0);
+                expect(pay11.interestOfPartner).to.equal(0);
+                // check discount object
+                expect(pay11).to.have.deep.property('discount.type', 'amount');
+                expect(pay11).to.have.deep.property('discount.note', 'some discount');
+                expect(pay11).to.have.deep.property('discount.state._id', 'payed');
+                expect(pay11).to.have.deep.property('discount.amount', 11000);
+                expect(pay11).to.have.deep.property('discount.sum', 10000);
+
+                // check second pay - company type pay
+                let pay12 = srv1.pays[1];
+                expect(pay12.amount).to.equal(0);
+                expect(pay12.payType._id).to.equal('company');
+                expect(pay12.created.toString()).to.equal(time.toString());
+                expect(pay12.branch._id).to.equal('mybranch');
+                expect(pay12.user).to.equal('myuser');
+                expect(pay12.state._id).to.equal('payed');
+                expect(pay12.percentOfPartner).to.equal(0);
+                expect(pay12.interestOfPartner).to.equal(0);
+
+                let srv2 = patientServicesWithPays[1];
+                expect(srv2.priceTotal).to.equal(20000);
+                expect(srv2.debt).to.equal(0);
+                expect(srv2.payed).to.equal(20000);
+                expect(srv2.state._id).to.equal('payed');
+                expect(srv2.pays).to.be.an('array').and.to.have.lengthOf(1);
+
+                // check first pay - company type pay
+                let pay21 = srv2.pays[0];
+                expect(pay21.amount).to.equal(20000);
+                expect(pay21.payType._id).to.equal('company');
+                expect(pay21.created.toString()).to.equal(time.toString());
+                expect(pay21.branch._id).to.equal('mybranch');
+                expect(pay21.user).to.equal('myuser');
+                expect(pay21.state._id).to.equal('payed');
+                expect(pay21.percentOfPartner).to.equal(0);
+                expect(pay21.interestOfPartner).to.equal(0);
+
+                let srv3 = patientServicesWithPays[2];
+                expect(srv3.priceTotal).to.equal(4000);
+                expect(srv3.debt).to.equal(1000);
+                expect(srv3.payed).to.equal(4000);
+                expect(srv3.state._id).to.equal('partlyPayed');
+                expect(srv3.pays).to.be.an('array').and.to.have.lengthOf(3);
+
+                // check first pay - discount type pay
+                let pay31 = srv3.pays[0];
+                expect(pay31.amount).to.equal(1000);
+                expect(pay31.payType._id).to.equal('discount');
+                expect(pay31.created.toString()).to.equal(time.toString());
+                expect(pay31.branch._id).to.equal('mybranch');
+                expect(pay31.user).to.equal('myuser');
+                expect(pay31.state._id).to.equal('payed');
+                expect(pay31.percentOfPartner).to.equal(0);
+                expect(pay31.interestOfPartner).to.equal(0);
+                // check discount object
+                expect(pay31).to.have.deep.property('discount.type', 'amount');
+                expect(pay31).to.have.deep.property('discount.note', 'some discount');
+                expect(pay31).to.have.deep.property('discount.state._id', 'payed');
+                expect(pay31).to.have.deep.property('discount.amount', 11000);
+                expect(pay31).to.have.deep.property('discount.sum', 1000);
+
+                // check second pay - cashless type pay
+                let pay32 = srv3.pays[1];
+                expect(pay32.amount).to.equal(2000);
+                expect(pay32.payType._id).to.equal('cashless');
+                expect(pay32.created.toString()).to.equal(time.toString());
+                expect(pay32.branch._id).to.equal('mybranch');
+                expect(pay32.user).to.equal('myuser');
+                expect(pay32.state._id).to.equal('payed');
+                expect(pay32.percentOfPartner).to.equal(0);
+                expect(pay32.interestOfPartner).to.equal(0);
+
+                // check third pay - cash type pay
+                let pay33 = srv3.pays[2];
+                expect(pay33.amount).to.equal(1000);
+                expect(pay33.payType._id).to.equal('cash');
+                expect(pay33.created.toString()).to.equal(time.toString());
+                expect(pay33.branch._id).to.equal('mybranch');
+                expect(pay33.user).to.equal('myuser');
+                expect(pay33.state._id).to.equal('payed');
+                expect(pay33.percentOfPartner).to.equal(0);
+                expect(pay33.interestOfPartner).to.equal(0);
+
+                // after all pay, there shouldn't be any left money
+                expect(payInfo.total).to.equal(0);
+                expect(payInfo.totalCash).to.equal(0);
+                expect(payInfo.totalCashless).to.equal(0);
+                expect(payInfo.totalCompany).to.equal(0);
+                cb(null, new Date());
+            });
+
+            // replace models.PatientService.pendingServicesOf() method
+            let stubPendingServicesOf = sandbox.stub(models.PatientService, 'pendingServicesOf');
+
+            // invokes 3rd argument as callback - cb(null, pendingPatients)
+            stubPendingServicesOf.onCall(0).callsArgWith(2, null, pendingPatients);
+
+            // spy models.Cash.payAll() method call
+            let spyPayAll = sandbox.spy(models.Cash, 'payAll');
+
+            // try to pay for all pending services
+            models.Cash.payAll(user, payInfo, cb);
+
+            expect(spyPayAll.called).to.be.true;
+            expect(spyPayAll.getCall(0).args[0]).to.be.equal(user);
+        });
 
         it('Error cases!');
 
