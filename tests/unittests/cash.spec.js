@@ -3628,6 +3628,8 @@ describe('Cash', function () {
 
         it('Error cases!');
 
+        it('Pays with partner!');
+
     });
 
     describe('Cash.changeCompaniesBalance()', function () {
