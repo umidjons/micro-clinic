@@ -41,6 +41,7 @@
     "angular-messages": "^1.5.5",
     "angular-ui-sortable": "^0.14.0",
     "sugar": "^1.4.1",
-    "ngstorage": "^0.3.10"
+    "ngstorage": "^0.3.10",
+    "angular-hotkeys": "chieffancypants/angular-hotkeys#^1.7.0"
   }
 }

@@ -103,7 +103,7 @@
             $scope.reloadPage();
         })
         .controller('ServiceCtrl', function ($scope, $state, $stateParams,
-                                             Modal, State, ServiceCategory, Service, FieldType) {
+                                             Modal, State, ServiceCategory, Service, FieldType, hotkeys) {
             $scope.serviceCategories = ServiceCategory.query();
             $scope.states = State.query();
             $scope.tab = {name: 'templates'};
@@ -288,6 +288,14 @@
                     }
                 });
             };
+
+            hotkeys.bindTo($scope)
+                .add({
+                    combo: 'alt+s',
+                    description: 'Сохранить',
+                    callback: $scope.saveService
+                });
+
             $scope.cloneService = function () {
                 Modal.confirm({
                     okAction: function (modal) {
