@@ -2,7 +2,9 @@
     'use strict';
 
     angular.module('MyClinic')
-        .controller('ServicesCtrl', function ($scope, Modal, Service, State, ServiceCategory) {
+        .controller('ServicesCtrl', function ($scope, Modal, Service, State, ServiceCategory, Pager) {
+            $scope.pagination = Pager.new();
+            $scope.pagination.pageSize = 20;
             $scope.states = State.query();
             $scope.categories = ServiceCategory.query();
 
@@ -40,10 +42,10 @@
                                 if (angular.isDefined(category.subcategories) && category.subcategories.length > 0) {
                                     $scope.subcategories = category.subcategories;
                                 } else {
-                                    this.subcategory = undefined;
-                                    this.subsubcategory = undefined;
                                     $scope.subcategories = [];
                                 }
+                                this.subcategory = undefined;
+                                this.subsubcategory = undefined;
                             } else {
                                 this.category = undefined;
                                 this.subcategory = undefined;
@@ -57,14 +59,13 @@
                                 if (angular.isDefined(category.subcategories) && category.subcategories.length > 0) {
                                     $scope.subsubcategories = category.subcategories;
                                 } else {
-                                    this.subsubcategory = undefined;
                                     $scope.subsubcategories = [];
                                 }
                             } else {
                                 this.subcategory = undefined;
-                                this.subsubcategory = undefined;
                                 $scope.subsubcategories = [];
                             }
+                            this.subsubcategory = undefined;
                             break;
                         case 'subsubcategory':
                             if (angular.isDefined(category)) {
@@ -111,7 +112,8 @@
                 //language: 'ru_RU',
                 //language_url: '/assets/lib/tinymce-dist/langs/ru_RU.js',
                 plugins: 'advlist autolink lists link image charmap print preview hr anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking save table contextmenu directionality emoticons template paste textcolor colorpicker textpattern imagetools',
-                paste_data_images: true
+                paste_data_images: true,
+                height: 500
             };
 
             $scope.Category = {

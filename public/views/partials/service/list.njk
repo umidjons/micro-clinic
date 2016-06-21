@@ -99,8 +99,9 @@
     </thead>
 
     <tbody>
-    <tr ng-repeat="srv in services | filter: filter: F.allowNulls">
-        <td>{{ $index + 1 }}</td>
+    <tr dir-paginate="srv in services | filter: filter: F.allowNulls | itemsPerPage: pagination.pageSize"
+        current-page="pagination.current">
+        <td class="text-right">{{ pagination.itemNumber($index) }}</td>
         <td>{{ srv.category.title }}</td>
         <td>{{ srv.subcategory.title }}</td>
         <td>{{ srv.subsubcategory.title }}</td>
@@ -117,6 +118,8 @@
         </td>
         <td class="text-right">{{ srv.templateCount | number }}</td>
         <td class="text-center">
+            <a ui-sref="serviceEdit({id:srv._id})" title="Изменить" class="btn btn-xs btn-success" target="_blank">
+                <i class="fa fa-fw fa-edit"></i></a>
             <div class="btn-group btn-group-xs">
                 <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">
@@ -140,5 +143,13 @@
         </td>
     </tr>
     </tbody>
+
+    <tfoot>
+    <tr>
+        <td colspan="12">
+            <dir-pagination-controls></dir-pagination-controls>
+        </td>
+    </tr>
+    </tfoot>
 
 </table>
