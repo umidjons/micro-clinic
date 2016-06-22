@@ -169,6 +169,15 @@ PatientServiceSchema.statics.payedPatients = function (branch, startDate, endDat
                             0
                         ]
                     }
+                },
+                payAmountCompany: {
+                    $sum: {
+                        $cond: [
+                            {$eq: ['$pays.payType._id', 'company']},
+                            '$pays.amount',
+                            0
+                        ]
+                    }
                 }
             }
         },
@@ -198,6 +207,7 @@ PatientServiceSchema.statics.payedPatients = function (branch, startDate, endDat
                 payAmountCashless: '$payAmountCashless',
                 payAmountDiscount: '$payAmountDiscount',
                 payAmountRefund: '$payAmountRefund',
+                payAmountCompany: '$payAmountCompany',
                 isRefund: {$cond: [{$gt: ['$payAmountRefund', 0]}, true, false]}
             }
         }

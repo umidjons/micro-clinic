@@ -178,7 +178,7 @@
 
     <tfoot>
     <tr>
-        <th rowspan="6" colspan="4" class="text-right" style="vertical-align: middle;">ИТОГО</th>
+        <th rowspan="7" colspan="4" class="text-right" style="vertical-align: middle;">ИТОГО</th>
     </tr>
     <tr>
         <th class="text-right">Скидка:</th>
@@ -187,6 +187,10 @@
     <tr>
         <th class="text-right">Возврат:</th>
         <th class="text-right">{{ F.total(records,'payAmountRefund') | number: 2 }}</th>
+    </tr>
+    <tr>
+        <th class="text-right">Организация (Страховка):</th>
+        <th class="text-right">{{ F.total(records,'payAmountCompany') | number: 2 }}</th>
     </tr>
     <tr>
         <th class="text-right">Наличные:</th>
