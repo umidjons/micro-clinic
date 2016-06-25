@@ -1,0 +1,54 @@
+<h3>Лаборатория</h3>
+
+<ul class="nav nav-tabs">
+    <li ng-repeat="cat in categories"
+        ng-class="{'active': activeTab.title == cat.title}">
+        <a href ng-click="openTab(cat)">{{ cat.title }}</a>
+    </li>
+</ul>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-striped table-hover table-condensed">
+
+        <thead>
+        <tr>
+            <th style="min-width: 40px; max-width: 40px; width: 40px;">№</th>
+            <th style="min-width: 60px; max-width: 60px; width: 60px;">ID</th>
+            <th style="min-width: 160px; max-width: 160px; width: 160px;">Дата посещение</th>
+            <th style="min-width: 230px; max-width: 230px; width: 230px;">ФИО</th>
+            <th style="min-width: 60px; max-width: 60px; width: 60px;">Филиал</th>
+            <th ng-repeat="srv in services" class="lab-table-cell">
+                {{ srv.shortTitle }}
+            </th>
+            <th class="text-center">
+                <button ng-click="reloadPage()" class="btn btn-xs btn-info" title="Обновить">
+                    <i class="fa fa-fw fa-refresh"></i>
+                </button>
+            </th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr ng-repeat="rec in records">
+            <td class="text-right">{{ $index + 1 }}</td>
+            <td>{{ rec._id.patient.code }}</td>
+            <td>{{ rec._id.created | date:'medium' }}</td>
+            <td>{{ rec._id.patient.lastName }} {{ rec._id.patient.firstName }} {{ rec._id.patient.middleName }}</td>
+            <td>{{ rec._id.branch.shortTitle }}</td>
+            <td ng-repeat="srv in services"
+                ng-click="open(srv, rec)"
+                ng-class="{'danger cursor': isFinished(srv, rec) === false,
+                           'success cursor': isFinished(srv, rec) === true}"
+                title="Анализ: {{ srv.title }}&#10;ФИО: {{ rec._id.patient.lastName }} {{ rec._id.patient.firstName }} {{ rec._id.patient.middleName }}"
+                class="lab-table-cell">
+                {{ getResultValue(srv, rec) }}
+            </td>
+            <td class="text-center">
+                <a href title="Изменить" class="btn btn-xs btn-info">
+                    <i class="fa fa-fw fa-edit"></i></a>
+            </td>
+        </tr>
+        </tbody>
+
+    </table>
+</div>

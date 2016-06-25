@@ -281,6 +281,12 @@
                     },
                     deleteBulk: {
                         method: 'POST', url: '/patient-service/delete-bulk'
+                    },
+                    laboratory: {
+                        method: 'GET', url: '/patient-service/laboratory'
+                    },
+                    saveResult: {
+                        method: 'PUT', url: '/patient-service/laboratory/save-result/:id'
                     }
                 }
             );

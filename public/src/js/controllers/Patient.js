@@ -598,19 +598,26 @@
                 plugins: 'advlist autolink lists link image charmap print preview hr anchor pagebreak searchreplace ' +
                 'wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking save table ' +
                 'contextmenu directionality emoticons template paste textcolor colorpicker textpattern imagetools',
-                paste_data_images: true
+                paste_data_images: true,
+                table_toolbar: false,
+                height: 400
             };
 
             $scope.templateChanged = function () {
                 if ($scope.patientService.result.template) {
-                    Modal.confirm({
-                        content: 'Заменить содержимое поле из шаблона?',
-                        okAction: function (modal) {
-                            modal.hide();
-                            // copy templates content into results content
-                            $scope.patientService.result.content = $scope.patientService.result.template.content;
-                        }
-                    });
+                    if (!$scope.patientService.result.content) {
+                        $scope.patientService.result.content = $scope.patientService.result.template.content;
+                    }
+                    else {
+                        Modal.confirm({
+                            content: 'Заменить содержимое поле из шаблона?',
+                            okAction: function (modal) {
+                                modal.hide();
+                                // copy templates content into results content
+                                $scope.patientService.result.content = $scope.patientService.result.template.content;
+                            }
+                        });
+                    }
                 } else {
                     Modal.confirm({
                         content: 'Очистить содержимое поле?',
@@ -624,7 +631,7 @@
             };
 
             var savePatSrv = function (modal) {
-                PatientService.update($scope.patientService, function (resp) {
+                PatientService.saveResult($scope.patientService, function (resp) {
                     // close confirmation window
                     modal.hide();
 
@@ -632,13 +639,14 @@
                     // aside is a parent scope, so $show/$hide is available
                     $scope.$hide();
 
+                    /*
                     if (resp.code == 'success') {
                         $state.transitionTo('patientView.services', $stateParams, {
                             reload: true,
                             inherit: false,
                             notify: true
                         });
-                    }
+                    }*/
                 });
             };
 

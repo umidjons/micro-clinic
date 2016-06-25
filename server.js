@@ -60,8 +60,8 @@ mongoose.connection.once('open', function () {
     app.use('/assets', express.static(path.join(__dirname, 'public')));
 
     // configure parsers
-    app.use(bodyParser.urlencoded({extended: true}));
-    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({extended: true, limit: '1mb'}));
+    app.use(bodyParser.json({limit: '5mb'}));
 
     app.get('/', function (req, res) {
         //res.set('Authorization', `JWT ${app.get('jwt_token')}`);

@@ -187,3 +187,14 @@ input[type=checkbox].ng-invalid {
 .navbar-brand {
     text-transform: uppercase;
 }
+
+.cursor {
+    cursor: pointer;
+}
+
+.lab-table-cell {
+    min-width: 50px;
+    width: 50px;
+    max-width: 50px;
+    word-wrap: break-word;
+}
