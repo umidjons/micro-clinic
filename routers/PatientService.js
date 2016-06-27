@@ -33,125 +33,76 @@ router
             condition['subcategory._id'] = mongoose.Types.ObjectId(req.query.subcat);
         }
 
+        // if branch id is specified, filter services by it
+        if (req.query.branch) {
+            condition['branch'] = mongoose.Types.ObjectId(req.query.branch);
+        }
+
+        // if service id is specified, filter services by it
+        if (req.query.service) {
+            condition['serviceId'] = mongoose.Types.ObjectId(req.query.service);
+        }
+
+        // if patient code is specified, filter services by it
+        if (req.query.code) {
+            condition['patientCode'] = req.query.code;
+        }
+
         // if period specified, filter by it
         if (req.query.start && req.query.end) {
             let period = F.normalizePeriod(req.query.start, req.query.end);
             condition['created'] = {$gte: period.start, $lte: period.end};
         }
 
-        async.parallel({
-            services: function (callback) {
-                models.PatientService.aggregate([
-                        {
-                            $match: condition
-                        },
-                        {
-                            $group: {
-                                _id: '$serviceId',
-                                srvQty: {
-                                    $sum: 1
-                                }
-                            }
-                        },
-                        {
-                            $lookup: {
-                                from: 'services',
-                                localField: '_id',
-                                foreignField: '_id',
-                                as: 'service'
-                            }
-                        },
-                        {
-                            $unwind: '$service'
-                        },
-                        {
-                            $sort: {
-                                'service.title': 1
-                            }
-                        },
-                        {
-                            $project: {
-                                _id: 0,
-                                id: '$service._id',
-                                title: '$service.title',
-                                shortTitle: '$service.shortTitle',
-                                qty: '$srvQty'
-                            }
-                        }
-                    ])
-                    .exec(function (err, services) {
-                        if (err) {
-                            return callback(err);
-                        }
-
-                        return callback(null, services);
-                    });
-            },
-            patientServices: function (callback) {
-                models.PatientService.aggregate([
-                        {
-                            $match: condition
-                        },
-                        {
-                            $lookup: {
-                                from: 'patients',
-                                localField: 'patientId',
-                                foreignField: '_id',
-                                as: 'patient'
-                            }
-                        },
-                        {
-                            $unwind: '$patient'
-                        },
-                        {
-                            $lookup: {
-                                from: 'branches',
-                                localField: 'branch',
-                                foreignField: '_id',
-                                as: 'branch'
-                            }
-                        },
-                        {
-                            $unwind: '$branch'
-                        },
-                        {
-                            $sort: {
-                                'patient.lastName': 1,
-                                'patient.firstName': 1,
-                                'patient.middleName': 1,
-                                'title': 1,
-                                'branch.title': 1,
-                                'created': -1
-                            }
-                        },
-                        {
-                            $group: {
-                                _id: {
-                                    created: "$created",
-                                    patient: "$patient",
-                                    branch: "$branch"
-                                },
-                                services: {
-                                    $push: "$$ROOT"
-                                }
-                            }
-                        }
-                    ])
-                    .exec(function (err, patSrvList) {
-                        if (err) {
-                            return callback(err);
-                        }
-
-                        return callback(null, patSrvList);
-                    });
-            }
-        }, function (err, results) {
+        // result handler callback
+        let resultHandler = function (err, results) {
             if (err) {
                 return Msg.sendError(res, err);
             }
-
             Msg.sendSuccess(res, '', results);
-        });
+        };
+
+        // if patient name is specified, then do 2 round trip:
+        // 1) find patients IDs by regexp
+        // 2) query for laboratory
+        if (req.query.name) {
+            let name = F.escapeForRegExp(req.query.name);
+            if (name) {
+                // build regular expression
+                let re = new RegExp(name, 'i');
+
+                // find match patient IDs
+                models.Patient.find(
+                    {
+                        $or: [
+                            {lastName: re},
+                            {firstName: re},
+                            {middleName: re}
+                        ]
+                    },
+                    {_id: 1}, // return only IDs
+                    function (err, patients) {
+                        if (err) {
+                            return Msg.sendError(res, err);
+                        }
+
+                        // build array of IDs from models
+                        let patIds = F.arrayOfProps(patients, '_id');
+
+                        // set filter by patient IDs
+                        condition['patientId'] = {$in: patIds};
+
+                        // query laboratory
+                        models.PatientService.laboratory(condition, resultHandler);
+                    }
+                );
+            } else {
+                Msg.sendError(res, 'Указано не правильное значение "ФИО".');
+            }
+        } else {
+            // query laboratory
+            models.PatientService.laboratory(condition, resultHandler);
+        }
 
 
     })

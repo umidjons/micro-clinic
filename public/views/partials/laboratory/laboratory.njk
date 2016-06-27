@@ -1,5 +1,84 @@
 <h3>Лаборатория</h3>
 
+<form name="formFilter" class="form-horizontal" novalidate>
+
+    <div class="col-sm-3">
+        <div class="form-group">
+            <label class="control-label col-sm-4 req">с</label>
+            <div class="col-sm-8">
+                <input ng-model="filter.period.start"
+                       bs-datepicker
+                       data-autoclose="true"
+                       data-max-date="{{ filter.period.end }}"
+                       required
+                       class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-4 req">по</label>
+            <div class="col-sm-8">
+                <input ng-model="filter.period.end"
+                       bs-datepicker
+                       data-autoclose="true"
+                       data-min-date="{{ filter.period.start }}"
+                       required
+                       class="form-control">
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-3">
+        <div class="form-group">
+            <label class="control-label col-sm-4">Филиал</label>
+            <div class="col-sm-8">
+                <select ng-model="filter.branch"
+                        ng-options="b as b.title for b in branches track by b._id"
+                        class="form-control">
+                    <option value="">Все</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-4">Анализ</label>
+            <div class="col-sm-8">
+                <select ng-model="filter.service"
+                        ng-options="s as s.title for s in filter.services track by s.id"
+                        class="form-control">
+                    <option value="">Все</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-3">
+        <div class="form-group">
+            <label class="control-label col-sm-4">ID пациента</label>
+            <div class="col-sm-8">
+                <input ng-model="filter.patientCode" placeholder="0000000" class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-4">ФИО</label>
+            <div class="col-sm-8">
+                <input ng-model="filter.fullName" class="form-control">
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group text-right">
+        <div class="col-sm-9">
+            <button ng-click="openTab()"
+                    ng-disabled="formFilter.$invalid"
+                    class="btn btn-default">Показать
+            </button>
+        </div>
+    </div>
+
+</form>
+
 <ul class="nav nav-tabs">
     <li ng-repeat="cat in categories"
         ng-class="{'active': activeTab.title == cat.title}">

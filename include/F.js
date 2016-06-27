@@ -86,6 +86,34 @@ class F {
             end: endDate
         };
     }
+
+    /**
+     * Escapes specified string for use in regular expression.
+     * @param {string} str string to escape
+     * @returns {string | undefined} escaped string or undefined if str is not string
+     */
+    static escapeForRegExp(str) {
+        if (typeof str !== 'string') {
+            return undefined; //throw new TypeError('Expected a string');
+        }
+        return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+    }
+
+    /**
+     * Returns from array of objects array of object[property] values.
+     * @param {array} arr array of objects
+     * @param {string} prop property name
+     * @returns {*} {array | undefined} array of object property values or undefined if arr is not array
+     */
+    static arrayOfProps(arr, prop) {
+        if (Array.isArray(arr)) {
+            return arr.map(function (item) {
+                return item[prop];
+            });
+        } else {
+            return undefined;
+        }
+    }
 }
 
 module.exports = F;

@@ -2,17 +2,67 @@
     'use strict';
 
     angular.module('MyClinic')
-        .controller('LaboratoryCtrl', function ($scope, $aside, $state, $stateParams, Modal, ServiceCategory, PatientService) {
+        .controller('LaboratoryCtrl', function ($scope, $aside, $state, $stateParams,
+                                                Modal, ServiceCategory, PatientService, Branch) {
+            Branch.query(function (resp) {
+                $scope.branches = resp;
+            });
+
             ServiceCategory.get({id: 'laboratory'}, function (resp) {
                 $scope.categories = resp.subcategories;
                 $scope.openTab($scope.categories[0]);
             });
 
+
+            $scope.filter = {
+                branch: $scope.$localStorage.currentUser.branch,
+                period: {
+                    start: Date.create('the beginning of this day'),
+                    end: Date.create('the end of this day')
+                },
+                services: [],
+                service: undefined
+            };
+
             $scope.openTab = function (subcat) {
-                $scope.activeTab = subcat;
-                PatientService.laboratory({subcat: subcat._id}, function (resp) {
+                let tabChanged = false;
+                if (subcat) {
+                    tabChanged = true;
+                    $scope.activeTab = subcat;
+                } else {
+                    subcat = $scope.activeTab;
+                }
+
+                // determine period
+                let period = angular.copy($scope.filter.period);
+
+                // determine branch
+                let branch = $scope.filter.branch ? $scope.filter.branch._id : undefined;
+
+                // determine service
+                let service = $scope.filter.service && !tabChanged ? $scope.filter.service.id : undefined;
+
+                // determine patient code
+                let patCode = $scope.filter.patientCode ? $scope.filter.patientCode : undefined;
+
+                // determine patient full name
+                let fullName = $scope.filter.fullName ? $scope.filter.fullName : undefined;
+
+                PatientService.laboratory({
+                    service: service,
+                    subcat: subcat._id,
+                    branch: branch,
+                    code: patCode,
+                    name: fullName,
+                    start: period.start,
+                    end: period.end
+                }, function (resp) {
                     $scope.records = resp.patientServices;
                     $scope.services = resp.services;
+                    $scope.filter.services = angular.copy(resp.services);
+                    if (tabChanged) {
+                        $scope.filter.service = undefined;
+                    }
                 });
             };
 

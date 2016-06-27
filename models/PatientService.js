@@ -14,6 +14,7 @@ var subSubCategorySchema = require('./ServiceSubSubCategory').ServiceSubSubCateg
 var sugar = require('sugar');
 var F = require('../include/F');
 var debug = require('debug')('myclinic:model:patientservice');
+var async = require('async');
 
 var PatientServiceSchema = mongoose.Schema({
     patientId: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Patient'},
@@ -298,6 +299,135 @@ PatientServiceSchema.statics.pendingServicesOf = function (branch, patientId, cb
         }
 
         return cb(null, patientServices);
+    });
+};
+
+PatientServiceSchema.statics.laboratory = function (condition, cb) {
+    async.parallel({
+        services: function (callback) {
+            PatientService.aggregate([
+                    {
+                        $match: condition
+                    },
+                    {
+                        $group: {
+                            _id: '$serviceId',
+                            srvQty: {
+                                $sum: 1
+                            }
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: 'services',
+                            localField: '_id',
+                            foreignField: '_id',
+                            as: 'service'
+                        }
+                    },
+                    {
+                        $unwind: '$service'
+                    },
+                    {
+                        $sort: {
+                            'service.title': 1
+                        }
+                    },
+                    {
+                        $project: {
+                            _id: 0,
+                            id: '$service._id',
+                            title: '$service.title',
+                            shortTitle: '$service.shortTitle',
+                            qty: '$srvQty'
+                        }
+                    }
+                ])
+                .exec(function (err, services) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    return callback(null, services);
+                });
+        },
+        patientServices: function (callback) {
+            PatientService.aggregate([
+                    {
+                        $match: condition
+                    },
+                    {
+                        $lookup: {
+                            from: 'patients',
+                            localField: 'patientId',
+                            foreignField: '_id',
+                            as: 'patient'
+                        }
+                    },
+                    {
+                        $unwind: '$patient'
+                    },
+                    {
+                        $lookup: {
+                            from: 'branches',
+                            localField: 'branch',
+                            foreignField: '_id',
+                            as: 'branch'
+                        }
+                    },
+                    {
+                        $unwind: '$branch'
+                    },
+                    {
+                        $sort: {
+                            'patient.lastName': 1,
+                            'patient.firstName': 1,
+                            'patient.middleName': 1,
+                            'title': 1,
+                            'branch.title': 1,
+                            'created': -1
+                        }
+                    },
+                    {
+                        $group: {
+                            _id: {
+                                created: "$created",
+                                patient: "$patient",
+                                branch: "$branch"
+                            },
+                            services: {
+                                $push: "$$ROOT"
+                            }
+                        }
+                    },
+                    {
+                        $project: {
+                            _id: 1,
+                            services: 1,
+                            fullName: {
+                                $concat: [
+                                    "$_id.patient.lastName", " ",
+                                    "$_id.patient.firstName", " ",
+                                    "$_id.patient.middleName"
+                                ]
+                            }
+                        }
+                    }
+                ])
+                .exec(function (err, patSrvList) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    return callback(null, patSrvList);
+                });
+        }
+    }, function (err, results) {
+        if (err) {
+            return cb(err)
+        }
+
+        cb(null, results);
     });
 };
 
