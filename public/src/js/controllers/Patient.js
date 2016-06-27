@@ -34,7 +34,7 @@
                     content: 'Удалить пациента?',
                     okAction: function (modal) {
                         if (iPatient) {
-                            iPatient.$delete(function (resp) {
+                            Patient.delete({}, {_id: iPatient._id}, function (resp) {
                                 // close confirmation window
                                 modal.hide();
 
@@ -640,13 +640,13 @@
                     $scope.$hide();
 
                     /*
-                    if (resp.code == 'success') {
-                        $state.transitionTo('patientView.services', $stateParams, {
-                            reload: true,
-                            inherit: false,
-                            notify: true
-                        });
-                    }*/
+                     if (resp.code == 'success') {
+                     $state.transitionTo('patientView.services', $stateParams, {
+                     reload: true,
+                     inherit: false,
+                     notify: true
+                     });
+                     }*/
                 });
             };
 

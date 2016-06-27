@@ -82,10 +82,10 @@
         <tbody>
         <tr ng-repeat="pat in patients" ng-class="{'danger':pat.debt>0}">
             <td class="text-right">{{ $index + 1 }}</td>
-            <td>{{ pat.code }}</td>
-            <td>{{ pat.lastName }}</td>
-            <td>{{ pat.firstName }}</td>
-            <td>{{ pat.middleName }}</td>
+            <td><a ui-sref="patientView.services({id:pat._id})">{{ pat.code }}</a></td>
+            <td><a ui-sref="patientView.services({id:pat._id})">{{ pat.lastName }}</a></td>
+            <td><a ui-sref="patientView.services({id:pat._id})">{{ pat.firstName }}</a></td>
+            <td><a ui-sref="patientView.services({id:pat._id})">{{ pat.middleName }}</a></td>
             <td>{{ pat.dateOfBirth | date }}</td>
             <td title="{{ pat.sex.title }}" class="text-center">
                 <i ng-if="pat.sex._id == 'male'" class="fa fa-fw fa-mars"></i>

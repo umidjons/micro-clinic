@@ -52,10 +52,10 @@
         total-items="pagination.total"
         ng-class="{'danger':pat.debt>0}">
         <td class="text-right">{{ pagination.itemNumber($index) }}</td>
-        <td>{{ pat.code }}</td>
-        <td>{{ pat.lastName }}</td>
-        <td>{{ pat.firstName }}</td>
-        <td>{{ pat.middleName }}</td>
+        <td><a ui-sref="patientView.services({id:pat._id})">{{ pat.code }}</a></td>
+        <td><a ui-sref="patientView.services({id:pat._id})">{{ pat.lastName }}</a></td>
+        <td><a ui-sref="patientView.services({id:pat._id})">{{ pat.firstName }}</a></td>
+        <td><a ui-sref="patientView.services({id:pat._id})">{{ pat.middleName }}</a></td>
         <td>{{ pat.dateOfBirth | date }}</td>
         <td title="{{ pat.sex.title }}" class="text-center">
             <i ng-if="pat.sex._id == 'male'" class="fa fa-fw fa-mars"></i>
@@ -94,7 +94,7 @@
     </tbody>
     <tfoot>
     <tr>
-        <td colspan="14">
+        <td colspan="15">
             <dir-pagination-controls on-page-change="pageChanged()"></dir-pagination-controls>
         </td>
     </tr>
