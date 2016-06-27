@@ -8,6 +8,20 @@
             </div>
 
             <div class="aside-body">
+                <div ng-if="service.norm.length > 0" class="col-sm-12">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-sm-4">Норма</label>
+                            <div class="col-sm-8">
+                                <textarea ng-model="service.norm"
+                                          cols="30" rows="10"
+                                          class="form-control"
+                                          readonly disabled></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="col-sm-12">
                     <div ng-if="service.templates.length > 0" class="form-horizontal">
                         <div class="form-group">

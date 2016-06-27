@@ -5,6 +5,7 @@ var subSubCategorySchema = require('./ServiceSubSubCategory').ServiceSubSubCateg
 var stateSchema = require('./State').StateSchema;
 var templateSchema = require('./Template').TemplateSchema;
 var serviceFieldSchema = require('./ServiceField').ServiceFieldSchema;
+var models = require('.');
 
 var ServiceSchema = mongoose.Schema({
     category: categorySchema,
@@ -13,6 +14,7 @@ var ServiceSchema = mongoose.Schema({
     title: {type: String, required: true, maxlength: 150},
     shortTitle: {type: String, required: true, maxlength: 20},
     price: {type: Number, required: true, default: 0, min: 0},
+    norm: {type: String, maxlength: 1000},
     state: stateSchema,
     templates: [templateSchema],
     fields: [serviceFieldSchema],
@@ -32,6 +34,15 @@ ServiceSchema.statics.lighten = function (service) {
     if (service.subcategory && service.subcategory.subcategories) {
         service.subcategory.subcategories = undefined;
     }
+};
+
+ServiceSchema.methods.isUsed = function (cb) {
+    models.PatientService.count({serviceId: this._id}, function (err, count) {
+        if (err) {
+            return cb(err);
+        }
+        return cb(null, count > 0);
+    });
 };
 
 var Service = mongoose.model('Service', ServiceSchema);

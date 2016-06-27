@@ -46,17 +46,17 @@
                     <option value="">{{ field.placeholder }}</option>
                 </select>
 
-                            <textarea ng-if="field.type._id=='textarea'"
-                                      cols="30" rows="10"
-                                      name="model{{ $index }}"
-                                      ng-model="field.value"
-                                      placeholder="{{ field.placeholder }}"
-                                      ng-pattern="field.pattern"
-                                      ng-minlength="field.minlength"
-                                      ng-maxlength="field.maxlength"
-                                      ng-required="field.required"
-                                      class="form-control">
-                            </textarea>
+                <textarea ng-if="field.type._id=='textarea'"
+                          cols="30" rows="10"
+                          name="model{{ $index }}"
+                          ng-model="field.value"
+                          placeholder="{{ field.placeholder }}"
+                          ng-pattern="field.pattern"
+                          ng-minlength="field.minlength"
+                          ng-maxlength="field.maxlength"
+                          ng-required="field.required"
+                          class="form-control">
+                </textarea>
 
                 <p ng-if="field.hint" class="help-block">{{ field.hint }}</p>
             </div>

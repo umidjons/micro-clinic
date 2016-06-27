@@ -147,14 +147,28 @@ router
             Msg.sendSuccess(res, 'Данные успешно сохранены.', service);
         });
     })
-    .delete('/:id', function (req, res) {
-        req.service.remove(function (err) {
-            if (err) {
-                return Msg.sendError(res, err);
-            }
+    .delete('/:id',
+        function (req, res, next) {
+            req.service.isUsed(function (err, isUsed) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
 
-            Msg.sendSuccess(res, 'Запись удален!');
+                if (isUsed) {
+                    return Msg.sendError(res, 'Существуют связанные записи. Услугу нельзя удалить!', req.service);
+                }
+
+                next();
+            });
+        },
+        function (req, res) {
+            req.service.remove(function (err) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+
+                Msg.sendSuccess(res, 'Запись удален!');
+            });
         });
-    });
 
 module.exports = router;

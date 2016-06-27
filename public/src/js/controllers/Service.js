@@ -87,7 +87,7 @@
                     content: 'Удалить услугу?',
                     okAction: function (modal) {
                         if (service) {
-                            service.$delete(function (resp) {
+                            Service.delete({}, {_id: service._id}, function (resp) {
                                 // close confirmation window
                                 modal.hide();
 
