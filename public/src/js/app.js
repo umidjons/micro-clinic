@@ -278,6 +278,11 @@
                     url: '/laboratory',
                     templateUrl: 'partials/laboratory/laboratory.html',
                     controller: 'LaboratoryCtrl'
+                })
+                .state('laboratoryAllResults', {
+                    url: '/laboratory/results/:id',
+                    templateUrl: 'partials/laboratory/results.html',
+                    controller: 'LaboratoryResultsCtrl'
                 });
             $urlRouterProvider.otherwise('/');
         })

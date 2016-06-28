@@ -120,6 +120,50 @@ router
             Msg.sendSuccess(res, 'Данные успешно сохранены.');
         });
     })
+    .get('/laboratory/get-results/:patientId', function (req, res) {
+        debug(`patientId: ${req.params.patientId}`);
+        let condition = {patientId: req.params.patientId};
+
+        // if lab specified, then show only laboratory service
+        if (req.query.lab && req.query.lab == '1') {
+            condition['category._id'] = 'laboratory';
+        }
+
+        // if branch id is specified, filter services by it
+        if (req.query.branch) {
+            condition['branch'] = mongoose.Types.ObjectId(req.query.branch);
+        }
+
+        // if period specified, filter by it
+        if (req.query.start && req.query.end) {
+            let period = F.normalizePeriod(req.query.start, req.query.end);
+            condition['created'] = {$gte: period.start, $lte: period.end};
+        }
+
+        let projection = {
+            created: 1,
+            state: 1,
+            serviceId: 1,
+            title: 1,
+            result: 1,
+            cat: 1,
+            category: 1,
+            subcategory: 1,
+            subsubcategory: 1
+        };
+        
+        models.PatientService
+            .find(condition, projection)
+            .populate('serviceId')
+            .sort({created: -1, category: 1, subcategory: 1, subsubcategory: 1, title: 1})
+            .exec(function (err, patientServices) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+
+                Msg.sendSuccess(res, '', patientServices, 'List of patient services:');
+            });
+    })
     .get('/:id', function (req, res) {
         req.patientService
             .populate('user', 'username lastName firstName middleName')

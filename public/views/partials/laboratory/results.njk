@@ -1,0 +1,158 @@
+<h3>Результаты {{ patient.lastName }} {{ patient.firstName }} {{ patient.middleName }}</h3>
+
+{% include "partials/patient/_patient_info.njk" %}
+
+<form name="formFilter" class="form-horizontal" novalidate>
+
+    <div class="col-sm-3">
+        <div class="form-group">
+            <label class="control-label col-sm-4 req">с</label>
+            <div class="col-sm-8">
+                <input ng-model="filter.period.start"
+                       bs-datepicker
+                       data-autoclose="true"
+                       data-max-date="{{ filter.period.end }}"
+                       required
+                       class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-4 req">по</label>
+            <div class="col-sm-8">
+                <input ng-model="filter.period.end"
+                       bs-datepicker
+                       data-autoclose="true"
+                       data-min-date="{{ filter.period.start }}"
+                       required
+                       class="form-control">
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-3">
+        <div class="form-group">
+            <label class="control-label col-sm-4">Филиал</label>
+            <div class="col-sm-8">
+                <select ng-model="filter.branch"
+                        ng-options="b as b.title for b in branches track by b._id"
+                        ng-change="refresh()"
+                        class="form-control">
+                    <option value="">Все</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="checkbox col-sm-offset-4">
+                <label>
+                    <input ng-model="filter.onlyLaboratory" type="checkbox"
+                           ng-true-value="1"
+                           ng-false-value="0"
+                           ng-change="refresh()"> Только лаборатория
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-12">
+        <div class="form-group text-right">
+            <div class="col-sm-6">
+                <button ng-click="refresh()"
+                        ng-disabled="formFilter.$invalid"
+                        class="btn btn-default">Показать
+                </button>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th>№</th>
+        <th>Дата</th>
+        <th>Категория</th>
+        <th>Услуга</th>
+        <th></th>
+    </tr>
+    </thead>
+
+    <tbody>
+
+    <tr ng-repeat-start="patientService in records"
+        ng-dblclick="open(patientService)"
+        class="row-group-header"
+        ng-class="{'success': patientService.state._id == 'completed',
+                   'row-group-body': $last && !patientService.opened}">
+        <td>{{ $index + 1 }}</td>
+        <td>{{ patientService.created | date: 'medium' }}</td>
+        <td>{{ patientService.cat }}</td>
+        <td>{{ patientService.title }}</td>
+        <td>
+            <button ng-click="open(patientService)" title="открыть/закрыть" class="btn btn-xs btn-info">
+                <i class="fa fa-fw fa-search"></i>
+            </button>
+        </td>
+    </tr>
+
+    <tr ng-repeat-end class="row-group-body">
+        <td ng-if="patientService.opened" colspan="10">
+            <div ng-form="formResult">
+                <div ng-if="patientService.serviceId.norm.length > 0" class="col-sm-12">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-sm-4">Норма</label>
+                            <div class="col-sm-8">
+                                <textarea ng-model="patientService.serviceId.norm"
+                                          cols="30" rows="10"
+                                          class="form-control"
+                                          readonly disabled></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% include "partials/patient/_aside_result_fields.njk" %}
+
+                <div class="col-sm-12">
+                    <div ng-if="patientService.serviceId.templates.length > 0" class="form-horizontal">
+                        <div class="form-group">
+                            <label class="req">Шаблон</label>
+                            <select ng-model="patientService.result.template"
+                                    ng-options="tpl as tpl.title for tpl in patientService.serviceId.templates track by tpl._id"
+                                    ng-change="templateChanged(patientService)"
+                                    class="form-control">
+                                <option value="">--</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <textarea ng-model="patientService.result.content"
+                                      ui-tinymce="tinymceOptions"
+                                      class="form-control">
+                            </textarea>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="form-group text-right">
+                <button ng-click="serviceSave(patientService)"
+                        ng-disabled="formResult.$invalid" class="btn btn-success">
+                    <i class="fa fa-fw fa-floppy-o"></i>
+                    Сохранить
+                </button>
+                <button ng-click="serviceComplete(patientService)"
+                        ng-disabled="formResult.$invalid" class="btn btn-primary">
+                    <i class="fa fa-fw fa-check-square-o"></i>
+                    Завершить услугу
+                </button>
+            </div>
+
+        </td>
+    </tr>
+
+    </tbody>
+</table>

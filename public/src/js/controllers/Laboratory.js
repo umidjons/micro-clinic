@@ -142,5 +142,122 @@
                     }
                 });
             };
+        })
+        .controller('LaboratoryResultsCtrl', function ($scope, $aside, $state, $stateParams,
+                                                       Modal, Patient, ServiceCategory, PatientService, Branch) {
+
+            $scope.tinymceOptions = {
+                //language: 'ru_RU',
+                //language_url: '/assets/lib/tinymce-dist/langs/ru_RU.js',
+                plugins: 'advlist autolink lists link image charmap print preview hr anchor pagebreak searchreplace ' +
+                'wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking save table ' +
+                'contextmenu directionality emoticons template paste textcolor colorpicker textpattern imagetools',
+                paste_data_images: true,
+                table_toolbar: false,
+                height: 400
+            };
+
+            Branch.query(function (resp) {
+                $scope.branches = resp;
+            });
+
+            $scope.patient = Patient.get({id: $stateParams.id});
+
+            $scope.filter = {
+                onlyLaboratory: 1,
+                branch: $scope.$localStorage.currentUser.branch,
+                period: {
+                    start: Date.create('the beginning of this month'),
+                    end: Date.create('the end of this day')
+                }
+            };
+
+            $scope.open = function (patSrv) {
+                patSrv.opened = !patSrv.opened;
+
+                if (patSrv.opened) {
+                    // no results yet, make it
+                    if (angular.isUndefined(patSrv.result)) {
+                        patSrv.result = {};
+                    }
+
+                    // no results fields yet, make it
+                    if (angular.isUndefined(patSrv.result.fields)
+                        || patSrv.result.fields.length == 0) {
+                        patSrv.result.fields = angular.copy(patSrv.serviceId.resultFields);
+                    }
+                }
+            };
+
+            $scope.templateChanged = function (patSrv) {
+                if (patSrv.result.template) {
+                    if (!patSrv.result.content) {
+                        patSrv.result.content = patSrv.result.template.content;
+                    } else {
+                        Modal.confirm({
+                            content: 'Заменить содержимое поле из шаблона?',
+                            okAction: function (modal) {
+                                modal.hide();
+                                // copy templates content into results content
+                                patSrv.result.content = patSrv.result.template.content;
+                            }
+                        });
+                    }
+                } else {
+                    Modal.confirm({
+                        content: 'Очистить содержимое поле?',
+                        okAction: function (modal) {
+                            modal.hide();
+                            // clear result content
+                            patSrv.result.content = '';
+                        }
+                    });
+                }
+            };
+
+            var savePatSrv = function (modal, patSrv) {
+                PatientService.saveResult(patSrv, function (resp) {
+                    // close confirmation window
+                    modal.hide();
+                });
+            };
+
+            $scope.serviceComplete = function (patSrv) {
+                Modal.confirm({
+                    content: 'Завершить услугу?',
+                    okAction: function (modal) {
+                        patSrv.state = {_id: 'completed', title: 'Завершен'};
+                        savePatSrv(modal, patSrv);
+                    }
+                });
+            };
+
+            $scope.serviceSave = function (patSrv) {
+                Modal.confirm({
+                    okAction: function (modal) {
+                        savePatSrv(modal, patSrv);
+                    }
+                });
+            };
+
+            $scope.refresh = function () {
+                // determine period
+                let period = angular.copy($scope.filter.period);
+
+                // determine branch
+                let branch = $scope.filter.branch ? $scope.filter.branch._id : undefined;
+
+                PatientService.getResults({
+                    patientId: $stateParams.id,
+                    lab: $scope.filter.onlyLaboratory,
+                    branch: branch,
+                    start: period.start,
+                    end: period.end
+                }, function (resp) {
+                    $scope.records = resp;
+                });
+            };
+
+            $scope.refresh();
         });
 })();

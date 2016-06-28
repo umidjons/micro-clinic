@@ -99,11 +99,6 @@
             <th ng-repeat="srv in services" class="lab-table-cell">
                 {{ srv.shortTitle }}
             </th>
-            <th class="text-center">
-                <button ng-click="reloadPage()" class="btn btn-xs btn-info" title="Обновить">
-                    <i class="fa fa-fw fa-refresh"></i>
-                </button>
-            </th>
         </tr>
         </thead>
 
@@ -112,7 +107,19 @@
             <td class="text-right">{{ $index + 1 }}</td>
             <td>{{ rec._id.patient.code }}</td>
             <td>{{ rec._id.created | date:'medium' }}</td>
-            <td>{{ rec._id.patient.lastName }} {{ rec._id.patient.firstName }} {{ rec._id.patient.middleName }}</td>
+            <td>
+                <a ui-sref="laboratoryAllResults({id: rec._id.patient._id})"
+                   title="Результаты"
+                   class="btn btn-us btn-info">
+                    <i class="fa fa-fw fa-edit"></i>
+                </a>
+
+                <a ui-sref="patientView.services({id: rec._id.patient._id})"
+                   target="_blank"
+                   title="Анкета пациента">
+                    {{ rec.fullName }} <i class="fa fa-fw fa-external-link"></i>
+                </a>
+            </td>
             <td>{{ rec._id.branch.shortTitle }}</td>
             <td ng-repeat="srv in services"
                 ng-click="open(srv, rec)"
@@ -121,10 +128,6 @@
                 title="Анализ: {{ srv.title }}&#10;ФИО: {{ rec._id.patient.lastName }} {{ rec._id.patient.firstName }} {{ rec._id.patient.middleName }}"
                 class="lab-table-cell">
                 {{ getResultValue(srv, rec) }}
-            </td>
-            <td class="text-center">
-                <a href title="Изменить" class="btn btn-xs btn-info">
-                    <i class="fa fa-fw fa-edit"></i></a>
             </td>
         </tr>
         </tbody>

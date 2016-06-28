@@ -198,3 +198,10 @@ input[type=checkbox].ng-invalid {
     max-width: 50px;
     word-wrap: break-word;
 }
+
+.btn.btn-us {
+    border-width: 1px;
+    padding: 1px;
+    font-size: 10px;
+    line-height: 1.3;
+}

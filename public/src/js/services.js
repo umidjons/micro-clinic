@@ -287,6 +287,9 @@
                     },
                     saveResult: {
                         method: 'PUT', url: '/patient-service/laboratory/save-result/:id'
+                    },
+                    getResults: {
+                        method: 'GET', url: '/patient-service/laboratory/get-results/:patientId', isArray: true
                     }
                 }
             );

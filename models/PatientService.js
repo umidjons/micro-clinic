@@ -18,7 +18,7 @@ var async = require('async');
 
 var PatientServiceSchema = mongoose.Schema({
     patientId: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Patient'},
-    serviceId: {type: mongoose.Schema.Types.ObjectId, required: true},
+    serviceId: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Service'},
     category: categorySchema,
     subcategory: subCategorySchema,
     subsubcategory: subSubCategorySchema,
@@ -48,6 +48,32 @@ var PatientServiceSchema = mongoose.Schema({
     user: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User'},
     branch: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Branch'}
 });
+
+PatientServiceSchema.virtual('cat').get(function () {
+    let cats = [];
+
+    if (this.category && this.category.title) {
+        cats.push(this.category.title);
+    }
+
+    if (this.subcategory && this.subcategory.title) {
+        cats.push(this.subcategory.title);
+    }
+
+    if (this.subsubcategory && this.subsubcategory.title) {
+        cats.push(this.subsubcategory.title);
+    }
+
+    if (!cats) {
+        return '';
+    }
+
+    return cats.join(' / ');
+});
+
+PatientServiceSchema.set('toJSON', {virtuals: true});
+PatientServiceSchema.set('toObject', {virtuals: true});
+
 
 PatientServiceSchema.statics.pendingPatients = function (branch, period, cb) {
     let ObjectId = mongoose.Types.ObjectId;
