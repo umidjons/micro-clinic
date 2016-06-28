@@ -24,6 +24,7 @@
                        bs-datepicker
                        data-autoclose="true"
                        data-min-date="{{ filter.period.start }}"
+                       data-max-date="today"
                        required
                        class="form-control">
             </div>
@@ -84,13 +85,17 @@
     <tr ng-repeat-start="patientService in records"
         ng-dblclick="open(patientService)"
         class="row-group-header"
-        ng-class="{'success': patientService.state._id == 'completed',
-                   'row-group-body': $last && !patientService.opened}">
+        ng-class="{'row-group-body': $last && !patientService.opened}">
         <td>{{ $index + 1 }}</td>
         <td>{{ patientService.created | date: 'medium' }}</td>
-        <td>{{ patientService.cat }}</td>
-        <td>{{ patientService.title }}</td>
         <td>
+            {{ patientService.cat }}<br>
+            <span ng-if="patientService.debt > 0" class="label label-danger">
+                Имеется долг: {{ patientService.debt | number: 2 }} сум
+            </span>
+        </td>
+        <td ng-class="{'success': patientService.state._id == 'completed'}">{{ patientService.title }}</td>
+        <td class="text-center">
             <button ng-click="open(patientService)" title="открыть/закрыть" class="btn btn-xs btn-info">
                 <i class="fa fa-fw fa-search"></i>
             </button>
@@ -144,7 +149,8 @@
                     <i class="fa fa-fw fa-floppy-o"></i>
                     Сохранить
                 </button>
-                <button ng-click="serviceComplete(patientService)"
+                <button ng-if="patientService.state._id != 'completed'"
+                        ng-click="serviceComplete(patientService)"
                         ng-disabled="formResult.$invalid" class="btn btn-primary">
                     <i class="fa fa-fw fa-check-square-o"></i>
                     Завершить услугу

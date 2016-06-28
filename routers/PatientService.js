@@ -149,13 +149,14 @@ router
             cat: 1,
             category: 1,
             subcategory: 1,
-            subsubcategory: 1
+            subsubcategory: 1,
+            debt: 1
         };
-        
+
         models.PatientService
             .find(condition, projection)
             .populate('serviceId')
-            .sort({created: -1, category: 1, subcategory: 1, subsubcategory: 1, title: 1})
+            .sort({created: -1, 'category.title': 1, 'subcategory.title': 1, 'subsubcategory.title': 1, title: 1})
             .exec(function (err, patientServices) {
                 if (err) {
                     return Msg.sendError(res, err);

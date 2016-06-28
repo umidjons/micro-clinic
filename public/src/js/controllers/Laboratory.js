@@ -93,6 +93,10 @@
                 if (service.result.fields.length > 0) {
                     for (let fld of service.result.fields) {
                         if (typeof fld.value !== 'undefined' && fld.value !== null && fld.value !== '') {
+                            // <select> value is object in {_id: xxx, text: xxx} format
+                            if (typeof fld.value == 'object' && 'text' in fld.value) {
+                                return fld.value.text;
+                            }
                             return fld.value;
                         }
                     }
