@@ -71,7 +71,7 @@ UserSchema.methods.comparePassword = function (candidatePassword, cb) {
 };
 
 UserSchema.virtual('fullName').get(function () {
-    return (this.lastName + ' ' + this.firstName + ' ' + this.middleName).trim();
+    return (this.lastName + ' ' + this.firstName + ' ' + (this.middleName ? this.middleName : '')).trim();
 });
 
 UserSchema.set('toJSON', {virtuals: true});

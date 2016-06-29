@@ -269,7 +269,7 @@
             );
         })
         .factory('PatientService', function ($resource) {
-            return $resource(
+            var PatSrvResource = $resource(
                 '/patient-service/:id',
                 {id: '@_id'},
                 {
@@ -290,9 +290,49 @@
                     },
                     getResults: {
                         method: 'GET', url: '/patient-service/laboratory/get-results/:patientId', isArray: true
+                    },
+                    getResultsPrint: {
+                        method: 'POST', url: '/patient-service/print/:patientId'
                     }
                 }
             );
+
+            PatSrvResource.printResults = function (patientId, patSrvIds, cb) {
+                PatSrvResource.getResultsPrint(
+                    {
+                        patientId: patientId
+                    },
+                    {
+                        patientId: patientId,
+                        ids: patSrvIds
+                    },
+                    function (resp) {
+                        if (resp.content) {
+                            // open print window
+                            let windowOptions = [
+                                "width=800",
+                                "height=600",
+                                "menubar=0",
+                                "toolbar=0",
+                                "location=0",
+                                "status=0",
+                                "resizable=0",
+                                "scrollbars=0",
+                                "modal=on"
+                            ].join(",");
+                            let popupWindow = window.open(null, 'printWindow', windowOptions);
+                            popupWindow.document.open();
+                            popupWindow.document.write(resp.content);
+                            popupWindow.document.close();
+                        }
+                        if (angular.isFunction(cb)) {
+                            cb();
+                        }
+                    }
+                );
+            };
+
+            return PatSrvResource;
         })
         .factory('PartnerSetter', function ($aside, $rootScope, Partner) {
             var PartnerSetter = {

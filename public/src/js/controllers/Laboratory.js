@@ -244,6 +244,52 @@
                 });
             };
 
+            $scope.Printer = {
+                isPrintable: function (patSrv) {
+                    return patSrv.state._id == 'completed' && (patSrv.debt == 0 || patSrv.hasWarranty);
+                },
+                completed: function () {
+                    let self = this;
+                    return _.filter($scope.records, function (patSrv) {
+                        return self.isPrintable(patSrv);
+                    });
+                },
+                forPrint: function () {
+                    let self = this;
+                    return _.filter($scope.records, function (ps) {
+                        return self.isPrintable(ps) && ps.print;
+                    });
+                },
+                toggle: function (patSrv, $event) {
+                    let patSrvs = this.completed();
+
+                    if (patSrv) { // individual patient service
+                        // if CTRL + mouse click, then toggle print value
+                        if ($event && $event.ctrlKey) {
+                            patSrv.print = !patSrv.print;
+                        }
+
+                        // get all completed and marked for print services
+                        let forPrint = this.forPrint();
+
+                        // toggle markAllForPrint value according quantity of marked services
+                        $scope.markAllForPrint = patSrvs.length == forPrint.length;
+                    } else { // all available patient services
+                        // toggle all available services print value
+                        for (let ps of patSrvs) {
+                            ps.print = $scope.markAllForPrint;
+                        }
+                    }
+                },
+                print: function () {
+                    let services = this.forPrint();
+                    let ids = services.map(function (srv) {
+                        return srv._id
+                    });
+                    PatientService.printResults($scope.patient._id, ids);
+                }
+            };
+
             $scope.refresh = function () {
                 // determine period
                 let period = angular.copy($scope.filter.period);

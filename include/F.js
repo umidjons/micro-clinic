@@ -20,12 +20,21 @@ class F {
     }
 
     /**
-     * Formats date object as full date and time string.
+     * Formats date object as a full date and time string.
      * @param {Date} date Date object to format.
      * @returns {*|String} Formatted string in <strong>dd.MM.yyyy HH:mm:ss</strong> format.
      */
     static formatDateTime(date) {
         return Date.create(date).format('{dd}.{MM}.{yyyy} {HH}:{mm}:{ss}');
+    }
+
+    /**
+     * Formats date object as a full date string without time part.
+     * @param {Date} date Date object to format.
+     * @returns {*|String} Formatted string in <strong>dd.MM.yyyy</strong> format.
+     */
+    static formatDate(date) {
+        return Date.create(date).format('{dd}.{MM}.{yyyy}');
     }
 
     /**

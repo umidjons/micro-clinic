@@ -31,6 +31,10 @@ var PatientSchema = mongoose.Schema({
 
 PatientSchema.index({lastName: 1, firstName: 1, middleName: 1, dateOfBirth: 1}, {unique: true});
 
+PatientSchema.virtual('fullName').get(function () {
+    return (this.lastName + ' ' + this.firstName + ' ' + (this.middleName ? this.middleName : '')).trim();
+});
+
 PatientSchema.statics.fillAdditions = function (patients, cb) {
     async.each(
         patients,

@@ -59,9 +59,21 @@
     <div class="col-sm-12">
         <div class="form-group text-right">
             <div class="col-sm-6">
+                <button ng-click="Printer.print()"
+                        ng-disabled="Printer.forPrint().length == 0"
+                        title="Распечатать результаты выделенных услуг"
+                        class="btn btn-info">
+                    <i class="fa fa-fw fa-print"></i> Распечатать
+                    <span ng-if="Printer.forPrint().length > 0">
+                        ({{ Printer.forPrint().length }} выделенных услуг)
+                    </span>
+                </button>
+
                 <button ng-click="refresh()"
                         ng-disabled="formFilter.$invalid"
-                        class="btn btn-default">Показать
+                        title="Применить фильтр"
+                        class="btn btn-success">
+                    <i class="fa fa-fw fa-filter"></i> Показать
                 </button>
             </div>
         </div>
@@ -72,6 +84,9 @@
 <table class="table table-bordered">
     <thead>
     <tr>
+        <th class="text-center">
+            <input ng-model="markAllForPrint" ng-change="Printer.toggle()" type="checkbox">
+        </th>
         <th>№</th>
         <th>Дата</th>
         <th>Категория</th>
@@ -84,8 +99,15 @@
 
     <tr ng-repeat-start="patientService in records"
         ng-dblclick="open(patientService)"
+        ng-click="Printer.toggle(patientService, $event)"
         class="row-group-header"
-        ng-class="{'row-group-body': $last && !patientService.opened}">
+        ng-class="{'row-group-body': $last && !patientService.opened, 'selected': patientService.print}">
+        <td class="text-center">
+            <input ng-if="Printer.isPrintable(patientService)"
+                   ng-model="patientService.print"
+                   ng-change="Printer.toggle(patientService)"
+                   type="checkbox">
+        </td>
         <td>{{ $index + 1 }}</td>
         <td>{{ patientService.created | date: 'medium' }}</td>
         <td>

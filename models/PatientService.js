@@ -49,6 +49,22 @@ var PatientServiceSchema = mongoose.Schema({
     branch: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Branch'}
 });
 
+PatientServiceSchema.virtual('minCat').get(function () {
+    if (this.subsubcategory && this.subsubcategory.title) {
+        return this.subsubcategory.title;
+    }
+
+    if (this.subcategory && this.subcategory.title) {
+        return this.subcategory.title;
+    }
+
+    if (this.category && this.category.title) {
+        return this.category.title;
+    }
+    
+    return '';
+});
+
 PatientServiceSchema.virtual('cat').get(function () {
     let cats = [];
 

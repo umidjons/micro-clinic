@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Результаты</title>
+
+    <style>
+        body {
+            color: #000;
+            background: #fff;
+            font-size: 12px;
+            width: 100%;
+            margin: 0;
+            /*border: 1px solid #000;*/
+        }
+
+        table.header {
+            width: 100%;
+            border-bottom: 2px solid #d0dbde;
+            margin-bottom: 10px;
+        }
+
+        table.analyze {
+            width: 100%;
+            border: 3px solid #d0dbde;
+            margin-bottom: 10px;
+            border-collapse: collapse;
+        }
+
+        .bordered > th, .bordered > td {
+            border: 1px solid #d0dbde;
+        }
+
+        .key {
+            font-weight: bold;
+        }
+
+        .value {
+            font-weight: normal;
+        }
+
+        .p0 {
+            padding: 0;
+        }
+
+        @page {
+            margin: 10mm;
+            padding: 0;
+        }
+    </style>
+</head>
+<body onload="window.print()" onafterprint="self.close()">
+
+{# Header #}
+<table class="header">
+    <thead>
+    <tr>
+        <th style="width:33%;">Logo</th>
+        <th style="width:33%;"><h2>РЕЗУЛЬТАТЫ АНАЛИЗОВ</h2></th>
+        <th style="width:34%; text-align: right;">
+            <span class="key">ФИО:</span> <span class="value">{{{ patient.fullName }}}</span><br>
+            <span class="key">Дата рождения:</span> <span class="value">{{{ patient.dateOfBirth }}}</span><br>
+            <span class="key">Дата распечатки:</span> <span class="value">{{{ printDate }}}</span><br>
+        </th>
+    </tr>
+    </thead>
+</table>
+
+{% for minCat, patSrvList in groupedServices %}
+<table class="analyze">
+    <thead>
+    <tr class="bordered">
+        <th colspan="3"><h3 style="margin: 2px;">{{{ minCat }}}</h3></th>
+    </tr>
+
+    <tr class="bordered">
+        <th style="width:33%;">Наименование анализа</th>
+        <th style="width:33%;">Результат</th>
+        <th style="width:34%;">Норма</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    {% for srv in patSrvList %}
+    <tr class="bordered">
+        <td>{{{ srv.title }}} - {{{ srv.fmtCreated }}}</td>
+        <td>{{{ srv.title }}}</td>
+        <td>{{{ srv.serviceId.norm }}}</td>
+    </tr>
+
+    {% if srv.result and srv.result.content %}
+    <tr>
+        <td class="p0" colspan="3">
+            {{{ srv.result.content | safe }}}
+        </td>
+    </tr>
+    {% endif %}
+
+    {% endfor %}
+    </tbody>
+</table>
+{% endfor %}
+
+</body>
+</html>

@@ -144,7 +144,7 @@ input[type=checkbox].ng-invalid {
     height: 200px;
 }
 
-.table tr.selected > td {
+.table tr.selected, .table tr.selected > td {
     background: #CDDC39;
 }
 

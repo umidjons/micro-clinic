@@ -165,6 +165,96 @@ router
                 Msg.sendSuccess(res, '', patientServices, 'List of patient services:');
             });
     })
+    .post('/print/:patientId',
+        function (req, res, next) {
+            // find patient
+            models.Patient.findById(req.params.patientId, function (err, patient) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+
+                req.patient = patient;
+                next();
+            });
+        },
+        function (req, res, next) {
+            // prepare results
+            if (!req.body.ids || !req.body.ids.length) {
+                return Msg.sendError(res, 'Ошибка параметров печати.');
+            }
+
+            let projection = {
+                created: 1,
+                serviceId: 1,
+                title: 1,
+                result: 1,
+                cat: 1,
+                minCat: 1,
+                category: 1,
+                subcategory: 1,
+                subsubcategory: 1
+            };
+
+            models.PatientService
+                .find({_id: {$in: req.body.ids}}, projection)
+                .populate('serviceId')
+                .sort({created: -1, 'category.title': 1, 'subcategory.title': 1, 'subsubcategory.title': 1, title: 1})
+                .exec(function (err, patientServices) {
+                    if (err) {
+                        return Msg.sendError(res, err);
+                    }
+
+                    // group services by minCat
+                    // format: {'cat 1': [ps1, ps2, ...], 'cat 2': [ps3, ps4, ...]}
+                    let grouped = {};
+                    for (let ps of patientServices) {
+                        // format date
+                        ps.fmtCreated = F.formatDate(ps.created);
+
+                        // set result type
+                        ps.resType = '';
+                        if (ps.content) {
+                            ps.resType = 'tpl';
+                            if (ps.result && ps.result.fields && ps.result.fields.length > 0) {
+                                ps.resType = 'tplWithFields';
+                            }
+                        } else {
+                            if (ps.result && ps.result.fields && ps.result.fields.length > 0) {
+                                ps.resType = 'fields';
+                            }
+                        }
+
+                        // initialize array & group
+                        if (typeof grouped[ps.minCat] == 'undefined') {
+                            grouped[ps.minCat] = [];
+                        }
+                        grouped[ps.minCat].push(ps);
+                    }
+
+                    req.groupedServices = grouped;
+                    next();
+                });
+        },
+        function (req, res) {
+            let viewData = {
+                patient: {
+                    fullName: req.patient.fullName,
+                    dateOfBirth: F.formatDate(req.patient.dateOfBirth)
+                },
+                printDate: F.formatDate(new Date()),
+                groupedServices: req.groupedServices
+            };
+
+            res.render('partials/laboratory/print_results',
+                viewData,
+                function (err, html) {
+                    if (err) {
+                        return Msg.sendError(res, err);
+                    }
+                    Msg.sendSuccess(res, '', {content: html});
+                }
+            );
+        })
     .get('/:id', function (req, res) {
         req.patientService
             .populate('user', 'username lastName firstName middleName')
