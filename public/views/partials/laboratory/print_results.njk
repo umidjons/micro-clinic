@@ -115,7 +115,23 @@
 
     <tr class="bordered">
         <td>{{{ srv.title }}} - {{{ srv.fmtCreated }}}</td>
-        <td>{{{ srv.title }}}</td>
+        <td>
+            {% if srv.result and srv.result.fields and srv.result.fields.length > 0 %}
+            {%     for fld in srv.result.fields %}
+            <strong>{{{ fld.title }}}:</strong>
+            {%         if fld.type._id == 'select' %}
+            {{{            fld.value.text }}}
+            {%         elif fld.type._id == 'checkbox' %}
+            {%             if fld.value %} &check;
+            {%             else %} &cross;
+            {%             endif %}
+            {%         else %}
+            {{{            fld.value }}}
+            {%         endif %}
+            <br>
+            {%     endfor %}
+            {% endif %}
+        </td>
         <td>{{{ srv.serviceId.norm }}}</td>
     </tr>
 
