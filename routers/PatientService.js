@@ -213,9 +213,9 @@ router
 
                         // set result type
                         ps.resType = '';
-                        if (ps.content) {
+                        if (ps.result && ps.result.content) {
                             ps.resType = 'tpl';
-                            if (ps.result && ps.result.fields && ps.result.fields.length > 0) {
+                            if (ps.result.fields && ps.result.fields.length > 0) {
                                 ps.resType = 'tplWithFields';
                             }
                         } else {

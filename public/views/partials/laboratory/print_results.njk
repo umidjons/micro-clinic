@@ -66,11 +66,38 @@
     </thead>
 </table>
 
+{% set renderHdr = true %}
+
 {% for minCat, patSrvList in groupedServices %}
+
+{%     for srv in patSrvList %}
+
+{%         if srv.resType == 'tpl' %}
+
+{%             if srv.result and srv.result.content %}
+
 <table class="analyze">
     <thead>
     <tr class="bordered">
-        <th colspan="3"><h3 style="margin: 2px;">{{{ minCat }}}</h3></th>
+        <th colspan="3"><h3 style="margin: 1px;">{{{ minCat }}}</h3></th>
+    </tr>
+    </thead>
+</table>
+
+{{{                srv.result.content | safe }}}
+
+{%                 set renderHdr = true %}
+
+{%             endif %}
+
+{%         elif srv.resType == 'fields' or srv.resType == 'tplWithFields' %}
+
+{%             if renderHdr %}
+
+<table class="analyze">
+    <thead>
+    <tr class="bordered">
+        <th colspan="3"><h3 style="margin: 1px;">{{{ minCat }}}</h3></th>
     </tr>
 
     <tr class="bordered">
@@ -81,7 +108,11 @@
     </thead>
 
     <tbody>
-    {% for srv in patSrvList %}
+
+    {%                 set renderHdr = false %}
+
+    {%         endif %}
+
     <tr class="bordered">
         <td>{{{ srv.title }}} - {{{ srv.fmtCreated }}}</td>
         <td>{{{ srv.title }}}</td>
@@ -96,9 +127,19 @@
     </tr>
     {% endif %}
 
-    {% endfor %}
+    {%         if loop.last or (patSrvList[loop.index] and patSrvList[loop.index].resType == 'tpl') %}
+
     </tbody>
 </table>
+
+{%                 set renderHdr = true %}
+
+{%             endif %}
+
+{%         endif %}
+
+{%     endfor %}
+
 {% endfor %}
 
 </body>
