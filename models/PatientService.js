@@ -61,7 +61,7 @@ PatientServiceSchema.virtual('minCat').get(function () {
     if (this.category && this.category.title) {
         return this.category.title;
     }
-    
+
     return '';
 });
 
@@ -450,7 +450,13 @@ PatientServiceSchema.statics.laboratory = function (condition, cb) {
                                 $concat: [
                                     "$_id.patient.lastName", " ",
                                     "$_id.patient.firstName", " ",
-                                    "$_id.patient.middleName"
+                                    {
+                                        $cond: [
+                                            {$gt: ["$_id.patient.middleName", null]},
+                                            "$_id.patient.middleName",
+                                            ""
+                                        ]
+                                    }
                                 ]
                             }
                         }

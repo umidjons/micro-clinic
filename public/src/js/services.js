@@ -283,7 +283,7 @@
                         method: 'POST', url: '/patient-service/delete-bulk'
                     },
                     laboratory: {
-                        method: 'GET', url: '/patient-service/laboratory'
+                        method: 'GET', url: '/patient-service/laboratory/query'
                     },
                     saveResult: {
                         method: 'PUT', url: '/patient-service/laboratory/save-result/:id'
@@ -293,6 +293,9 @@
                     },
                     getResultsPrint: {
                         method: 'POST', url: '/patient-service/print/:patientId'
+                    },
+                    exportToExcel: {
+                        method: 'GET', url: '/patient-service/laboratory/export'
                     }
                 }
             );

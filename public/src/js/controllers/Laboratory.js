@@ -2,7 +2,7 @@
     'use strict';
 
     angular.module('MyClinic')
-        .controller('LaboratoryCtrl', function ($scope, $aside, $state, $stateParams,
+        .controller('LaboratoryCtrl', function ($scope, $aside, $state, $stateParams, $timeout,
                                                 Modal, ServiceCategory, PatientService, Branch) {
             Branch.query(function (resp) {
                 $scope.branches = resp;
@@ -63,6 +63,47 @@
                     if (tabChanged) {
                         $scope.filter.service = undefined;
                     }
+                });
+            };
+
+            $scope.exportTab = function (subcat) {
+                let tabChanged = false;
+                if (subcat) {
+                    tabChanged = true;
+                    $scope.activeTab = subcat;
+                } else {
+                    subcat = $scope.activeTab;
+                }
+
+                // determine period
+                let period = angular.copy($scope.filter.period);
+
+                // determine branch
+                let branch = $scope.filter.branch ? $scope.filter.branch._id : undefined;
+
+                // determine service
+                let service = $scope.filter.service && !tabChanged ? $scope.filter.service.id : undefined;
+
+                // determine patient code
+                let patCode = $scope.filter.patientCode ? $scope.filter.patientCode : undefined;
+
+                // determine patient full name
+                let fullName = $scope.filter.fullName ? $scope.filter.fullName : undefined;
+
+                PatientService.exportToExcel({
+                    service: service,
+                    subcat: subcat._id,
+                    branch: branch,
+                    code: patCode,
+                    name: fullName,
+                    start: period.start,
+                    end: period.end
+                }, function (resp) {
+                    let uri = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
+                    let url = uri + resp.content;
+                    $timeout(function () {
+                        location.href = url;
+                    }, 100);
                 });
             };
 

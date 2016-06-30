@@ -7,6 +7,8 @@ var Msg = require('../include/Msg');
 var mongoose = require('mongoose');
 var F = require('../include/F');
 var async = require('async');
+var excel = require('node-excel-export');
+var _ = require('underscore');
 
 router
     .param('id', function (req, res, next, id) {
@@ -20,9 +22,7 @@ router
             next();
         });
     })
-    .get('/laboratory', function (req, res) {
-        // todo: show only debt=0 or has warranty to pay
-
+    .use(['/laboratory/query', '/laboratory/export'], function (req, res, next) {
         // filter all patient services for laboratory
         let condition = {
             'category._id': 'laboratory'
@@ -59,7 +59,8 @@ router
             if (err) {
                 return Msg.sendError(res, err);
             }
-            Msg.sendSuccess(res, '', results);
+            req.records = results;
+            next();
         };
 
         // if patient name is specified, then do 2 round trip:
@@ -97,14 +98,177 @@ router
                     }
                 );
             } else {
-                Msg.sendError(res, 'Указано не правильное значение "ФИО".');
+                return Msg.sendError(res, 'Указано не правильное значение "ФИО".');
             }
         } else {
             // query laboratory
             models.PatientService.laboratory(condition, resultHandler);
         }
+    })
+    .get('/laboratory/export', function (req, res) {
+        let border = {
+            top: {style: 'thin', color: {rgb: '00000000'}},
+            bottom: {style: 'thin', color: {rgb: '00000000'}},
+            left: {style: 'thin', color: {rgb: '00000000'}},
+            right: {style: 'thin', color: {rgb: '00000000'}}
+        };
 
+        let styles = {
+            headerDark: {
+                fill: {fgColor: {rgb: 'FFCCCCCC'}},
+                font: {
+                    color: {rgb: '00000000'},
+                    sz: 14,
+                    bold: true
+                },
+                alignment: {wrapText: true},
+                border: border
+            },
+            cellDefault: {border: border},
+            cellFilled: {fill: {fgColor: {rgb: 'FF15A589'}}, border: border},
+            cellNotFilled: {fill: {fgColor: {rgb: 'FFE43725'}}, border: border},
+            cellPink: {fill: {fgColor: {rgb: 'FFFFCCFF'}}, border: border},
+            cellGreen: {fill: {fgColor: {rgb: 'FF00FF00'}}, border: border}
+        };
 
+        let specification = {
+            patientCode: {
+                displayName: 'ID',
+                headerStyle: styles.headerDark,
+                cellStyle: styles.cellDefault,
+                width: '7'
+            },
+            visitDate: {
+                displayName: 'Дата посещение',
+                headerStyle: styles.headerDark,
+                cellStyle: styles.cellDefault,
+                width: '20'
+            },
+            fullName: {
+                displayName: 'Ф.И.О.',
+                headerStyle: styles.headerDark,
+                cellStyle: styles.cellDefault,
+                width: '30'
+            },
+            branch: {
+                displayName: 'Филиал',
+                headerStyle: styles.headerDark,
+                cellStyle: styles.cellDefault,
+                width: '10'
+            }
+        };
+
+        // add services into specification
+        for (let srv of req.records.services) {
+            specification[srv.id] = {
+                displayName: srv.shortTitle,
+                headerStyle: styles.headerDark,
+                cellStyle: function (value, row) {
+                    //console.log('VALUE:', value, 'ROW:', row);
+
+                    let state = row[srv.id + '_state'];
+
+                    if (!state) {
+                        return styles.cellDefault;
+                    }
+
+                    switch (state) {
+                        case 'completed':
+                            return styles.cellFilled;
+                        default:
+                            return styles.cellNotFilled;
+                    }
+                },
+                cellFormat: function (value, row) {
+                    let val = row[srv.id];
+
+                    // state is completed, but no result value, most likely result filled from template
+                    if (val === '' && row[srv.id + '_state'] == 'completed') {
+                        // return this symbol
+                        return '+';
+                    }
+
+                    // return actual value
+                    return val;
+                },
+                width: '7'
+            };
+        }
+
+        // The data set should have the following shape (Array of Objects)
+        // The order of the keys is irrelevant, it is also irrelevant if the
+        // dataset contains more fields as the report is build based on the
+        // specification provided above. But you should have all the fields
+        // that are listed in the report specification
+        let dataset = [];
+
+        for (let ps of req.records.patientServices) {
+            let row = {
+                patientCode: ps._id.patient.code ? ps._id.patient.code : '',
+                visitDate: F.formatDateTime(ps._id.created),
+                fullName: ps.fullName,
+                branch: ps._id.branch.shortTitle
+            };
+
+            // add service values
+            for (let srv of req.records.services) {
+                // by default no value
+                row[srv.id] = '';
+
+                // find patient service
+                let patSrv = _.find(ps.services, function (item) {
+                    return (item.serviceId.toString() == srv.id.toString());
+                });
+
+                // by default state is empty
+                row[srv.id + '_state'] = '';
+
+                // if service found, fill attributes
+                if (patSrv) {
+                    // set patient service state
+                    row[srv.id + '_state'] = patSrv.state._id;
+
+                    // set patient service result value
+                    if (patSrv.result && patSrv.result.fields && patSrv.result.fields.length > 0) {
+                        for (let fld of patSrv.result.fields) {
+                            if (typeof fld.value !== 'undefined' && fld.value !== null && fld.value !== '') {
+                                // <select> value is object in {_id: xxx, text: xxx} format
+                                if (fld.type._id == 'select') {
+                                    row[srv.id] = fld.value.text;
+                                } else {
+                                    row[srv.id] = fld.value;
+                                }
+
+                                // stop processing other values
+                                break;
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            dataset.push(row);
+        }
+
+        // Create the excel report.
+        // This function will return Buffer
+        let report = excel.buildExport(
+            [ // <- Notice that this is an array. Pass multiple sheets to create multi sheet report
+                {
+                    name: 'Лаборатория', // <- Specify sheet name (optional)
+                    specification: specification, // <- Report specification
+                    data: dataset // <-- Report data
+                }
+            ]
+        );
+
+        // convert Buffer to Base64 and send to the client
+        Msg.sendSuccess(res, 'Данные успешно экспортированы.', {content: report.toString('base64')});
+    })
+    .get('/laboratory/query', function (req, res) {
+        // just return results
+        Msg.sendSuccess(res, '', req.records);
     })
     .put('/laboratory/save-result/:id', function (req, res) {
         // only result and state can be changed
