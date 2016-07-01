@@ -71,7 +71,7 @@
             <td>{{ selSrv.subcategory.title }}</td>
             <td>{{ selSrv.subsubcategory.title }}</td>
             <td>{{ selSrv.title }}</td>
-            <td class="text-right"
+            <td class="text-right cursor"
                 ng-dblclick="ServiceHelper.Service.openDiscount(selSrv)"
                 title="{{ selSrv.discount.note }}">
                 {{ selSrv.discount.amount || 0 | number: 2 }}
@@ -96,8 +96,8 @@
                 </div>
             </td>
             <td class="text-right">{{ selSrv.priceTotal | number: 2 }}</td>
-            <td ng-dblclick="ServiceHelper.Service.openPartner(selSrv)">{{ selSrv.partner.code }}</td>
-            <td ng-dblclick="ServiceHelper.Service.openCompany(selSrv)">{{ selSrv.company.title }}</td>
+            <td ng-dblclick="ServiceHelper.Service.openPartner(selSrv)" class="cursor">{{ selSrv.partner.code }}</td>
+            <td ng-dblclick="ServiceHelper.Service.openCompany(selSrv)" class="cursor">{{ selSrv.company.title }}</td>
 
             <td class="text-right">
                 <button ng-click="ServiceHelper.Service.remove($index)"

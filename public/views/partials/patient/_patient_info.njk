@@ -5,58 +5,58 @@
         <td>
             <i ng-if="patient.sex._id == 'male'" class="fa fa-lg fa-fw fa-mars"></i>
             <i ng-if="patient.sex._id == 'female'" class="fa fa-lg fa-fw fa-venus"></i>
-            {{ patient.sex.title }}
+            {{ ::patient.sex.title }}
         </td>
 
         <td class="cell-title">Дата рождение:</td>
         <td>
-            {{ patient.dateOfBirth | date }}
+            {{ ::patient.dateOfBirth | date }}
         </td>
 
         <td class="cell-title">Мобильный:</td>
         <td>
-            {{ patient.cellPhone }}
+            {{ ::patient.cellPhone }}
         </td>
 
         <td class="cell-title">Городской:</td>
         <td>
-            {{ patient.homePhone }}
+            {{ ::patient.homePhone }}
         </td>
 
         <td class="cell-title">Email:</td>
         <td>
-            {{ patient.email }}
+            {{ ::patient.email }}
         </td>
     </tr>
 
     <tr>
         <td class="cell-title">Гражданство:</td>
-        <td>{{ patient.resident.title }}</td>
+        <td>{{ ::patient.resident.title }}</td>
 
         <td class="cell-title">Паспорт:</td>
-        <td>{{ patient.passport }}</td>
+        <td>{{ ::patient.passport }}</td>
 
         <td class="cell-title">Место работы:</td>
-        <td>{{ patient.workplace }}</td>
+        <td>{{ ::patient.workplace }}</td>
 
         <td class="cell-title">Организация:</td>
-        <td colspan="3">{{ patient.company }}</td>
+        <td colspan="3">{{ ::patient.company }}</td>
     </tr>
 
     <tr>
         <td class="cell-title">Адрес:</td>
-        <td colspan="9">{{ patient.address }}</td>
+        <td colspan="9">{{ ::patient.address }}</td>
     </tr>
 
     <tr>
         <td class="cell-title">Дата регистрации:</td>
-        <td>{{ patient.created | date: 'medium' }}</td>
+        <td>{{ ::patient.created | date: 'medium' }}</td>
         <td class="cell-title">Последняя посещения:</td>
-        <td>{{ patient.lastVisit | date: 'medium' }}</td>
+        <td>{{ ::patient.lastVisit | date: 'medium' }}</td>
         <td class="cell-title">Пользователь:</td>
-        <td title="{{ patient.user.fullName }}">{{ patient.user.username }}</td>
+        <td title="{{ ::patient.user.fullName }}">{{ ::patient.user.username }}</td>
         <td class="cell-title">Филиал:</td>
-        <td>{{ patient.branch.shortTitle }}</td>
+        <td>{{ ::patient.branch.shortTitle }}</td>
     </tr>
     </tbody>
 </table>

@@ -43,11 +43,11 @@
             </thead>
 
             <tbody>
-            <tr ng-repeat="srv in services | filter: ServiceHelper.Service.filter as filteredServices"
+            <tr ng-repeat="srv in services | filter: ServiceHelper.Service.filter as filteredServices track by srv._id"
                 ng-dblclick="ServiceHelper.Service.add(srv)"
                 ng-class="{'success': srv.added}">
-                <td>{{ srv.title }}</td>
-                <td class="text-right">{{ srv.price | number }}</td>
+                <td>{{ ::srv.title }}</td>
+                <td class="text-right">{{ ::srv.price | number }}</td>
                 <td class="text-center">
                     <button ng-click="ServiceHelper.Service.add(srv)"
                             class="btn btn-xs btn-primary"

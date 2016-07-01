@@ -3,11 +3,11 @@
             class="btn btn-xs btn-danger"
             ng-class="{'active': ServiceHelper.Service.filter.category == undefined}">Все
     </button>
-    <button ng-repeat="cat in categories"
+    <button ng-repeat="cat in categories track by cat._id"
             ng-click="ServiceHelper.Service.filter.by(cat, 'category')"
             class="btn btn-xs btn-danger"
             ng-class="{'active': ServiceHelper.Service.filter.category.title == cat.title}">
-        {{ cat.title }}
+        {{ ::cat.title }}
     </button>
 
     <br>
@@ -17,11 +17,11 @@
             ng-class="{'active': ServiceHelper.Service.filter.subcategory == undefined}">Все
     </button>
     <button ng-if="ServiceHelper.Service.filter.category.title"
-            ng-repeat="subcat in subcategories"
+            ng-repeat="subcat in subcategories track by subcat._id"
             ng-click="ServiceHelper.Service.filter.by(subcat,'subcategory')"
             class="btn btn-xs btn-warning"
             ng-class="{'active': ServiceHelper.Service.filter.subcategory.title == subcat.title}">
-        {{ subcat.title }}
+        {{ ::subcat.title }}
     </button>
 
     <br>
@@ -31,11 +31,11 @@
             ng-class="{'active': ServiceHelper.Service.filter.subsubcategory == undefined}">Все
     </button>
     <button ng-if="ServiceHelper.Service.filter.subcategory.title"
-            ng-repeat="subsubcat in subsubcategories"
+            ng-repeat="subsubcat in subsubcategories track by subsubcat._id"
             ng-click="ServiceHelper.Service.filter.by(subsubcat,'subsubcategory')"
             class="btn btn-xs btn-info"
             ng-class="{'active': ServiceHelper.Service.filter.subsubcategory.title == subsubcat.title}">
-        {{ subsubcat.title }}
+        {{ ::subsubcat.title }}
     </button>
 </div>
 
