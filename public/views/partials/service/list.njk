@@ -99,7 +99,7 @@
     </thead>
 
     <tbody>
-    <tr dir-paginate="srv in services | filter: filter: F.allowNulls | itemsPerPage: pagination.pageSize track by srv._id"
+    <tr dir-paginate="srv in ::services | filter: filter: F.allowNulls | itemsPerPage: pagination.pageSize track by srv._id"
         current-page="pagination.current">
         <td class="text-right">{{ pagination.itemNumber($index) }}</td>
         <td>{{ ::srv.category.title }}</td>
