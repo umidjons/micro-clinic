@@ -1,4 +1,9 @@
-<h3>Результаты {{ patient.lastName }} {{ patient.firstName }} {{ patient.middleName }}</h3>
+<h3>
+    Результаты {{ patient.lastName }} {{ patient.firstName }} {{ patient.middleName }}
+    <a ui-sref="patientView.services({id: patient._id})" title="Анкета пациента" class="btn btn-sm btn-link btn-success">
+        <i class="fa fa-2x fa-fw fa-newspaper-o"></i>
+    </a>
+</h3>
 
 {% include "partials/patient/_patient_info.njk" %}
 

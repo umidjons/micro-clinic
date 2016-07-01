@@ -1,5 +1,10 @@
 <div class="container">
-    <h3>Изменение реквизитов пациента</h3>
+    <h3>
+        Изменение реквизитов пациента
+        <a ui-sref="patientView.services({id: patient._id})" title="Анкета пациента" class="btn btn-sm btn-link btn-success">
+            <i class="fa fa-2x fa-fw fa-newspaper-o"></i>
+        </a>
+    </h3>
 
     <form class="form-horizontal" name="formPatient" novalidate>
 

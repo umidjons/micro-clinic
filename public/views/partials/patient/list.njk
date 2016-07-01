@@ -77,10 +77,21 @@
                     <i class="fa fa-fw fa-bars"></i> <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-right">
-                    <li><a ui-sref="patientView.services({id:pat._id})"><i class="fa fa-fw fa-search"></i> Просмотр</a>
+                    <li>
+                        <a ui-sref="patientView.services({id: pat._id})">
+                            <i class="fa fa-fw fa-newspaper-o"></i> Анкета
+                        </a>
                     </li>
-                    <li><a ui-sref="patientEdit({id:pat._id})"><i class="fa fa-fw fa-edit"></i> Изменить</a></li>
-                    <li><a href ng-click="deletePatient(pat)"><i class="fa fa-fw fa-trash"></i> Удалить</a></li>
+                    <li>
+                        <a ui-sref="patientEdit({id: pat._id})">
+                            <i class="fa fa-fw fa-edit"></i> Редактировать реквизиты
+                        </a>
+                    </li>
+                    <li>
+                        <a href ng-click="deletePatient(pat)">
+                            <i class="fa fa-fw fa-trash"></i> Удалить
+                        </a>
+                    </li>
                     <li role="separator" class="divider"></li>
                     <li>
                         <a ui-sref="laboratoryAllResults({id: pat._id})">

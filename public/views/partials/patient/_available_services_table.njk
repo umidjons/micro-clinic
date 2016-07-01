@@ -1,99 +1,62 @@
 <fieldset class="col-sm-12">
     <legend>Услуги</legend>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <span ng-if="ServiceHelper.Service.filter.category">
+                {{ ServiceHelper.Service.filter.category.title }}
+            </span>
+            <span ng-if="ServiceHelper.Service.filter.subcategory">
+                / {{ ServiceHelper.Service.filter.subcategory.title }}
+            </span>
+            <span ng-if="ServiceHelper.Service.filter.subsubcategory">
+                / {{ ServiceHelper.Service.filter.subsubcategory.title }}
+            </span>
+        </div>
+        <table class="table table-bordered table-condensed table-hover">
+            <thead>
 
+            <tr>
+                <th class="col-sm-8">Услуга</th>
+                <th>Стоимость</th>
+                <th class="text-center">
+                    <button ng-if="filteredServices.length > 0"
+                            ng-click="ServiceHelper.Service.addFiltered(filteredServices)"
+                            class="btn btn-xs btn-info"
+                            title="Добавить все отфильтрованные услуги">
+                        <i class="fa fa-fw fa-filter"></i><i class="fa fa-fw fa-plus"></i>
+                    </button>
+                </th>
+            </tr>
 
-    <button ng-click="ServiceHelper.Service.filter.by(undefined, 'category')"
-            class="btn btn-xs btn-danger"
-            ng-class="{'active': ServiceHelper.Service.filter.category == undefined}">Все
-    </button>
-    <button ng-repeat="cat in categories"
-            ng-click="ServiceHelper.Service.filter.by(cat, 'category')"
-            class="btn btn-xs btn-danger"
-            ng-class="{'active': ServiceHelper.Service.filter.category.title == cat.title}">
-        {{ cat.title }}
-    </button>
+            <tr>
+                <td><input ng-model="ServiceHelper.Service.filter.title" class="form-control"></td>
+                <td><input ng-model="ServiceHelper.Service.filter.price" class="form-control"></td>
+                <td class="text-center">
+                    <button class="btn btn-xs btn-default"
+                            ng-click="ServiceHelper.Service.filter.reset()"
+                            title="Очистить фильтр">
+                        <i class="fa fa-fw fa-filter"></i><i class="fa fa-fw fa-remove"></i>
+                    </button>
+                </td>
+            </tr>
 
-    <br>
+            </thead>
 
-    <button ng-click="ServiceHelper.Service.filter.by(undefined, 'subcategory')"
-            class="btn btn-xs btn-warning"
-            ng-class="{'active': ServiceHelper.Service.filter.subcategory == undefined}">Все
-    </button>
-    <button ng-if="ServiceHelper.Service.filter.category.title"
-            ng-repeat="subcat in subcategories"
-            ng-click="ServiceHelper.Service.filter.by(subcat,'subcategory')"
-            class="btn btn-xs btn-warning"
-            ng-class="{'active': ServiceHelper.Service.filter.subcategory.title == subcat.title}">
-        {{ subcat.title }}
-    </button>
-
-    <br>
-
-    <button ng-click="ServiceHelper.Service.filter.by(undefined, 'subsubcategory')"
-            class="btn btn-xs btn-info"
-            ng-class="{'active': ServiceHelper.Service.filter.subsubcategory == undefined}">Все
-    </button>
-    <button ng-if="ServiceHelper.Service.filter.subcategory.title"
-            ng-repeat="subsubcat in subsubcategories"
-            ng-click="ServiceHelper.Service.filter.by(subsubcat,'subsubcategory')"
-            class="btn btn-xs btn-info"
-            ng-class="{'active': ServiceHelper.Service.filter.subsubcategory.title == subsubcat.title}">
-        {{ subsubcat.title }}
-    </button>
-
-    <table class="table table-bordered table-condensed table-hover">
-        <thead>
-
-        <tr>
-            <th class="col-sm-2">Категория</th>
-            <th class="col-sm-2">Подкатегория</th>
-            <th class="col-sm-2">Под-подкатегория</th>
-            <th class="col-sm-3">Услуга</th>
-            <th>Стоимость</th>
-            <th class="text-right">
-                <button ng-if="filteredServices.length > 0"
-                        ng-click="ServiceHelper.Service.addFiltered(filteredServices)"
-                        class="btn btn-xs btn-info"
-                        title="Добавить все отфильтрованные услуги">
-                    <i class="fa fa-fw fa-filter"></i><i class="fa fa-fw fa-plus"></i>
-                </button>
-            </th>
-        </tr>
-
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td><input ng-model="ServiceHelper.Service.filter.title" class="form-control"></td>
-            <td><input ng-model="ServiceHelper.Service.filter.price" class="form-control"></td>
-            <td class="text-right">
-                <button class="btn btn-xs btn-default"
-                        ng-click="ServiceHelper.Service.filter.reset()"
-                        title="Очистить фильтр">
-                    <i class="fa fa-fw fa-filter"></i><i class="fa fa-fw fa-remove"></i>
-                </button>
-            </td>
-        </tr>
-
-        </thead>
-
-        <tbody>
-        <tr ng-repeat="srv in services | filter: ServiceHelper.Service.filter as filteredServices"
-            ng-dblclick="ServiceHelper.Service.add(srv)"
-            ng-class="{'success': srv.added}">
-            <td>{{ srv.category.title }}</td>
-            <td>{{ srv.subcategory.title }}</td>
-            <td>{{ srv.subsubcategory.title }}</td>
-            <td>{{ srv.title }}</td>
-            <td class="text-right">{{ srv.price | number }}</td>
-            <td class="text-right">
-                <button ng-click="ServiceHelper.Service.add(srv)"
-                        class="btn btn-xs btn-primary"
-                        title="Добавить услугу">
-                    <i class="fa fa-fw fa-plus"></i>
-                </button>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+            <tbody>
+            <tr ng-repeat="srv in services | filter: ServiceHelper.Service.filter as filteredServices"
+                ng-dblclick="ServiceHelper.Service.add(srv)"
+                ng-class="{'success': srv.added}">
+                <td>{{ srv.title }}</td>
+                <td class="text-right">{{ srv.price | number }}</td>
+                <td class="text-center">
+                    <button ng-click="ServiceHelper.Service.add(srv)"
+                            class="btn btn-xs btn-primary"
+                            title="Добавить услугу">
+                        <i class="fa fa-fw fa-plus"></i>
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </fieldset>
