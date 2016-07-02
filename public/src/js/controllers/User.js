@@ -21,7 +21,7 @@
                 Modal.confirm({
                     okAction: function (modal) {
                         if ($scope.user._id) {
-                            $scope.user.$update(function (resp) {
+                            User.update($scope.user, function (resp) {
                                 // close confirmation window
                                 modal.hide();
 
@@ -34,7 +34,7 @@
                                 }
                             });
                         } else {
-                            $scope.user.$save(function (resp) {
+                            User.save($scope.user, function (resp) {
                                 // close confirmation window
                                 modal.hide();
 
@@ -59,7 +59,7 @@
                     content: 'Удалить пользователя?',
                     okAction: function (modal) {
                         if (user) {
-                            user.$delete(function (resp) {
+                            User.delete({}, {_id: user._id}, function (resp) {
                                 // close confirmation window
                                 modal.hide();
 

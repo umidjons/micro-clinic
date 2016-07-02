@@ -17,7 +17,7 @@
                 Modal.confirm({
                     okAction: function (modal) {
                         if ($scope.company._id) {
-                            $scope.company.$update(function (resp) {
+                            Company.update($scope.company, function (resp) {
                                 // close confirmation window
                                 modal.hide();
 
@@ -30,7 +30,7 @@
                                 }
                             });
                         } else {
-                            $scope.company.$save(function (resp) {
+                            Company.save($scope.company, function (resp) {
                                 // close confirmation window
                                 modal.hide();
 
@@ -51,10 +51,10 @@
 
             $scope.deleteCompany = function (company) {
                 Modal.confirm({
-                    content: 'Удалить компанию?',
+                    content: 'Удалить организацию?',
                     okAction: function (modal) {
                         if (company) {
-                            company.$delete(function (resp) {
+                            Company.delete({}, {_id: company._id}, function (resp) {
                                 // close confirmation window
                                 modal.hide();
 

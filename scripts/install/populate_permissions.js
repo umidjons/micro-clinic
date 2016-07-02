@@ -2,7 +2,9 @@
 
 var mongoose = require('mongoose');
 var models = require('../../models');
-mongoose.connect('mongodb://127.0.0.1:27017/starmed');
+const async = require('async');
+
+mongoose.connect('mongodb://admin:admin@127.0.0.1:27017/starmed');
 mongoose.connection.once('open', function () {
     var docs = [
         {
@@ -46,8 +48,16 @@ mongoose.connection.once('open', function () {
             title: 'Категория: Просмотр списка категорий'
         },
         {
+            _id: 'cash',
+            title: 'Касса'
+        },
+        {
             _id: 'cash:pay',
             title: 'Касса: Производить оплаты'
+        },
+        {
+            _id: 'cash:registry',
+            title: 'Касса: Реестр оплат'
         },
         {
             _id: 'cash:cancel',
@@ -56,6 +66,10 @@ mongoose.connection.once('open', function () {
         {
             _id: 'cash:discount',
             title: 'Касса: Скидки'
+        },
+        {
+            _id: 'patient:list',
+            title: 'Пациент: Список'
         },
         {
             _id: 'patient:create',
@@ -68,15 +82,52 @@ mongoose.connection.once('open', function () {
         {
             _id: 'patient:delete',
             title: 'Пациент: Удаление'
+        },
+        {
+            _id: 'patient:view',
+            title: 'Пациент: Анкета'
+        },
+        {
+            _id: 'patient:service:add',
+            title: 'Пациент: Добавить услугу'
+        },
+        {
+            _id: 'search',
+            title: 'Поиск'
+        },
+        {
+            _id: 'laboratory',
+            title: 'Лаборатория'
+        },
+        {
+            _id: 'report',
+            title: 'Отчеты'
+        },
+        {
+            _id: 'report:partnerInterests',
+            title: 'Отчеты: Доля партнёров за период'
+        },
+        {
+            _id: 'admin',
+            title: 'Администрирование'
         }
     ];
 
-    models.Permission.collection.insert(docs, function (err, res) {
-        if (err) {
-            console.log('Error occurred:', err.message);
-        } else {
-            console.info(`${res.insertedCount} documents successfully created.`);
+    async.each(
+        docs,
+        function (doc, cb) {
+            let model = new models.Permission(doc);
+            model.save(function (err, permission) {
+                if (err) {
+                    console.log('_id:', doc._id, ' failed. Error:', err.message);
+                    return cb(); //cb(err);
+                }
+                console.info(`_id: ${doc._id} successfully created.`);
+                cb();
+            });
+        },
+        function (err) {
+            mongoose.connection.close();
         }
-        mongoose.connection.close();
-    });
+    );
 });

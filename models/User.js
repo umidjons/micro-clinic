@@ -26,6 +26,8 @@ var UserSchema = mongoose.Schema({
     user: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User'}
 });
 
+UserSchema.index({username: 1}, {unique: true});
+
 UserSchema.pre('save', function (next) {
     var user = this;
 

@@ -1,6 +1,6 @@
 (function () {
     angular.module('MyClinic', ['ngAnimate', 'ngSanitize', 'ngMessages', 'ngStorage', 'angular-loading-bar',
-            'ui.router', 'ngResource', 'mgcrea.ngStrap', 'toaster', 'ui.select',
+            'ui.router', 'ui.router.state.events', 'ngResource', 'mgcrea.ngStrap', 'toaster', 'ui.select',
             'angularUtils.directives.dirPagination', 'ui.tinymce', 'ui.sortable', 'cfp.hotkeys'])
         .run(function ($rootScope, $http, $location, $localStorage, Auth) {
             // keep user logged in after page refresh
@@ -33,6 +33,25 @@
             // do underscope available on views
             $rootScope._ = _;
             $rootScope.F = F;
+        })
+        .run(function ($rootScope, Auth, $state) {
+            // check privileges to specific states (routes/pages/views)
+            $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams, options) {
+                if (toState.permission && !Auth.hasAccess(toState.permission)) {
+                    event.preventDefault();
+                    if (fromState.name == '') {
+                        console.log('To home page!');
+                        $state.go('home');
+                    } else {
+                        console.log('To the previous page!');
+                        $state.transitionTo(fromState, fromParams, {
+                            reload: true,
+                            inherit: false,
+                            notify: true
+                        });
+                    }
+                }
+            });
         })
         .config(function (cfpLoadingBarProvider) {
             cfpLoadingBarProvider.includeSpinner = false;
@@ -85,17 +104,20 @@
                 .state('settings', {
                     url: '/settings',
                     templateUrl: 'partials/settings/settings.html',
-                    controller: 'SettingsCtrl'
+                    controller: 'SettingsCtrl',
+                    permission: 'admin'
                 })
                 .state('patientSearch', {
                     url: '/patient/search',
                     templateUrl: 'partials/patient/search.html',
-                    controller: 'PatientSearchCtrl'
+                    controller: 'PatientSearchCtrl',
+                    permission: 'search'
                 })
                 .state('patientCreate', {
                     url: '/patient/create',
                     templateUrl: 'partials/patient/create.html',
                     controller: 'PatientCtrl',
+                    permission: 'patient:create',
                     params: {
                         initialPatient: null
                     }
@@ -103,7 +125,8 @@
                 .state('patientEdit', {
                     url: '/patient/edit/:id',
                     templateUrl: 'partials/patient/edit.html',
-                    controller: 'PatientCtrl'
+                    controller: 'PatientCtrl',
+                    permission: 'patient:edit'
                 })
                 .state('patientView', {
                     abstract: true,
@@ -121,7 +144,8 @@
                         'patient@patientView': {
                             templateUrl: 'partials/patient/_add-services.html'
                         }
-                    }
+                    },
+                    permission: 'patient:service:add'
                 })
                 .state('patientView.services', {
                     url: '',
@@ -129,7 +153,8 @@
                         'patient@patientView': {
                             templateUrl: 'partials/patient/_assigned-services.html'
                         }
-                    }
+                    },
+                    permission: 'patient:view'
                 })
                 .state('patientList', {
                     url: '/patient/list',
@@ -204,12 +229,14 @@
                 .state('cashList', {
                     url: '/cash',
                     templateUrl: 'partials/cash/list.html',
-                    controller: 'CashListCtrl'
+                    controller: 'CashListCtrl',
+                    permission: 'cash:pay'
                 })
                 .state('cashRegistry', {
                     url: '/cash/registry',
                     templateUrl: 'partials/cash/registry.html',
-                    controller: 'CashRegCtrl'
+                    controller: 'CashRegCtrl',
+                    permission: 'cash:registry'
                 })
                 .state('cashPay', {
                     url: '/pay',
@@ -285,6 +312,42 @@
                     controller: 'LaboratoryResultsCtrl'
                 });
             $urlRouterProvider.otherwise('/');
+        })
+        .directive('access', function ($rootScope) {
+            return {
+                restrict: 'A',
+                link: function (scope, elem, attrs) {
+                    // by default hide element
+                    elem.hide();
+
+                    let key = attrs.access;
+
+                    if (!key) {
+                        // no permission name provided
+                        return elem.remove();
+                    }
+
+                    let permissions = [];
+
+                    if ($rootScope.$localStorage &&
+                        $rootScope.$localStorage.currentUser &&
+                        $rootScope.$localStorage.currentUser.permissions
+                    ) {
+                        permissions = $rootScope.$localStorage.currentUser.permissions;
+                    } else {
+                        // no permissions found
+                        return elem.remove();
+                    }
+
+                    if (key in permissions && permissions[key] === true) {
+                        // the current user has enough privilege
+                        return elem.show();
+                    }
+
+                    // hasn't enough privilege
+                    elem.remove();
+                }
+            };
         })
         .controller('HomeCtrl', function ($scope) {
 

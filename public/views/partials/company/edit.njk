@@ -11,6 +11,12 @@
 
     <div class="row">
         <div class="col-sm-12 text-right">
+            <button ui-sref="companyDetails({id: company._id})" class="btn btn-link btn-info">
+                <i class="fa fa-fw fa-search"></i> Детализация
+            </button>
+            <button ui-sref="companyPay({id: company._id})" class="btn btn-link btn-info">
+                <i class="fa fa-fw fa-usd"></i> Пополнить счет
+            </button>
             <button ui-sref="companyList" class="btn btn-danger">Отмена</button>
             <button ng-click="saveCompany()" ng-disabled="formCompany.$invalid" class="btn btn-success">
                 Сохранить

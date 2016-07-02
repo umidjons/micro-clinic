@@ -5,6 +5,8 @@ var PermissionSchema = mongoose.Schema({
     title: String
 });
 
+PermissionSchema.index({_id: 1}, {unique: true});
+
 var Permission = mongoose.model('Permission', PermissionSchema);
 
 module.exports.PermissionSchema = PermissionSchema;

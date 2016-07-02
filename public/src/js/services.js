@@ -44,7 +44,7 @@
                 ];
             }
         })
-        .factory('Auth', function ($http, $localStorage, $rootScope) {
+        .factory('Auth', function ($http, $localStorage, $rootScope, $location, Msg) {
             return {
                 login: function (username, password, branch, callback) {
                     $http.post('/authenticate', {username: username, password: password, branch: branch})
@@ -66,6 +66,61 @@
                     $rootScope.loggedin = false;
                     delete $localStorage.currentUser;
                     $http.defaults.headers.common.Authorization = '';
+                },
+                /**
+                 * Checks whether the current user has specified permission.
+                 * @param {string | array} permissionId permission or array of permissions. If array of permissions
+                 * is specified, then OR operator will be applied.
+                 * @param {object} options additional options.
+                 *                 <i>options.errorMessage</i> - error message
+                 * @returns {boolean} true - if the user has specified permission, otherwise false.
+                 */
+                hasAccess: function (permissionId, options) {
+                    // default options
+                    let opts = {
+                        errorMessage: 'Доступ запрещен.'
+                    };
+
+                    // helper function to show an error message
+                    let deny = function () {
+                        Msg.error(opts.errorMessage);
+                        return false;
+                    };
+
+                    // merge default and specified options
+                    Object.assign(opts, options);
+
+                    // permission doesn't specified, deny access
+                    if (!permissionId) {
+                        return deny();
+                    }
+
+                    let permissions = [];
+
+                    if ($rootScope.$localStorage &&
+                        $rootScope.$localStorage.currentUser &&
+                        $rootScope.$localStorage.currentUser.permissions
+                    ) {
+                        permissions = $rootScope.$localStorage.currentUser.permissions;
+                    } else {
+                        // no permissions found
+                        return deny();
+                    }
+
+                    // if string, convert it to array
+                    if (typeof permissionId == 'string') {
+                        permissionId = [permissionId];
+                    }
+
+                    // check permission
+                    for (let permission of permissionId) {
+                        if (permission in permissions && permissions[permission] === true) {
+                            return true;
+                        }
+                    }
+
+                    // the current user hasn't enough privilege
+                    return deny();
                 }
             };
         })

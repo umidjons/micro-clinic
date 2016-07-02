@@ -10,7 +10,9 @@
                 <span class="icon-bar"></span>
             </button>
 
-            <a class="navbar-brand" ui-sref="home">{{ $localStorage.currentUser.branch.shortTitle }}</a>
+            <a class="navbar-brand" ui-sref="home">
+                <i class="fa fa-fw fa-home"></i>{{ $localStorage.currentUser.branch.shortTitle }}
+            </a>
 
         </div>
 
@@ -18,22 +20,33 @@
 
             <ul class="nav navbar-nav">
 
-                <li><a ui-sref="home" title="Главная"><i class="fa fa-fw fa-home"></i></a></li>
-                <li><a ui-sref="patientSearch" title="Поиск"><i class="fa fa-fw fa-search"></i></a></li>
-                <li><a ui-sref="patientList" title="Пациенты"><i class="fa fa-fw fa-list"></i></a></li>
-                <li><a ui-sref="laboratory" title="Лаборатория"><i class="fa fa-fw fa-flask"></i></a></li>
+                <li access="search">
+                    <a ui-sref="patientSearch" title="Поиск"><i class="fa fa-fw fa-search"></i></a>
+                </li>
 
-                <li class="dropdown">
+                <li access="patient:list">
+                    <a ui-sref="patientList" title="Пациенты"><i class="fa fa-fw fa-list"></i></a>
+                </li>
+
+                <li access="laboratory">
+                    <a ui-sref="laboratory" title="Лаборатория"><i class="fa fa-fw fa-flask"></i></a>
+                </li>
+
+                <li access="cash" class="dropdown">
                     <a href class="dropdown-toggle" data-toggle="dropdown"
                        role="button" aria-haspopup="true" aria-expanded="false">
                         <i class="fa fa-fw fa-usd"></i> Касса <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a ui-sref="cashList"><i class="fa fa-fw fa-credit-card"></i> Касса</a></li>
-                        <li><a ui-sref="cashRegistry"><i class="fa fa-fw fa-archive"></i> Реестр оплат</a></li>
+                        <li access="cash:pay">
+                            <a ui-sref="cashList"><i class="fa fa-fw fa-credit-card"></i> Касса</a>
+                        </li>
+                        <li access="cash:registry">
+                            <a ui-sref="cashRegistry"><i class="fa fa-fw fa-archive"></i> Реестр оплат</a>
+                        </li>
                     </ul>
                 </li>
 
-                <li class="dropdown">
+                <li access="report" class="dropdown">
                     <a href class="dropdown-toggle" data-toggle="dropdown"
                        role="button" aria-haspopup="true" aria-expanded="false">
                         <i class="fa fa-fw fa-line-chart"></i> Отчеты <span class="caret"></span></a>
@@ -41,14 +54,17 @@
                         <li><a href="#">Оказываемые услуги</a></li>
                         <li><a href="#">Регистрация по операторам</a></li>
                         <li role="separator" class="divider"></li>
-                        <li><a ui-sref="partnerInterests">Доля партнёров за период</a></li>
+                        <li access="report:partnerInterests">
+                            <a ui-sref="partnerInterests">Доля партнёров за период</a>
+                        </li>
                     </ul>
                 </li>
 
-                <li class="dropdown">
+                <li access="admin" class="dropdown">
                     <a href class="dropdown-toggle" data-toggle="dropdown"
                        role="button" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-fw fa-cogs"></i> Администрирование <span class="caret"></span></a>
+                        <i class="fa fa-fw fa-cogs"></i> Администрирование <span class="caret"></span>
+                    </a>
                     <ul class="dropdown-menu">
                         <li><a ui-sref="branchesList">Филиалы</a></li>
                         <li><a ui-sref="userList">Пользователи</a></li>
