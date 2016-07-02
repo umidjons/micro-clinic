@@ -21,14 +21,20 @@ router
         function (req, res, next) {
             debug(`Search params: ${req.body}`);
 
-            if (!req.body.firstName || !req.body.lastName) {
+            if (!(req.body.lastName && req.body.firstName) && !req.body.code) {
                 return Msg.sendError(res, 'Объязательные параметры не указаны.');
             }
 
-            var condition = {
-                firstName: new RegExp(req.body.firstName, 'i'),
-                lastName: new RegExp(req.body.lastName, 'i')
-            };
+            var condition = {};
+
+            if (req.body.code) {
+                condition.code = new RegExp(req.body.code, 'i');
+            }
+
+            if (req.body.lastName && req.body.firstName) {
+                condition.lastName = new RegExp(req.body.lastName, 'i');
+                condition.firstName = new RegExp(req.body.firstName, 'i');
+            }
 
             if (req.body.middleName) {
                 condition.middleName = new RegExp(req.body.middleName, 'i');
@@ -39,6 +45,10 @@ router
                     $gte: Date.create(req.body.dateOfBirth).beginningOfDay(),
                     $lte: Date.create(req.body.dateOfBirth).endOfDay()
                 };
+            }
+
+            if (!condition) {
+                return Msg.sendError(res, 'Объязательные параметры не указаны.');
             }
 
             var sort = {
@@ -151,7 +161,7 @@ router
         newPatient.lastVisit = newPatient.created;
         newPatient.user = req.user._id;
         newPatient.branch = req.user.branch._id;
-        
+
         // get new patient code
         models.Setting.findById('patientCode').exec(function (err, setting) {
             if (err) {
@@ -173,7 +183,7 @@ router
                     if (err) {
                         return Msg.sendError(res, err);
                     }
-                    
+
                     // all right, show success message
                     Msg.sendSuccess(res, 'Данные успешно сохранены.', savedPatient);
                 });

@@ -317,6 +317,11 @@
             return {
                 restrict: 'A',
                 link: function (scope, elem, attrs) {
+                    // if element is not available yet, just return
+                    if (!elem) {
+                        return;
+                    }
+
                     // by default hide element
                     elem.hide();
 

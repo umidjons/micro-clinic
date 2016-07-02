@@ -3,19 +3,19 @@
 <form name="formSearch" novalidate>
     <div class="row">
         <div class="form-group col-sm-3">
-            <label class="req">Фамилия</label>
+            <label ng-class="{'req': !patient.code}">Фамилия</label>
             <input ng-model="patient.lastName"
                    ng-change="searchPatients(formSearch.$valid)"
                    ng-model-options="{debounce:500}"
-                   class="form-control" maxlength="50" required>
+                   class="form-control" maxlength="50" ng-required="!patient.code">
         </div>
 
         <div class="form-group col-sm-3">
-            <label class="req">Имя</label>
+            <label ng-class="{'req': !patient.code}">Имя</label>
             <input ng-model="patient.firstName"
                    ng-change="searchPatients(formSearch.$valid)"
                    ng-model-options="{debounce:500}"
-                   class="form-control" maxlength="50" required>
+                   class="form-control" maxlength="50" ng-required="!patient.code">
         </div>
 
         <div class="form-group col-sm-3">
@@ -24,6 +24,17 @@
                    ng-change="searchPatients(formSearch.$valid)"
                    ng-model-options="{debounce:500}"
                    class="form-control" maxlength="50">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-sm-3">
+            <label ng-class="{'req': !patient.lastName && !patient.firstName}">Код</label>
+            <input ng-model="patient.code"
+                   ng-change="searchPatients(formSearch.$valid)"
+                   ng-model-options="{debounce:500}"
+                   ng-required="!patient.lastName && !patient.firstName"
+                   class="form-control" maxlength="10">
         </div>
 
         <div class="form-group col-sm-3">
@@ -37,7 +48,7 @@
     </div>
 
     <div class="row">
-        <div class="col-sm-12 text-right">
+        <div class="col-sm-9 text-right">
             <button ng-click="reset(formSearch)" class="btn btn-danger">Очистить</button>
         </div>
     </div>
@@ -45,8 +56,8 @@
 
 <div ng-if="formSearch.$valid && patients.length==0" class="alert alert-warning">
     Пациент с такими реквизитами не найден!
-    <a ui-sref="patientCreate({initialPatient:patient})"
-       class="btn btn-xs btn-primary">Перейти к регистрацию нового пациента с этими реквизитами
+    <a access="patient:create" ui-sref="patientCreate({initialPatient:patient})"
+       class="btn btn-xs btn-primary">Перейти к регистрацию нового пациента с указаннами реквизитами
     </a>
 </div>
 

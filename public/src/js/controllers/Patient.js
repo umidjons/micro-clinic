@@ -10,7 +10,8 @@
                     firstName: '',
                     lastName: '',
                     middleName: '',
-                    dateOfBirth: ''
+                    dateOfBirth: '',
+                    code: ''
                 };
 
                 // empty found patients
