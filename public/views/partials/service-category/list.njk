@@ -1,6 +1,6 @@
 <h3>Категории</h3>
 
-<button ui-sref="serviceCategoryCreate" class="btn btn-success">
+<button access="category:create" ui-sref="serviceCategoryCreate" class="btn btn-success">
     <i class="fa fa-fw fa-plus"></i> Новая категория
 </button>
 
@@ -44,10 +44,12 @@
                     <i class="fa fa-fw fa-bars"></i> <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-right">
-                    <li>
+                    <li access="category:edit">
                         <a ui-sref="serviceCategoryEdit({id:cat._id})"><i class="fa fa-fw fa-edit"></i> Изменить</a>
                     </li>
-                    <li><a href ng-click="deleteCategory(cat)"><i class="fa fa-fw fa-trash"></i> Удалить</a></li>
+                    <li access="category:delete">
+                        <a href ng-click="deleteCategory(cat)"><i class="fa fa-fw fa-trash"></i> Удалить</a>
+                    </li>
                 </ul>
             </div>
         </td>

@@ -20,10 +20,6 @@ mongoose.connection.once('open', function () {
             title: 'Пользователи: Удаление пользователя'
         },
         {
-            _id: 'user:view',
-            title: 'Пользователи: Просмотр пользователя'
-        },
-        {
             _id: 'user:list',
             title: 'Пользователи: Просмотр списка пользователей'
         },
@@ -38,10 +34,6 @@ mongoose.connection.once('open', function () {
         {
             _id: 'category:delete',
             title: 'Категория: Удаление категории'
-        },
-        {
-            _id: 'category:view',
-            title: 'Категория: Просмотр категории'
         },
         {
             _id: 'category:list',
@@ -110,6 +102,70 @@ mongoose.connection.once('open', function () {
         {
             _id: 'admin',
             title: 'Администрирование'
+        },
+        {
+            _id: 'service:list',
+            title: 'Услуга: Список'
+        },
+        {
+            _id: 'service:create',
+            title: 'Услуга: Новый'
+        },
+        {
+            _id: 'service:edit',
+            title: 'Услуга: Редактирование'
+        },
+        {
+            _id: 'service:delete',
+            title: 'Услуга: Удаление'
+        },
+        {
+            _id: 'service:history',
+            title: 'Услуга: История'
+        },
+        {
+            _id: 'branch:list',
+            title: 'Филиал: Список'
+        },
+        {
+            _id: 'branch:create',
+            title: 'Филиал: Новый'
+        },
+        {
+            _id: 'branch:edit',
+            title: 'Филиал: Редактирование'
+        },
+        {
+            _id: 'branch:delete',
+            title: 'Филиал: Удаление'
+        },
+        {
+            _id: 'company:list',
+            title: 'Организация: Список'
+        },
+        {
+            _id: 'company:create',
+            title: 'Организация: Новый'
+        },
+        {
+            _id: 'company:edit',
+            title: 'Организация: Редактирование'
+        },
+        {
+            _id: 'company:delete',
+            title: 'Организация: Удаление'
+        },
+        {
+            _id: 'company:pay',
+            title: 'Организация: Пополнить счет'
+        },
+        {
+            _id: 'company:pay:cancel',
+            title: 'Организация: Отменить оплату'
+        },
+        {
+            _id: 'company:details',
+            title: 'Организация: Детализация'
         }
     ];
 

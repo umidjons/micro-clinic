@@ -1,6 +1,8 @@
 <h3>Организации</h3>
 
-<button ui-sref="companyCreate" class="btn btn-success"><i class="fa fa-fw fa-plus"></i> Новая организация</button>
+<button access="company:create" ui-sref="companyCreate" class="btn btn-success">
+    <i class="fa fa-fw fa-plus"></i> Новая организация
+</button>
 
 <table class="table table-bordered table-striped table-hover table-condensed">
 
@@ -38,14 +40,22 @@
         </td>
         <td>{{ company.balance | number: 2 }}</td>
         <td class="text-center">
-            <a ui-sref="companyEdit({id:company._id})" title="Изменить" class="btn btn-xs btn-info">
-                <i class="fa fa-fw fa-edit"></i></a>
-            <a href ng-click="deleteCompany(company)" title="Удалить" class="btn btn-xs btn-danger">
-                <i class="fa fa-fw fa-trash"></i></a>
-            <a ui-sref="companyDetails({id:company._id})" title="Детализация" class="btn btn-xs btn-info">
-                <i class="fa fa-fw fa-search"></i></a>
-            <a ui-sref="companyPay({id:company._id})" title="Пополнить счет" class="btn btn-xs btn-success">
-                <i class="fa fa-fw fa-usd"></i></a>
+            <a access="company:edit" ui-sref="companyEdit({id:company._id})"
+               title="Изменить" class="btn btn-xs btn-info">
+                <i class="fa fa-fw fa-edit"></i>
+            </a>
+            <a access="company:delete" href ng-click="deleteCompany(company)"
+               title="Удалить" class="btn btn-xs btn-danger">
+                <i class="fa fa-fw fa-trash"></i>
+            </a>
+            <a access="company:details" ui-sref="companyDetails({id:company._id})"
+               title="Детализация" class="btn btn-xs btn-info">
+                <i class="fa fa-fw fa-search"></i>
+            </a>
+            <a access="company:pay" ui-sref="companyPay({id:company._id})"
+               title="Пополнить счет" class="btn btn-xs btn-success">
+                <i class="fa fa-fw fa-usd"></i>
+            </a>
         </td>
     </tr>
     </tbody>

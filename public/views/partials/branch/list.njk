@@ -1,6 +1,8 @@
 <h3>Филиалы</h3>
 
-<button ui-sref="branchCreate" class="btn btn-success"><i class="fa fa-fw fa-plus"></i> Новый филиал</button>
+<button access="branch:create" ui-sref="branchCreate" class="btn btn-success">
+    <i class="fa fa-fw fa-plus"></i> Новый филиал
+</button>
 
 <table class="table table-bordered table-striped table-hover table-condensed">
 
@@ -42,8 +44,12 @@
                     <i class="fa fa-fw fa-bars"></i> <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-right">
-                    <li><a ui-sref="branchEdit({id:branch._id})"><i class="fa fa-fw fa-edit"></i> Изменить</a></li>
-                    <li><a href ng-click="deleteBranch(branch)"><i class="fa fa-fw fa-trash"></i> Удалить</a></li>
+                    <li access="branch:edit">
+                        <a ui-sref="branchEdit({id:branch._id})"><i class="fa fa-fw fa-edit"></i> Изменить</a>
+                    </li>
+                    <li access="branch:delete">
+                        <a href ng-click="deleteBranch(branch)"><i class="fa fa-fw fa-trash"></i> Удалить</a>
+                    </li>
                 </ul>
             </div>
         </td>

@@ -1,6 +1,6 @@
 <h3>Услуги</h3>
 
-<p>
+<p access="service:create">
     <button ui-sref="serviceCreate" class="btn btn-success"><i class="fa fa-fw fa-plus"></i> Новая услуга</button>
 </p>
 
@@ -99,7 +99,7 @@
     </thead>
 
     <tbody>
-    <tr dir-paginate="srv in ::services | filter: filter: F.allowNulls | itemsPerPage: pagination.pageSize track by srv._id"
+    <tr dir-paginate="srv in services | filter: filter: F.allowNulls | itemsPerPage: pagination.pageSize track by srv._id"
         current-page="pagination.current">
         <td class="text-right">{{ pagination.itemNumber($index) }}</td>
         <td>{{ ::srv.category.title }}</td>
@@ -118,22 +118,23 @@
         </td>
         <td class="text-right">{{ ::srv.templateCount | number }}</td>
         <td class="text-center">
-            <a ui-sref="serviceEdit({id:srv._id})" title="Изменить" class="btn btn-xs btn-success" target="_blank">
-                <i class="fa fa-fw fa-edit"></i></a>
             <div class="btn-group btn-group-xs">
                 <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">
                     <i class="fa fa-fw fa-bars"></i> <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-right">
-                    <li><a ui-sref="serviceView({id: srv._id})"><i class="fa fa-fw fa-search"></i> Просмотр</a></li>
-                    <li><a ui-sref="serviceEdit({id: srv._id})"><i class="fa fa-fw fa-edit"></i> Изменить</a></li>
-                    <li>
+                    <li access="service:edit">
+                        <a ui-sref="serviceEdit({id: srv._id})"><i class="fa fa-fw fa-edit"></i> Изменить</a>
+                    </li>
+                    <li access="service:create">
                         <a ui-sref="serviceClone({id: srv._id})"><i class="fa fa-fw fa-clone"></i> Дублировать</a>
                     </li>
-                    <li><a href ng-click="deleteService(srv)"><i class="fa fa-fw fa-trash"></i> Удалить</a></li>
+                    <li access="service:delete">
+                        <a href ng-click="deleteService(srv)"><i class="fa fa-fw fa-trash"></i> Удалить</a>
+                    </li>
                     <li role="separator" class="divider"></li>
-                    <li>
+                    <li access="service:history">
                         <a ui-sref="serviceView({id:srv._id})">
                             <i class="fa fa-fw fa-paperclip"></i> История изменения
                         </a>

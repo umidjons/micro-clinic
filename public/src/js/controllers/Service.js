@@ -2,7 +2,7 @@
     'use strict';
 
     angular.module('MyClinic')
-        .controller('ServicesCtrl', function ($scope, Modal, Service, State, ServiceCategory, Pager) {
+        .controller('ServicesCtrl', function ($scope, Modal, Service, State, ServiceCategory, Pager, Auth) {
             $scope.pagination = Pager.new();
             $scope.pagination.pageSize = 20;
             $scope.states = State.query();
@@ -83,6 +83,10 @@
             };
 
             $scope.deleteService = function (service) {
+                if (!Auth.hasAccess('service:delete')) {
+                    return;
+                }
+
                 Modal.confirm({
                     content: 'Удалить услугу?',
                     okAction: function (modal) {
@@ -103,7 +107,7 @@
             $scope.reloadPage();
         })
         .controller('ServiceCtrl', function ($scope, $state, $stateParams,
-                                             Modal, State, ServiceCategory, Service, FieldType, hotkeys) {
+                                             Modal, State, ServiceCategory, Service, FieldType, hotkeys, Auth) {
             $scope.serviceCategories = ServiceCategory.query();
             $scope.states = State.query();
             $scope.tab = {name: 'templates'};
@@ -267,7 +271,10 @@
                 Modal.confirm({
                     okAction: function (modal) {
                         if ($scope.service._id) {
-                            $scope.service.$update(function (resp) {
+                            if (!Auth.hasAccess('service:edit'))
+                                return;
+
+                            Service.update($scope.service, function (resp) {
                                 // close confirmation window
                                 modal.hide();
 
@@ -276,7 +283,10 @@
                                 }
                             });
                         } else {
-                            $scope.service.$save(function (resp) {
+                            if (!Auth.hasAccess('service:create'))
+                                return;
+
+                            Service.save($scope.service, function (resp) {
                                 // close confirmation window
                                 modal.hide();
 
@@ -297,10 +307,13 @@
                 });
 
             $scope.cloneService = function () {
+                if (!Auth.hasAccess('service:create'))
+                    return;
+
                 Modal.confirm({
                     okAction: function (modal) {
                         if ($scope.service._id) {
-                            $scope.service.$clone(function (resp) {
+                            Service.clone($scope.service, function (resp) {
                                 // close confirmation window
                                 modal.hide();
 

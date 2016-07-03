@@ -6,7 +6,7 @@
 
 <h3>{{ company.title }}</h3>
 
-<div class="col-sm-4">
+<div access="company:pay" class="col-sm-4">
     <form class="form-horizontal" novalidate>
         <div class="form-group">
             <label class="control-label col-sm-4">Баланс</label>
@@ -74,7 +74,8 @@
         <td>{{ pay.canceled | date: 'medium' }}</td>
         <td>{{ pay.canceledUser.username }}</td>
         <td class="text-center">
-            <button ng-click="cancelPay(pay)" title="Отменить оплату" class="btn btn-xs btn-danger">
+            <button access="company:pay:cancel" ng-click="cancelPay(pay)"
+                    title="Отменить оплату" class="btn btn-xs btn-danger">
                 <i class="fa fa-fw fa-undo"></i>
             </button>
         </td>

@@ -159,27 +159,32 @@
                 .state('patientList', {
                     url: '/patient/list',
                     templateUrl: 'partials/patient/list.html',
-                    controller: 'PatientsCtrl'
+                    controller: 'PatientsCtrl',
+                    permission: 'patient:list'
                 })
                 .state('serviceList', {
                     url: '/service/list',
                     templateUrl: 'partials/service/list.html',
-                    controller: 'ServicesCtrl'
+                    controller: 'ServicesCtrl',
+                    permission: 'service:list'
                 })
                 .state('serviceCreate', {
                     url: '/service/create',
                     templateUrl: 'partials/service/create.html',
-                    controller: 'ServiceCtrl'
+                    controller: 'ServiceCtrl',
+                    permission: 'service:create'
                 })
                 .state('serviceEdit', {
                     url: '/service/edit/:id',
                     templateUrl: 'partials/service/edit.html',
-                    controller: 'ServiceCtrl'
+                    controller: 'ServiceCtrl',
+                    permission: 'service:edit'
                 })
                 .state('serviceClone', {
                     url: '/service/clone/:id',
                     templateUrl: 'partials/service/clone.html',
-                    controller: 'ServiceCtrl'
+                    controller: 'ServiceCtrl',
+                    permission: 'service:create'
                 })
                 .state('serviceView', {
                     url: '/service/view/:id',
@@ -214,17 +219,20 @@
                 .state('userList', {
                     url: '/user/list',
                     templateUrl: 'partials/user/list.html',
-                    controller: 'UsersCtrl'
+                    controller: 'UsersCtrl',
+                    permission: 'user:list'
                 })
                 .state('userCreate', {
                     url: '/user/create',
                     templateUrl: 'partials/user/create.html',
-                    controller: 'UserCtrl'
+                    controller: 'UserCtrl',
+                    permission: 'user:create'
                 })
                 .state('userEdit', {
                     url: '/user/edit/:id',
                     templateUrl: 'partials/user/edit.html',
-                    controller: 'UserCtrl'
+                    controller: 'UserCtrl',
+                    permission: 'user:edit'
                 })
                 .state('cashList', {
                     url: '/cash',
@@ -249,57 +257,68 @@
                 .state('serviceCategoryList', {
                     url: '/service-category/list',
                     templateUrl: 'partials/service-category/list.html',
-                    controller: 'ServiceCategoryListCtrl'
+                    controller: 'ServiceCategoryListCtrl',
+                    permission: 'category:list'
                 })
                 .state('serviceCategoryCreate', {
                     url: '/service-category/create',
                     templateUrl: 'partials/service-category/create.html',
-                    controller: 'ServiceCategoryCtrl'
+                    controller: 'ServiceCategoryCtrl',
+                    permission: 'category:create'
                 })
                 .state('serviceCategoryEdit', {
                     url: '/service-category/edit/:id',
                     templateUrl: 'partials/service-category/edit.html',
-                    controller: 'ServiceCategoryCtrl'
+                    controller: 'ServiceCategoryCtrl',
+                    permission: 'category:edit'
                 })
                 .state('branchesList', {
                     url: '/branch/list',
                     templateUrl: 'partials/branch/list.html',
-                    controller: 'BranchesCtrl'
+                    controller: 'BranchesCtrl',
+                    permission: 'branch:list'
                 })
                 .state('branchCreate', {
                     url: '/branch/create',
                     templateUrl: 'partials/branch/create.html',
-                    controller: 'BranchCtrl'
+                    controller: 'BranchCtrl',
+                    permission: 'branch:create'
                 })
                 .state('branchEdit', {
                     url: '/branch/edit/:id',
                     templateUrl: 'partials/branch/edit.html',
-                    controller: 'BranchCtrl'
+                    controller: 'BranchCtrl',
+                    permission: 'branch:edit'
                 })
                 .state('companyList', {
                     url: '/company/list',
                     templateUrl: 'partials/company/list.html',
-                    controller: 'CompaniesCtrl'
+                    controller: 'CompaniesCtrl',
+                    permission: 'company:list'
                 })
                 .state('companyCreate', {
                     url: '/company/create',
                     templateUrl: 'partials/company/create.html',
-                    controller: 'CompanyCtrl'
+                    controller: 'CompanyCtrl',
+                    permission: 'company:create'
                 })
                 .state('companyEdit', {
                     url: '/company/edit/:id',
                     templateUrl: 'partials/company/edit.html',
-                    controller: 'CompanyCtrl'
+                    controller: 'CompanyCtrl',
+                    permission: 'company:edit'
                 })
                 .state('companyDetails', {
                     url: '/company/details/:id',
                     templateUrl: 'partials/company/details.html',
-                    controller: 'CompanyDetailsCtrl'
+                    controller: 'CompanyDetailsCtrl',
+                    permission: 'company:details'
                 })
                 .state('companyPay', {
                     url: '/company/pay/:id',
                     templateUrl: 'partials/company/pay.html',
-                    controller: 'CompanyPayCtrl'
+                    controller: 'CompanyPayCtrl',
+                    permission: 'company:pay'
                 })
                 .state('laboratory', {
                     url: '/laboratory',

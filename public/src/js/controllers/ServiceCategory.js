@@ -1,17 +1,21 @@
 (function () {
     'use strict';
     angular.module('MyClinic')
-        .controller('ServiceCategoryListCtrl', function ($scope, Modal, ServiceCategory) {
+        .controller('ServiceCategoryListCtrl', function ($scope, Modal, ServiceCategory, Auth) {
             $scope.reloadPage = function () {
                 $scope.categories = ServiceCategory.query();
             };
 
             $scope.deleteCategory = function (category) {
+                if (!Auth.hasAccess('category:delete')) {
+                    return;
+                }
+
                 Modal.confirm({
                     content: 'Удалить категорию?',
                     okAction: function (modal) {
                         if (category) {
-                            category.$delete(function (resp) {
+                            ServiceCategory.delete({}, {_id: category._id}, function (resp) {
                                 // close confirmation window
                                 modal.hide();
 
@@ -26,7 +30,8 @@
 
             $scope.reloadPage();
         })
-        .controller('ServiceCategoryCtrl', function ($scope, $state, $stateParams, Modal, State, ServiceCategory) {
+        .controller('ServiceCategoryCtrl', function ($scope, $state, $stateParams, Modal, State,
+                                                     ServiceCategory, Auth) {
             $scope.states = State.query();
 
             $scope.SubCat = {
@@ -78,7 +83,11 @@
                 Modal.confirm({
                     okAction: function (modal) {
                         if ($scope.category._id && !$scope.category.isNew) {
-                            $scope.category.$update(function (resp) {
+                            if (!Auth.hasAccess('category:edit')) {
+                                return;
+                            }
+
+                            ServiceCategory.update($scope.category, function (resp) {
                                 // close confirmation window
                                 modal.hide();
 
@@ -91,7 +100,11 @@
                                 }
                             });
                         } else {
-                            $scope.category.$save(function (resp) {
+                            if (!Auth.hasAccess('category:create')) {
+                                return;
+                            }
+
+                            ServiceCategory.save($scope.category, function (resp) {
                                 // close confirmation window
                                 modal.hide();
 

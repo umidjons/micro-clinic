@@ -2,7 +2,7 @@
     'use strict';
 
     angular.module('MyClinic')
-        .controller('CompanyCtrl', function ($scope, $state, $stateParams, Modal, Company, State) {
+        .controller('CompanyCtrl', function ($scope, $state, $stateParams, Modal, Company, State, Auth) {
             $scope.states = State.query();
 
             if ($stateParams.id) {
@@ -17,6 +17,9 @@
                 Modal.confirm({
                     okAction: function (modal) {
                         if ($scope.company._id) {
+                            if (!Auth.hasAccess('company:edit'))
+                                return;
+
                             Company.update($scope.company, function (resp) {
                                 // close confirmation window
                                 modal.hide();
@@ -30,6 +33,9 @@
                                 }
                             });
                         } else {
+                            if (!Auth.hasAccess('company:create'))
+                                return;
+
                             Company.save($scope.company, function (resp) {
                                 // close confirmation window
                                 modal.hide();
@@ -44,12 +50,15 @@
             };
 
         })
-        .controller('CompaniesCtrl', function ($scope, Modal, Company) {
+        .controller('CompaniesCtrl', function ($scope, Modal, Company, Auth) {
             $scope.reloadPage = function () {
                 $scope.companies = Company.query({all: 1});
             };
 
             $scope.deleteCompany = function (company) {
+                if (!Auth.hasAccess('company:delete'))
+                    return;
+
                 Modal.confirm({
                     content: 'Удалить организацию?',
                     okAction: function (modal) {
@@ -93,7 +102,7 @@
                 $scope.search = {};
             };
         })
-        .controller('CompanyPayCtrl', function ($scope, F, Company, $state, $stateParams, Msg, Modal) {
+        .controller('CompanyPayCtrl', function ($scope, F, Company, $state, $stateParams, Msg, Modal, Auth) {
             $scope.refresh = function () {
                 Company.get({id: $stateParams.id}, function (company) {
                     $scope.company = company;
@@ -111,6 +120,9 @@
             }
 
             $scope.addFunds = function () {
+                if (!Auth.hasAccess('company:pay'))
+                    return;
+
                 let pay = angular.copy($scope.pay);
                 pay.companyId = $scope.company._id;
                 Modal.confirm({
@@ -126,6 +138,9 @@
             };
 
             $scope.cancelPay = function (payment) {
+                if (!Auth.hasAccess('company:pay:cancel'))
+                    return;
+
                 let pay = {};
                 pay.payId = payment._id;
                 pay.companyId = $scope.company._id;

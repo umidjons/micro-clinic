@@ -2,7 +2,7 @@
     'use strict';
 
     angular.module('MyClinic')
-        .controller('BranchCtrl', function ($scope, $state, $stateParams, Modal, Branch, State) {
+        .controller('BranchCtrl', function ($scope, $state, $stateParams, Modal, Branch, State, Auth) {
             $scope.states = State.query();
 
             if ($stateParams.id) {
@@ -17,7 +17,11 @@
                 Modal.confirm({
                     okAction: function (modal) {
                         if ($scope.branch._id) {
-                            $scope.branch.$update(function (resp) {
+                            if (!Auth.hasAccess('branch:edit')) {
+                                return;
+                            }
+
+                            Branch.update($scope.branch, function (resp) {
                                 // close confirmation window
                                 modal.hide();
 
@@ -30,7 +34,11 @@
                                 }
                             });
                         } else {
-                            $scope.branch.$save(function (resp) {
+                            if (!Auth.hasAccess('branch:create')) {
+                                return;
+                            }
+
+                            Branch.save($scope.branch, function (resp) {
                                 // close confirmation window
                                 modal.hide();
 
@@ -44,17 +52,21 @@
             };
 
         })
-        .controller('BranchesCtrl', function ($scope, Modal, Branch) {
+        .controller('BranchesCtrl', function ($scope, Modal, Branch, Auth) {
             $scope.reloadPage = function () {
                 $scope.branches = Branch.query({all: 1});
             };
 
             $scope.deleteBranch = function (branch) {
+                if (!Auth.hasAccess('branch:delete')) {
+                    return;
+                }
+
                 Modal.confirm({
                     content: 'Удалить филиала?',
                     okAction: function (modal) {
                         if (branch) {
-                            branch.$delete(function (resp) {
+                            Branch.delete({}, {_id: branch._id}, function (resp) {
                                 // close confirmation window
                                 modal.hide();
 
