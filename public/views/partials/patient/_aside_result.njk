@@ -48,12 +48,14 @@
 
             <div class="aside-footer">
                 <button type="button" class="btn btn-danger" ng-click="$hide()">Отмена</button>
-                <button ng-click="serviceSave()"
+                <button access="patient:service:results:fill"
+                        ng-click="serviceSave()"
                         ng-disabled="formResult.$invalid" class="btn btn-success">
                     <i class="fa fa-fw fa-floppy-o"></i>
                     Сохранить
                 </button>
-                <button ng-if="patientService.state._id != 'completed'"
+                <button access="patient:service:results:complete"
+                        ng-if="patientService.state._id != 'completed'"
                         ng-click="serviceComplete()"
                         ng-disabled="formResult.$invalid" class="btn btn-primary">
                     <i class="fa fa-fw fa-check-square-o"></i>

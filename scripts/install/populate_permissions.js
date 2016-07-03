@@ -84,12 +84,48 @@ mongoose.connection.once('open', function () {
             title: 'Пациент: Добавить услугу'
         },
         {
+            _id: 'patient:service:delete',
+            title: 'Пациент: Удалить услугу'
+        },
+        {
+            _id: 'patient:service:discount',
+            title: 'Пациент: Добавить скидку'
+        },
+        {
+            _id: 'patient:service:partner',
+            title: 'Пациент: Прикрепить партнёра к услугу'
+        },
+        {
+            _id: 'patient:service:company',
+            title: 'Пациент: Прикрепить организацию к услугу'
+        },
+        {
+            _id: 'patient:service:results',
+            title: 'Пациент: Результаты'
+        },
+        {
+            _id: 'patient:service:results:print',
+            title: 'Пациент: Распечатка результатов'
+        },
+        {
+            _id: 'patient:service:results:fill',
+            title: 'Пациент: Внесения результатов'
+        },
+        {
+            _id: 'patient:service:results:complete',
+            title: 'Пациент: Завершить услугу'
+        },
+        {
             _id: 'search',
             title: 'Поиск'
         },
         {
             _id: 'laboratory',
             title: 'Лаборатория'
+        },
+        {
+            _id: 'laboratory:export',
+            title: 'Лаборатория: Экспорт'
         },
         {
             _id: 'report',
@@ -102,6 +138,10 @@ mongoose.connection.once('open', function () {
         {
             _id: 'admin',
             title: 'Администрирование'
+        },
+        {
+            _id: 'admin:settings',
+            title: 'Администрирование: Параметры системы'
         },
         {
             _id: 'service:list',
@@ -166,6 +206,22 @@ mongoose.connection.once('open', function () {
         {
             _id: 'company:details',
             title: 'Организация: Детализация'
+        },
+        {
+            _id: 'partner:list',
+            title: 'Партнёр: Список'
+        },
+        {
+            _id: 'partner:create',
+            title: 'Партнёр: Новый'
+        },
+        {
+            _id: 'partner:edit',
+            title: 'Партнёр: Редактирование'
+        },
+        {
+            _id: 'partner:delete',
+            title: 'Партнёр: Удаление'
         }
     ];
 

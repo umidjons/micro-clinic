@@ -105,7 +105,7 @@
                     url: '/settings',
                     templateUrl: 'partials/settings/settings.html',
                     controller: 'SettingsCtrl',
-                    permission: 'admin'
+                    permission: 'admin:settings'
                 })
                 .state('patientSearch', {
                     url: '/patient/search',
@@ -194,17 +194,20 @@
                 .state('partnerList', {
                     url: '/partner/list',
                     templateUrl: 'partials/partner/list.html',
-                    controller: 'PartnersCtrl'
+                    controller: 'PartnersCtrl',
+                    permission: 'partner:list'
                 })
                 .state('partnerCreate', {
                     url: '/partner/create',
                     templateUrl: 'partials/partner/create.html',
-                    controller: 'PartnerCtrl'
+                    controller: 'PartnerCtrl',
+                    permission: 'partner:create'
                 })
                 .state('partnerEdit', {
                     url: '/partner/edit/:id',
                     templateUrl: 'partials/partner/edit.html',
-                    controller: 'PartnerCtrl'
+                    controller: 'PartnerCtrl',
+                    permission: 'partner:edit'
                 })
                 .state('partnerView', {
                     url: '/partner/view/:id',
@@ -212,9 +215,13 @@
                     controller: 'PartnerViewCtrl'
                 })
                 .state('partnerInterests', {
-                    url: '/partner/interests',
+                    url: '/partner/interests/:id',
+                    params: {
+                        id: null
+                    },
                     templateUrl: 'partials/partner/interests.html',
-                    controller: 'PartnerInterestCtrl'
+                    controller: 'PartnerInterestCtrl',
+                    permission: 'report:partnerInterests'
                 })
                 .state('userList', {
                     url: '/user/list',
@@ -323,12 +330,14 @@
                 .state('laboratory', {
                     url: '/laboratory',
                     templateUrl: 'partials/laboratory/laboratory.html',
-                    controller: 'LaboratoryCtrl'
+                    controller: 'LaboratoryCtrl',
+                    permission: 'laboratory'
                 })
                 .state('laboratoryAllResults', {
                     url: '/laboratory/results/:id',
                     templateUrl: 'partials/laboratory/results.html',
-                    controller: 'LaboratoryResultsCtrl'
+                    controller: 'LaboratoryResultsCtrl',
+                    permission: 'patient:service:results'
                 });
             $urlRouterProvider.otherwise('/');
         })
@@ -376,10 +385,13 @@
         .controller('HomeCtrl', function ($scope) {
 
         })
-        .controller('SettingsCtrl', function ($scope, Setting, Modal) {
+        .controller('SettingsCtrl', function ($scope, Setting, Modal, Auth) {
             $scope.setting = Setting.query();
 
             $scope.saveSettings = function () {
+                if (!Auth.hasAccess('admin:settings'))
+                    return;
+
                 Modal.confirm({
                     content: 'Сохранить параметры системы?',
                     okAction: function (modal) {

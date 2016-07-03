@@ -43,7 +43,7 @@
             </thead>
 
             <tbody>
-            <tr ng-repeat="srv in ::services | filter: ServiceHelper.Service.filter as filteredServices track by srv._id"
+            <tr ng-repeat="srv in services | filter: ServiceHelper.Service.filter as filteredServices track by srv._id"
                 ng-dblclick="ServiceHelper.Service.add(srv)"
                 ng-class="{'success': srv.added}">
                 <td>{{ ::srv.title }}</td>

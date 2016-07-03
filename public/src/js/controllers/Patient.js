@@ -166,7 +166,7 @@
         })
         .controller('PatientViewCtrl', function ($scope, $state, $stateParams, Patient, Service, PatientService,
                                                  ServiceCategory, Discount, PartnerSetter, Msg, Modal, Fields,
-                                                 $aside, Setting, CompanySetter) {
+                                                 $aside, Setting, CompanySetter, Auth) {
             $scope.Discount = Discount;
             $scope.Fields = Fields;
 
@@ -336,6 +336,9 @@
                         }
                     },
                     openDiscount: function (srv) {
+                        if (!Auth.hasAccess('patient:service:discount'))
+                            return;
+
                         if (!srv.marked) {
                             srv.marked = 1;
                             $scope.ServiceHelper.Marker.onChange();
@@ -343,6 +346,9 @@
                         $scope.openDiscount();
                     },
                     openPartner: function (srv) {
+                        if (!Auth.hasAccess('patient:service:partner'))
+                            return;
+
                         if (!srv.marked) {
                             srv.marked = 1;
                             $scope.ServiceHelper.Marker.onChange();
@@ -350,6 +356,9 @@
                         $scope.openPartner();
                     },
                     openCompany: function (srv) {
+                        if (!Auth.hasAccess('patient:service:company'))
+                            return;
+
                         if (!srv.marked) {
                             srv.marked = 1;
                             $scope.ServiceHelper.Marker.onChange();
@@ -439,6 +448,9 @@
                         $scope.patient.services_assigned = PatientService.forPatient({patientId: $scope.patient._id});
                     },
                     remove: function (patSrv) {
+                        if (!Auth.hasAccess('patient:service:delete'))
+                            return;
+
                         if (angular.isUndefined(patSrv)) {
                             if ($scope.ServiceHelper.AssignedMarker.getMarked(true) > 0) {
                                 var markedPatSrvList = $scope.ServiceHelper.AssignedMarker.getMarked();
@@ -549,6 +561,9 @@
             };
 
             $scope.openResult = function (srv) {
+                if (!Auth.hasAccess('patient:service:results:fill'))
+                    return;
+
                 // create and show aside
                 $aside({
                     controller: 'ResultCtrl',
@@ -574,7 +589,8 @@
                 $scope.ServiceHelper.AssignedService.refresh();
             });
         })
-        .controller('ResultCtrl', function ($scope, $state, $stateParams, options, Service, PatientService, Modal) {
+        .controller('ResultCtrl', function ($scope, $state, $stateParams, options, Service, PatientService,
+                                            Modal, Auth) {
             $scope.patientService = options.patientService;
 
             Service.get({id: $scope.patientService.serviceId}, function (resp) {
@@ -651,6 +667,9 @@
             };
 
             $scope.serviceComplete = function () {
+                if (!Auth.hasAccess('patient:service:results:complete'))
+                    return;
+
                 Modal.confirm({
                     content: 'Завершить услугу?',
                     okAction: function (modal) {
@@ -661,6 +680,9 @@
             };
 
             $scope.serviceSave = function () {
+                if (!Auth.hasAccess('patient:service:results:fill'))
+                    return;
+
                 Modal.confirm({
                     okAction: function (modal) {
                         savePatSrv(modal);

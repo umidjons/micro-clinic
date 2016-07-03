@@ -1,6 +1,8 @@
 <h3>Партнёры</h3>
 
-<button ui-sref="partnerCreate" class="btn btn-success"><i class="fa fa-fw fa-plus"></i> Новый партнёр</button>
+<button access="partner:create" ui-sref="partnerCreate" class="btn btn-success">
+    <i class="fa fa-fw fa-plus"></i> Новый партнёр
+</button>
 
 <table class="table table-bordered table-striped table-hover table-condensed">
 
@@ -54,12 +56,15 @@
                     <i class="fa fa-fw fa-bars"></i> <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-right">
-                    <li><a ui-sref="partnerView({id:partner._id})"><i class="fa fa-fw fa-search"></i> Просмотр</a></li>
-                    <li><a ui-sref="partnerEdit({id:partner._id})"><i class="fa fa-fw fa-edit"></i> Изменить</a></li>
-                    <li><a href ng-click="deletePartner(partner)"><i class="fa fa-fw fa-trash"></i> Удалить</a></li>
+                    <li access="partner:edit">
+                        <a ui-sref="partnerEdit({id: partner._id})"><i class="fa fa-fw fa-edit"></i> Изменить</a>
+                    </li>
+                    <li access="partner:delete">
+                        <a href ng-click="deletePartner(partner)"><i class="fa fa-fw fa-trash"></i> Удалить</a>
+                    </li>
                     <li role="separator" class="divider"></li>
-                    <li>
-                        <a ui-sref="partnerView({id:partner._id})">
+                    <li access="report:partnerInterests">
+                        <a ui-sref="partnerInterests({id: partner._id})">
                             <i class="fa fa-fw fa-paperclip"></i> Доходы
                         </a>
                     </li>

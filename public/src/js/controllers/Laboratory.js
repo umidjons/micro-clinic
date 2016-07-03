@@ -3,7 +3,7 @@
 
     angular.module('MyClinic')
         .controller('LaboratoryCtrl', function ($scope, $aside, $state, $stateParams, $timeout,
-                                                Modal, ServiceCategory, PatientService, Branch) {
+                                                Modal, ServiceCategory, PatientService, Branch, Auth) {
             Branch.query(function (resp) {
                 $scope.branches = resp;
             });
@@ -67,6 +67,9 @@
             };
 
             $scope.exportTab = function (subcat) {
+                if (!Auth.hasAccess('laboratory:export'))
+                    return;
+
                 let tabChanged = false;
                 if (subcat) {
                     tabChanged = true;
@@ -161,6 +164,9 @@
             };
 
             $scope.open = function (srv, rec) {
+                if (!Auth.hasAccess('patient:service:results:fill'))
+                    return;
+
                 let patSrv = $scope.getService(srv, rec);
                 if (!patSrv) {
                     return;
@@ -188,7 +194,7 @@
                 });
             };
         })
-        .controller('LaboratoryResultsCtrl', function ($scope, $aside, $state, $stateParams,
+        .controller('LaboratoryResultsCtrl', function ($scope, $aside, $state, $stateParams, Auth,
                                                        Modal, Patient, ServiceCategory, PatientService, Branch) {
 
             $scope.tinymceOptions = {
@@ -218,6 +224,9 @@
             };
 
             $scope.open = function (patSrv) {
+                if (!Auth.hasAccess('patient:service:results:fill'))
+                    return;
+
                 patSrv.opened = !patSrv.opened;
 
                 if (patSrv.opened) {
@@ -268,6 +277,9 @@
             };
 
             $scope.serviceComplete = function (patSrv) {
+                if (!Auth.hasAccess('patient:service:results:complete'))
+                    return;
+
                 Modal.confirm({
                     content: 'Завершить услугу?',
                     okAction: function (modal) {
@@ -278,6 +290,9 @@
             };
 
             $scope.serviceSave = function (patSrv) {
+                if (!Auth.hasAccess('patient:service:results:fill'))
+                    return;
+
                 Modal.confirm({
                     okAction: function (modal) {
                         savePatSrv(modal, patSrv);
@@ -323,6 +338,9 @@
                     }
                 },
                 print: function () {
+                    if (!Auth.hasAccess('patient:service:results:print'))
+                        return;
+
                     let services = this.forPrint();
                     let ids = services.map(function (srv) {
                         return srv._id

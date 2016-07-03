@@ -29,7 +29,7 @@
                             <i class="fa fa-fw fa-bars"></i> <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li>
+                            <li access="patient:service:delete">
                                 <a href ng-click="ServiceHelper.AssignedService.remove()">
                                     <i class="fa fa-fw fa-minus"></i> Удалить
                                 </a>
@@ -78,7 +78,7 @@
                             <i class="fa fa-fw fa-bars"></i> <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li ng-class="{'disabled': selSrv.state._id!='new'}">
+                            <li access="patient:service:delete" ng-class="{'disabled': selSrv.state._id!='new'}">
                                 <a href ng-click="ServiceHelper.AssignedService.remove(selSrv)">
                                     <i class="fa fa-fw fa-minus"></i> Удалить
                                 </a>
@@ -88,7 +88,8 @@
                                     <i class="fa fa-fw fa-search"></i> Дополнительная информация
                                 </a>
                             </li>
-                            <li ng-class="{'disabled': selSrv.state._id=='removed'}">
+                            <li access="patient:service:results:fill"
+                                ng-class="{'disabled': selSrv.state._id=='removed'}">
                                 <a href ng-click="openResult(selSrv)">
                                     <i class="fa fa-fw fa-sticky-note"></i> Результат
                                 </a>

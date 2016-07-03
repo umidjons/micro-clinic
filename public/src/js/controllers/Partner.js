@@ -2,7 +2,7 @@
     'use strict';
 
     angular.module('MyClinic')
-        .controller('PartnerCtrl', function ($scope, $state, $stateParams, Modal, Partner, State, Setting) {
+        .controller('PartnerCtrl', function ($scope, $state, $stateParams, Modal, Partner, State, Setting, Auth) {
             $scope.states = State.query();
 
             if ($stateParams.id) {
@@ -20,7 +20,10 @@
                 Modal.confirm({
                     okAction: function (modal) {
                         if ($scope.partner._id) {
-                            $scope.partner.$update(function (resp) {
+                            if (!Auth.hasAccess('partner:edit'))
+                                return;
+
+                            Partner.update($scope.partner, function (resp) {
                                 // close confirmation window
                                 modal.hide();
 
@@ -33,7 +36,10 @@
                                 }
                             });
                         } else {
-                            $scope.partner.$save(function (resp) {
+                            if (!Auth.hasAccess('partner:create'))
+                                return;
+
+                            Partner.save($scope.partner, function (resp) {
                                 // close confirmation window
                                 modal.hide();
                                 if (resp.partnerId) {
@@ -46,17 +52,20 @@
             };
 
         })
-        .controller('PartnersCtrl', function ($scope, Modal, Partner) {
+        .controller('PartnersCtrl', function ($scope, Modal, Partner, Auth) {
             $scope.reloadPage = function () {
                 $scope.partners = Partner.query();
             };
 
             $scope.deletePartner = function (partner) {
+                if (!Auth.hasAccess('partner:delete'))
+                    return;
+
                 Modal.confirm({
                     content: 'Удалить партнёра?',
                     okAction: function (modal) {
                         if (partner) {
-                            partner.$delete(function (resp) {
+                            Partner.delete({}, {_id: partner._id}, function (resp) {
                                 // close confirmation window
                                 modal.hide();
 
@@ -76,14 +85,18 @@
                 $scope.partner = partner;
             });
         })
-        .controller('PartnerInterestCtrl', function ($scope, Partner) {
+        .controller('PartnerInterestCtrl', function ($scope, $stateParams, Partner) {
             $scope.period = {
                 start: Date.create('the beginning of this month'),
                 end: Date.create('the end of this month')
             };
 
             $scope.refresh = function () {
-                $scope.records = Partner.interests({period: $scope.period});
+                let params = {period: $scope.period};
+                if ($stateParams.id) {
+                    params.partnerId = $stateParams.id;
+                }
+                $scope.records = Partner.interests(params);
             };
 
             $scope.resetSearch = function () {

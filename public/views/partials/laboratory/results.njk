@@ -64,7 +64,8 @@
     <div class="col-sm-12">
         <div class="form-group text-right">
             <div class="col-sm-6">
-                <button ng-click="Printer.print()"
+                <button access="patient:service:results:print"
+                        ng-click="Printer.print()"
                         ng-disabled="Printer.forPrint().length == 0"
                         title="Распечатать результаты выделенных услуг"
                         class="btn btn-info">

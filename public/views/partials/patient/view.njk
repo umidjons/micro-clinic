@@ -1,7 +1,9 @@
 <h3>
     [ID: {{ patient.code }}] {{ patient.lastName }} {{ patient.firstName }} {{ patient.middleName }}
-    <a ui-sref="patientEdit({id: patient._id})" title="Редактировать"><i class="fa fa-fw fa-edit"></i></a>
-    <a ui-sref="laboratoryAllResults({id: patient._id})" title="Результаты анализов">
+    <a access="patient:edit" ui-sref="patientEdit({id: patient._id})" title="Редактировать">
+        <i class="fa fa-fw fa-edit"></i>
+    </a>
+    <a access="patient:service:results" ui-sref="laboratoryAllResults({id: patient._id})" title="Результаты анализов">
         <i class="fa fa-fw fa-paperclip"></i>
     </a>
 </h3>

@@ -52,18 +52,24 @@ PartnerSchema.statics.incCode = function (cb) {
     });
 };
 
-PartnerSchema.statics.interests = function (startDate, endDate, cb) {
+PartnerSchema.statics.interests = function (startDate, endDate, partnerId, cb) {
     var period = F.normalizePeriod(startDate, endDate);
 
     debug(F.inspect(period, 'Period to get partners interests:', true));
 
+    let cond = {
+        'partner': {$exists: true},
+        'pays.created': {$gte: period.start, $lte: period.end}
+    };
+
+    if (partnerId) {
+        cond['partner._id'] = mongoose.Types.ObjectId(partnerId);
+    }
+
     models.PatientService.aggregate([
         //db.patientservices.aggregate([
         {
-            $match: {
-                'partner': {$exists: true},
-                'pays.created': {$gte: period.start, $lte: period.end}
-            }
+            $match: cond
         },
         {
             $unwind: '$pays'

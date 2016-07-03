@@ -41,7 +41,9 @@ router
             return Msg.sendError(res, 'Неправильный период!');
         }
 
-        models.Partner.interests(req.body.period.start, req.body.period.end, function (err, records) {
+        let partnerId = req.body.partnerId;
+
+        models.Partner.interests(req.body.period.start, req.body.period.end, partnerId, function (err, records) {
             if (err) {
                 return Msg.sendError(res, err);
             }
