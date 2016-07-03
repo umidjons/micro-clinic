@@ -16,7 +16,7 @@
                             <p class="form-control-static bold text-success">{{ Pay.fullName }}</p>
                         </div>
 
-                        <div class="form-group">
+                        <div access="cash:discount" class="form-group">
                             <label class="req">Скидка</label>
                             <div class="input-group">
                                 <input ng-model="Pay.discount.amount"
@@ -43,7 +43,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
+                        <div access="cash:discount" class="form-group">
                             <label ng-class="{'req': Pay.discount.amount > 0}">Причина</label>
                             <textarea ng-model="Pay.discount.note" class="form-control" maxlength="200"
                                       ng-required="Pay.discount.amount > 0">
@@ -60,7 +60,7 @@
                         </div>
 
                         <div ng-if="!Pay.isByCompany" class="form-group">
-                            <label class="req">Общая сумма</label>
+                            <label class="req">На оплату</label>
                             <input ng-model="Pay.total" ng-change="Pay.recalc()"
                                    class="form-control"
                                    type="number" min="0" ng-max="Pay.totalMax" required>

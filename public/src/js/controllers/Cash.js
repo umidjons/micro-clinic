@@ -2,7 +2,7 @@
     'use strict';
 
     angular.module('MyClinic')
-        .controller('CashListCtrl', function ($scope, $aside, $state, Cash, PayType, Modal, Branch) {
+        .controller('CashListCtrl', function ($scope, $aside, $state, Cash, PayType, Modal, Branch, Auth) {
             $scope.payTypes = PayType.query();
             $scope.records = [];
             $scope.branches = Branch.query();
@@ -41,6 +41,8 @@
             $scope.reloadPage();
 
             $scope.startPay = function (patientService) {
+                if (!Auth.hasAccess('cash:pay'))
+                    return;
 
                 // create and show aside, also keep it in a property
                 let asidePay = $aside({
@@ -358,7 +360,7 @@
 
             init();
         })
-        .controller('CashRegCtrl', function ($scope, $filter, $q, $state, $aside, Msg, Cash, Modal, Branch) {
+        .controller('CashRegCtrl', function ($scope, $filter, $q, $state, $aside, Msg, Cash, Modal, Branch, Auth) {
             $scope.branches = Branch.query();
 
             $scope.filter = {
@@ -456,6 +458,9 @@
             };
 
             $scope.refund = function (pay) {
+                if (!Auth.hasAccess('cash:cancel'))
+                    return;
+
                 $scope.details(pay).then(function (pay) {
                     // check each service state for this pay
                     let canBeRefunded = true;

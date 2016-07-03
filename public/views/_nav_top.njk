@@ -25,25 +25,19 @@
                 </li>
 
                 <li access="patient:list">
-                    <a ui-sref="patientList" title="Пациенты"><i class="fa fa-fw fa-list"></i></a>
+                    <a ui-sref="patientList" title="Пациенты"><i class="fa fa-fw fa-users"></i></a>
                 </li>
 
                 <li access="laboratory">
                     <a ui-sref="laboratory" title="Лаборатория"><i class="fa fa-fw fa-flask"></i></a>
                 </li>
 
-                <li access="cash" class="dropdown">
-                    <a href class="dropdown-toggle" data-toggle="dropdown"
-                       role="button" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-fw fa-usd"></i> Касса <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li access="cash:pay">
-                            <a ui-sref="cashList"><i class="fa fa-fw fa-credit-card"></i> Касса</a>
-                        </li>
-                        <li access="cash:registry">
-                            <a ui-sref="cashRegistry"><i class="fa fa-fw fa-archive"></i> Реестр оплат</a>
-                        </li>
-                    </ul>
+                <li access="cash:pay">
+                    <a ui-sref="cashList" title="Касса"><i class="fa fa-fw fa-usd"></i></a>
+                </li>
+
+                <li access="cash:registry">
+                    <a ui-sref="cashRegistry" title="Реестр оплат"><i class="fa fa-fw fa-archive"></i></a>
                 </li>
 
                 <li access="report" class="dropdown">

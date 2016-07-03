@@ -47,17 +47,19 @@
     </form>
 </div>
 
-<div class="col-sm-12">
-    <button ng-click="Filter.by(undefined)"
-            class="btn btn-xs btn-default"
-            ng-class="{'active': Filter.branch == undefined}">Все филиалы
-    </button>
-    <button ng-repeat="b in branches"
-            ng-click="Filter.by(b)"
-            class="btn btn-xs btn-default"
-            ng-class="{'active': Filter.branch.shortTitle == b.shortTitle}">
-        {{ b.shortTitle }}
-    </button>
+<div access="cash:branch:change" class="row">
+    <div class="col-sm-12">
+        <button ng-click="Filter.by(undefined)"
+                class="btn btn-xs btn-default"
+                ng-class="{'active': Filter.branch == undefined}">Все филиалы
+        </button>
+        <button ng-repeat="b in branches"
+                ng-click="Filter.by(b)"
+                class="btn btn-xs btn-default"
+                ng-class="{'active': Filter.branch.shortTitle == b.shortTitle}">
+            {{ b.shortTitle }}
+        </button>
+    </div>
 </div>
 
 <table class="table table-bordered table-striped table-condensed">

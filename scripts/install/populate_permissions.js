@@ -52,12 +52,20 @@ mongoose.connection.once('open', function () {
             title: 'Касса: Реестр оплат'
         },
         {
+            _id: 'cash:registry:branch:change',
+            title: 'Касса: Реестр оплат / Выбор филиала'
+        },
+        {
             _id: 'cash:cancel',
             title: 'Касса: Отменить оплаты'
         },
         {
             _id: 'cash:discount',
             title: 'Касса: Скидки'
+        },
+        {
+            _id: 'cash:branch:change',
+            title: 'Касса: Выбор филиала'
         },
         {
             _id: 'patient:list',

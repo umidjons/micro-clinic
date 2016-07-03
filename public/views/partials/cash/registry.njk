@@ -4,17 +4,6 @@
 
 <h1>Реестр оплат</h1>
 
-<button ng-click="filter.by(undefined)"
-        class="btn btn-xs btn-default"
-        ng-class="{'active': filter.branch == undefined}">Все филиалы
-</button>
-<button ng-repeat="b in branches"
-        ng-click="filter.by(b)"
-        class="btn btn-xs btn-default"
-        ng-class="{'active': filter.branch.shortTitle == b.shortTitle}">
-    {{ b.shortTitle }}
-</button>
-
 <div class="col-sm-4">
     <form class="form-horizontal" novalidate>
         <div class="form-group">
@@ -43,6 +32,21 @@
             </div>
         </div>
     </form>
+</div>
+
+<div access="cash:registry:branch:change" class="row">
+    <div class="col-sm-12">
+        <button ng-click="filter.by(undefined)"
+                class="btn btn-xs btn-default"
+                ng-class="{'active': filter.branch == undefined}">Все филиалы
+        </button>
+        <button ng-repeat="b in branches"
+                ng-click="filter.by(b)"
+                class="btn btn-xs btn-default"
+                ng-class="{'active': filter.branch.shortTitle == b.shortTitle}">
+            {{ b.shortTitle }}
+        </button>
+    </div>
 </div>
 
 <table class="table table-bordered table-striped table-condensed">
@@ -115,7 +119,8 @@
                     class="btn btn-xs btn-default">
                 <i class="fa fa-fw fa-print"></i>
             </button>
-            <button ng-if="!rec.isRefund && rec.payState._id=='payed'"
+            <button access="cash:cancel"
+                    ng-if="!rec.isRefund && rec.payState._id=='payed'"
                     ng-click="refund(rec)"
                     title="Возврат"
                     class="btn btn-xs btn-danger">
