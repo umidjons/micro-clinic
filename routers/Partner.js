@@ -119,18 +119,33 @@ router
             Msg.sendSuccess(res, 'Данные успешно сохранены.');
         });
     })
-    .delete('/:id', function (req, res) {
-        if (!models.User.can(req.user, 'partner:delete')) {
-            return Msg.sendError(res, 'Доступ запрещен.');
-        }
-
-        req.partner.remove(function (err) {
-            if (err) {
-                return Msg.sendError(res, err.message);
+    .delete('/:id',
+        function (req, res, next) {
+            if (!models.User.can(req.user, 'partner:delete')) {
+                return Msg.sendError(res, 'Доступ запрещен.');
             }
 
-            Msg.sendSuccess(res, 'Запись удален!');
-        });
-    });
+            models.PatientService.count({'partner._id': req.partner._id}, function (err, count) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+
+                if (count > 0) {
+                    return Msg.sendError(res, 'Партнёр используются, его нельзя удалить.');
+                }
+
+                next();
+            });
+        },
+        function (req, res) {
+            req.partner.remove(function (err) {
+                if (err) {
+                    return Msg.sendError(res, err.message);
+                }
+
+                Msg.sendSuccess(res, 'Запись удален!');
+            });
+        }
+    );
 
 module.exports = router;

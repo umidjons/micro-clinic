@@ -83,19 +83,151 @@ router
             Msg.sendSuccess(res, 'Данные успешно сохранены.');
         });
     })
-    .delete('/:id', function (req, res) {
-        if (!models.User.can(req.user, 'user:delete')) {
-            return Msg.sendError(res, 'Доступ запрещен.');
-        }
-
-        // req.userObj contains user object retrieved via param(id) handler
-        req.userObj.remove(function (err) {
-            if (err) {
-                return Msg.sendError(res, err.message);
+    .delete('/:id',
+        function (req, res, next) {
+            if (!models.User.can(req.user, 'user:delete')) {
+                return Msg.sendError(res, 'Доступ запрещен.');
             }
 
-            Msg.sendSuccess(res, 'Запись удален!');
-        });
-    });
+            models.Branch.count({user: req.userObj._id}, function (err, count) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+
+                if (count > 0) {
+                    return Msg.sendError(res, 'У пользователя имеется активность, её нельзя удалить.');
+                }
+
+                next();
+            });
+        },
+        function (req, res, next) {
+            models.Company.count({user: req.userObj._id}, function (err, count) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+
+                if (count > 0) {
+                    return Msg.sendError(res, 'У пользователя имеется активность, её нельзя удалить.');
+                }
+
+                next();
+            });
+        },
+        function (req, res, next) {
+            models.Company.count({'pays.user': req.userObj._id}, function (err, count) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+
+                if (count > 0) {
+                    return Msg.sendError(res, 'У пользователя имеется активность, её нельзя удалить.');
+                }
+
+                next();
+            });
+        },
+        function (req, res, next) {
+            models.Partner.count({user: req.userObj._id}, function (err, count) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+
+                if (count > 0) {
+                    return Msg.sendError(res, 'У пользователя имеется активность, её нельзя удалить.');
+                }
+
+                next();
+            });
+        },
+        function (req, res, next) {
+            models.Patient.count({user: req.userObj._id}, function (err, count) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+
+                if (count > 0) {
+                    return Msg.sendError(res, 'У пользователя имеется активность, её нельзя удалить.');
+                }
+
+                next();
+            });
+        },
+        function (req, res, next) {
+            models.PatientService.count({user: req.userObj._id}, function (err, count) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+
+                if (count > 0) {
+                    return Msg.sendError(res, 'У пользователя имеется активность, её нельзя удалить.');
+                }
+
+                next();
+            });
+        },
+        function (req, res, next) {
+            models.PatientService.count({'pays.user': req.userObj._id}, function (err, count) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+
+                if (count > 0) {
+                    return Msg.sendError(res, 'У пользователя имеется активность, её нельзя удалить.');
+                }
+
+                next();
+            });
+        },
+        function (req, res, next) {
+            models.Service.count({user: req.userObj._id}, function (err, count) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+
+                if (count > 0) {
+                    return Msg.sendError(res, 'У пользователя имеется активность, её нельзя удалить.');
+                }
+
+                next();
+            });
+        },
+        function (req, res, next) {
+            models.ServiceCategory.count({user: req.userObj._id}, function (err, count) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+
+                if (count > 0) {
+                    return Msg.sendError(res, 'У пользователя имеется активность, её нельзя удалить.');
+                }
+
+                next();
+            });
+        },
+        function (req, res, next) {
+            models.User.count({user: req.userObj._id}, function (err, count) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+
+                if (count > 0) {
+                    return Msg.sendError(res, 'У пользователя имеется активность, её нельзя удалить.');
+                }
+
+                next();
+            });
+        },
+        function (req, res) {
+            // req.userObj contains user object retrieved via param(id) handler
+            req.userObj.remove(function (err) {
+                if (err) {
+                    return Msg.sendError(res, err.message);
+                }
+
+                Msg.sendSuccess(res, 'Запись удален!');
+            });
+        }
+    );
 
 module.exports = router;

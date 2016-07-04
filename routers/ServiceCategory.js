@@ -96,18 +96,33 @@ router
             Msg.sendSuccess(res, 'Данные успешно сохранены.', serviceCategory);
         });
     })
-    .delete('/:id', function (req, res) {
-        if (!models.User.can(req.user, 'category:delete')) {
-            return Msg.sendError(res, 'Доступ запрещен.');
-        }
-
-        req.serviceCategory.remove(function (err) {
-            if (err) {
-                return Msg.sendError(res, err.message);
+    .delete('/:id',
+        function (req, res, next) {
+            if (!models.User.can(req.user, 'category:delete')) {
+                return Msg.sendError(res, 'Доступ запрещен.');
             }
 
-            Msg.sendSuccess(res, 'Запись удален!');
-        });
-    });
+            models.Service.count({'category._id': req.serviceCategory._id}, function (err, count) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+
+                if (count > 0) {
+                    return Msg.sendError(res, 'Категория используются, её нельзя удалить.');
+                }
+
+                next();
+            });
+        },
+        function (req, res) {
+            req.serviceCategory.remove(function (err) {
+                if (err) {
+                    return Msg.sendError(res, err.message);
+                }
+
+                Msg.sendSuccess(res, 'Запись удален!');
+            });
+        }
+    );
 
 module.exports = router;

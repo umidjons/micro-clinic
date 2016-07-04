@@ -160,12 +160,22 @@ router
     })
     .delete('/:id',
         function (req, res, next) {
-            //todo: check, is there any patient service with this company
             if (!models.User.can(req.user, 'company:delete')) {
                 return Msg.sendError(res, 'Доступ запрещен.');
             }
 
-            next();
+            // check, is there any patient service with this company
+            models.PatientService.count({'company._id': req.company._id}, function (err, count) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+
+                if (count > 0) {
+                    return Msg.sendError(res, 'Организация используются, её нельзя удалить');
+                }
+
+                next();
+            });
         },
         function (req, res) {
             req.company.remove(function (err) {
@@ -175,6 +185,7 @@ router
 
                 Msg.sendSuccess(res, 'Запись удален!');
             });
-        });
+        }
+    );
 
 module.exports = router;
