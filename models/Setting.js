@@ -14,6 +14,8 @@ var SettingSchema = mongoose.Schema({
     order: {type: Number, default: 0}
 });
 
+SettingSchema.index({_id: 1}, {unique: true});
+
 /**
  * Converts settings object into setting models and saves all models.
  * @param {object} settingsObject settings object, keys are model's id, values are model's value.

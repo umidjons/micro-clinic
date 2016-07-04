@@ -12,6 +12,8 @@ var ServiceCategorySchema = mongoose.Schema({
     user: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User'}
 });
 
+ServiceCategorySchema.index({_id: 1}, {unique: true});
+
 var ServiceCategory = mongoose.model('ServiceCategory', ServiceCategorySchema);
 
 module.exports.ServiceCategorySchema = ServiceCategorySchema;

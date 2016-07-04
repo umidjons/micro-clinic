@@ -5,6 +5,8 @@ var ResidentSchema = mongoose.Schema({
     title: String
 });
 
+ResidentSchema.index({_id: 1}, {unique: true});
+
 var Resident = mongoose.model('Resident', ResidentSchema);
 
 module.exports.ResidentSchema = ResidentSchema;

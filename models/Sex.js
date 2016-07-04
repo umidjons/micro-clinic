@@ -5,6 +5,8 @@ var SexSchema = mongoose.Schema({
     title: String
 });
 
+SexSchema.index({_id: 1}, {unique: true});
+
 var Sex = mongoose.model('Sex', SexSchema);
 
 module.exports.SexSchema = SexSchema;

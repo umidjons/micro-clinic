@@ -74,18 +74,58 @@ router
             Msg.sendSuccess(res, 'Данные успешно сохранены.');
         });
     })
-    .delete('/:id', function (req, res) {
-        if (!models.User.can(req.user, 'branch:delete')) {
-            return Msg.sendError(res, 'Доступ запрещен.');
-        }
-
-        req.branch.remove(function (err) {
-            if (err) {
-                return Msg.sendError(res, err.message);
+    .delete('/:id',
+        function (req, res, next) {
+            if (!models.User.can(req.user, 'branch:delete')) {
+                return Msg.sendError(res, 'Доступ запрещен.');
             }
 
-            Msg.sendSuccess(res, 'Запись удален!');
+            // Is branch used in Patient model?
+            models.Patient.count({branch: req.branch._id}, function (err, count) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+                if (count > 0) {
+                    return Msg.sendError(res, 'Филиал используются, его нельзя удалить');
+                }
+
+                next();
+            });
+        },
+        function (req, res, next) {
+            // Is branch used in PatientService model?
+            models.PatientService.count({branch: req.branch._id}, function (err, count) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+                if (count > 0) {
+                    return Msg.sendError(res, 'Филиал используются, его нельзя удалить');
+                }
+
+                next();
+            });
+        },
+        function (req, res, next) {
+            // Is branch used in User model?
+            models.User.count({'branch._id': req.branch._id}, function (err, count) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+                if (count > 0) {
+                    return Msg.sendError(res, 'Филиал используются, его нельзя удалить');
+                }
+
+                next();
+            });
+        },
+        function (req, res) {
+            req.branch.remove(function (err) {
+                if (err) {
+                    return Msg.sendError(res, err.message);
+                }
+
+                Msg.sendSuccess(res, 'Запись удален!');
+            });
         });
-    });
 
 module.exports = router;

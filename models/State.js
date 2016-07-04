@@ -5,6 +5,8 @@ var StateSchema = mongoose.Schema({
     title: String
 });
 
+StateSchema.index({_id: 1}, {unique: true});
+
 var State = mongoose.model('State', StateSchema);
 
 module.exports.StateSchema = StateSchema;
