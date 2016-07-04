@@ -19,6 +19,10 @@ router
         });
     })
     .post('/interests/details/:partnerCode', function (req, res) {
+        if (!models.User.can(req.user, 'report:partnerInterests')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         if (!req.body.period || !req.body.period.start || !req.body.period.end) {
             return Msg.sendError(res, 'Неправильный период!');
         }
@@ -37,6 +41,10 @@ router
         );
     })
     .post('/interests', function (req, res) {
+        if (!models.User.can(req.user, 'report:partnerInterests')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         if (!req.body.period || !req.body.period.start || !req.body.period.end) {
             return Msg.sendError(res, 'Неправильный период!');
         }
@@ -68,6 +76,9 @@ router
             });
     })
     .post('/', function (req, res) {
+        if (!models.User.can(req.user, 'partner:create')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
 
         // create model and fill fields from request body
         let newPartner = new models.Partner(req.body);
@@ -95,6 +106,10 @@ router
         });
     })
     .put('/:id', function (req, res) {
+        if (!models.User.can(req.user, 'partner:edit')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         req.partner = Object.assign(req.partner, req.body);
         req.partner.save(function (err) {
             if (err) {
@@ -105,6 +120,10 @@ router
         });
     })
     .delete('/:id', function (req, res) {
+        if (!models.User.can(req.user, 'partner:delete')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         req.partner.remove(function (err) {
             if (err) {
                 return Msg.sendError(res, err.message);

@@ -23,6 +23,10 @@ router
             });
     })
     .post('/details/:id', function (req, res) {
+        if (!models.User.can(req.user, 'company:details')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         if (!req.body.start || !req.body.end) {
             return Msg.sendError(res, 'Неправильный период!');
         }
@@ -36,6 +40,10 @@ router
         });
     })
     .post('/pay/:id', function (req, res) {
+        if (!models.User.can(req.user, 'company:pay')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         // check pay amount
         if (req.body.amount <= 0) {
             return Msg.sendError(res, 'Неправильная сумма.');
@@ -70,6 +78,10 @@ router
         });
     })
     .delete('/pay/:id/:payId', function (req, res) {
+        if (!models.User.can(req.user, 'company:pay:cancel')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         // find and modify pay state
         let pay = req.company.pays.id(req.params.payId);
         pay.amount = -pay.amount; // negate sign
@@ -112,6 +124,10 @@ router
             });
     })
     .post('/', function (req, res) {
+        if (!models.User.can(req.user, 'company:create')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         // create model and fill fields from request body
         let newCompany = new models.Company(req.body);
         newCompany.user = req.user._id;
@@ -128,6 +144,10 @@ router
         });
     })
     .put('/:id', function (req, res) {
+        if (!models.User.can(req.user, 'company:edit')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         req.company = Object.assign(req.company, req.body);
 
         req.company.save(function (err) {
@@ -141,6 +161,10 @@ router
     .delete('/:id',
         function (req, res, next) {
             //todo: check, is there any patient service with this company
+            if (!models.User.can(req.user, 'company:delete')) {
+                return Msg.sendError(res, 'Доступ запрещен.');
+            }
+
             next();
         },
         function (req, res) {

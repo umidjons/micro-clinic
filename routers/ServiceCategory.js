@@ -59,6 +59,10 @@ router
             });
     })
     .post('/', function (req, res) {
+        if (!models.User.can(req.user, 'category:create')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         // create model and fill fields from request body
         let newServiceCat = new models.ServiceCategory(req.body);
 
@@ -78,6 +82,10 @@ router
         });
     })
     .put('/:id', function (req, res) {
+        if (!models.User.can(req.user, 'category:edit')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         req.serviceCategory = Object.assign(req.serviceCategory, req.body);
 
         req.serviceCategory.save(function (err, serviceCategory) {
@@ -89,6 +97,10 @@ router
         });
     })
     .delete('/:id', function (req, res) {
+        if (!models.User.can(req.user, 'category:delete')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         req.serviceCategory.remove(function (err) {
             if (err) {
                 return Msg.sendError(res, err.message);

@@ -85,6 +85,10 @@ router
             });
     })
     .post('/clone', function (req, res) {
+        if (!models.User.can(req.user, 'service:create')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         var srv = req.body;
 
         // remove unnecessary _id
@@ -114,6 +118,10 @@ router
         });
     })
     .post('/', function (req, res) {
+        if (!models.User.can(req.user, 'service:create')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         // create model and fill fields from request body
         let newService = new models.Service(req.body);
         newService.created = new Date();
@@ -134,6 +142,10 @@ router
         });
     })
     .put('/:id', function (req, res) {
+        if (!models.User.can(req.user, 'service:edit')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         req.service = Object.assign(req.service, req.body);
 
         // delete category & subcategory subcategories
@@ -149,6 +161,10 @@ router
     })
     .delete('/:id',
         function (req, res, next) {
+            if (!models.User.can(req.user, 'service:delete')) {
+                return Msg.sendError(res, 'Доступ запрещен.');
+            }
+
             req.service.isUsed(function (err, isUsed) {
                 if (err) {
                     return Msg.sendError(res, err);

@@ -106,6 +106,10 @@ router
         }
     })
     .get('/laboratory/export', function (req, res) {
+        if (!models.User.can(req.user, 'laboratory:export')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         let border = {
             top: {style: 'thin', color: {rgb: '00000000'}},
             bottom: {style: 'thin', color: {rgb: '00000000'}},
@@ -267,10 +271,19 @@ router
         Msg.sendSuccess(res, 'Данные успешно экспортированы.', {content: report.toString('base64')});
     })
     .get('/laboratory/query', function (req, res) {
+        if (!models.User.can(req.user, 'laboratory')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         // just return results
         Msg.sendSuccess(res, '', req.records);
     })
     .put('/laboratory/save-result/:id', function (req, res) {
+        if (!models.User.can(req.user, 'patient:service:results:fill')
+            && !models.User.can(req.user, 'patient:service:results:complete')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         // only result and state can be changed
         req.patientService.result = req.body.result;
         req.patientService.state = req.body.state;
@@ -331,6 +344,10 @@ router
     })
     .post('/print/:patientId',
         function (req, res, next) {
+            if (!models.User.can(req.user, 'patient:service:results:print')) {
+                return Msg.sendError(res, 'Доступ запрещен.');
+            }
+
             // find patient
             models.Patient.findById(req.params.patientId, function (err, patient) {
                 if (err) {
@@ -446,6 +463,10 @@ router
     })
     .post('/',
         function (req, res, next) {
+            if (!models.User.can(req.user, 'patient:service:add')) {
+                return Msg.sendError(res, 'Доступ запрещен.');
+            }
+
             // middleware to prepare patient services for save
             if (!req.body.patientId) {
                 return Msg.sendError(res, 'Пациент не указан.');
@@ -471,6 +492,10 @@ router
 
                 // set discount's state
                 if (srv.discount && srv.discount.type) {
+                    if (!models.User.can(req.user, 'patient:service:discount')) {
+                        return Msg.sendError(res, 'Доступ запрещен.');
+                    }
+
                     srv.discount.state = {_id: 'new', title: 'Новый'};
                 }
 
@@ -517,6 +542,10 @@ router
     })
     .post('/delete-bulk',
         function (req, res, next) {
+            if (!models.User.can(req.user, 'patient:service:delete')) {
+                return Msg.sendError(res, 'Доступ запрещен.');
+            }
+
             debug(`STEP 1. Checking patient services states, pays, results before bulk deleting. IDS: ${req.body.ids}`);
 
             models.PatientService.find({_id: {$in: req.body.ids}})
@@ -636,6 +665,10 @@ router
     )
     .delete('/:id',
         function (req, res, next) {
+            if (!models.User.can(req.user, 'patient:service:delete')) {
+                return Msg.sendError(res, 'Доступ запрещен.');
+            }
+
             debug(`STEP 1. Checking patient service state, pays, results before deleting. id=${req.params.id}`);
 
             // by default mark as removable

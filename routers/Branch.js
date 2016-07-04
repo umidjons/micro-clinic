@@ -40,6 +40,10 @@ router
             });
     })
     .post('/', function (req, res) {
+        if (!models.User.can(req.user, 'branch:create')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         // create model and fill fields from request body
         let newBranch = new models.Branch(req.body);
         newBranch.user = req.user._id;
@@ -56,6 +60,10 @@ router
         });
     })
     .put('/:id', function (req, res) {
+        if (!models.User.can(req.user, 'branch:edit')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         req.branch = Object.assign(req.branch, req.body);
 
         req.branch.save(function (err) {
@@ -67,6 +75,10 @@ router
         });
     })
     .delete('/:id', function (req, res) {
+        if (!models.User.can(req.user, 'branch:delete')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         req.branch.remove(function (err) {
             if (err) {
                 return Msg.sendError(res, err.message);

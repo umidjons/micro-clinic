@@ -85,13 +85,13 @@ UserSchema.statics.can = function (user, operation) {
         return false;
     }
 
-    if (!user || Array.isArray(user.permissions)) {
+    if (!user || !user.permissions || typeof user.permissions !== 'object') {
         debug('User not found or no permissions available for that user yet.');
         return false;
     }
 
     debug('Checking permissions...');
-    return !!user.permissions[operation];
+    return user.permissions[operation] === true;
 };
 
 UserSchema.statics.sortPermissions = function (userJson) {

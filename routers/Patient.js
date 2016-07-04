@@ -19,6 +19,10 @@ router
     })
     .post('/search',
         function (req, res, next) {
+            if (!models.User.can(req.user, 'search')) {
+                return Msg.sendError(res, 'Доступ запрещен.');
+            }
+
             debug(`Search params: ${req.body}`);
 
             if (!(req.body.lastName && req.body.firstName) && !req.body.code) {
@@ -153,6 +157,10 @@ router
         }
     )
     .post('/', function (req, res) {
+        if (!models.User.can(req.user, 'patient:create')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         debug(`Request body: ${req.body}`);
 
         // create model and fill fields from request body
@@ -191,6 +199,10 @@ router
         });
     })
     .put('/:id', function (req, res) {
+        if (!models.User.can(req.user, 'patient:edit')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         debug(`Updating patient with id: ${req.params.id}`);
 
         // merge existing data with modified data
@@ -206,6 +218,10 @@ router
     })
     .delete('/:id',
         function (req, res, next) {
+            if (!models.User.can(req.user, 'patient:delete')) {
+                return Msg.sendError(res, 'Доступ запрещен.');
+            }
+
             debug(`Checking patient services before deleting. Patient id: ${req.params.id}`);
             models.PatientService.count({patientId: req.params.id, 'pays.0': {$exists: true}})
                 .exec(function (err, srvCount) {

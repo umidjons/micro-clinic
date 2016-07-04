@@ -36,6 +36,10 @@ router
             });
     })
     .post('/', function (req, res) {
+        if (!models.User.can(req.user, 'user:create')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         let user = models.User.sortPermissions(req.body);
 
         // create model and fill fields from request body
@@ -55,6 +59,10 @@ router
         });
     })
     .put('/:id', function (req, res) {
+        if (!models.User.can(req.user, 'user:edit')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         // req.userObj contains user object retrieved via param(id) handler
 
         let user = models.User.sortPermissions(req.body);
@@ -76,6 +84,10 @@ router
         });
     })
     .delete('/:id', function (req, res) {
+        if (!models.User.can(req.user, 'user:delete')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         // req.userObj contains user object retrieved via param(id) handler
         req.userObj.remove(function (err) {
             if (err) {

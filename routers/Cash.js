@@ -19,6 +19,10 @@ router
         });
     })
     .post('/registry', function (req, res) {
+        if (!models.User.can(req.user, 'cash:registry')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         if (!req.body.startDate || !req.body.endDate) {
             return Msg.sendError(res, 'Неправильный период!');
         }
@@ -35,6 +39,10 @@ router
             });
     })
     .post('/registry/pay-details/:patientId', function (req, res) {
+        if (!models.User.can(req.user, 'cash:registry')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         if (!req.body.payTime) {
             return Msg.sendError(res, 'Неправильная время оплаты!');
         }
@@ -48,6 +56,10 @@ router
         });
     })
     .post('/refund', function (req, res) {
+        if (!models.User.can(req.user, 'cash:cancel')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         if (!req.body.patientId || !req.body.payTime || !req.body.payAmount) {
             return Msg.sendError(res, 'Указаны неправильные параметры');
         }
@@ -145,6 +157,10 @@ router
             });
     })
     .post('/pay-all', function (req, res) {
+        if (!models.User.can(req.user, 'cash:pay')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         var payInfo = req.body.pay;
 
         debug('Paying all patient services.' + F.inspect(payInfo, 'Pay Info', true));
@@ -158,6 +174,10 @@ router
         });
     })
     .post('/', function (req, res, next) {
+        if (!models.User.can(req.user, 'cash:pay')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         var patSrvList = req.body.pendingServices;
         models.Cash.preparePays(req.user, patSrvList, function (err) {
             if (err) {

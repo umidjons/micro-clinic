@@ -37,6 +37,10 @@ router
             });
     })
     .post('/', function (req, res) {
+        if (!models.User.can(req.user, 'admin:settings')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
         debug(F.inspect(req.body, 'Settings object from request body:', true));
 
         models.Setting.saveFromObject(req.body, function (err) {
