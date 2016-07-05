@@ -4,8 +4,13 @@ var router = require('express').Router();
 var debug = require('debug')('myclinic:router:branch');
 var models = require('../models');
 var Msg = require('../include/Msg');
+var L = require('../include/L');
 
 router
+    .use(function (req, res, next) {
+        L.context = 'branch';
+        next();
+    })
     .param('id', function (req, res, next, id) {
         debug(`id: ${req.params.id}`);
         models.Branch.findOne({_id: req.params.id})
@@ -20,7 +25,7 @@ router
             });
     })
     .get('/:id', function (req, res) {
-        Msg.sendSuccess(res, '', req.branch, 'Branch:');
+        Msg.sendSuccess(res, '', req.branch);
     })
     .get('/', function (req, res) {
         var condition = {};
@@ -36,7 +41,7 @@ router
                     return Msg.sendError(res, err.message);
                 }
 
-                Msg.sendSuccess(res, '', branches, 'List of branches:');
+                Msg.sendSuccess(res, '', branches);
             });
     })
     .post('/', function (req, res) {

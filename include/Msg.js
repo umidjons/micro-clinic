@@ -1,5 +1,7 @@
 'use strict';
 
+var L = require('./L');
+
 const STATUS_INFO = 'info';
 const STATUS_SUCCESS = 'success';
 const STATUS_WARNING = 'warning';
@@ -70,6 +72,8 @@ class Msg {
      * @param {object} err error message text
      */
     static sendError(res, err) {
+        L.logger.error(err, L.meta(null, {data: err}));
+
         // set content-type to application/json
         res.type('json');
 
@@ -97,9 +101,17 @@ class Msg {
      * @param res HTTP Response object instance
      * @param {string} message success message text
      * @param data additional data to send
-     * @param {string} dataPrefix prefix in the console output for the additional data
+     * @param {bool} logData true - to log data
      */
-    static sendSuccess(res, message, data, dataPrefix) {
+    static sendSuccess(res, message, data, logData) {
+        let meta = {message: message};
+
+        if (logData) {
+            meta.data = data;
+        }
+
+        L.logger.info(message, L.meta(null, meta));
+
         // set content-type to application/json
         res.type('json');
 
@@ -117,7 +129,7 @@ class Msg {
 
         // if data provided, send only it in the response body
         if (data) {
-            let pfx = dataPrefix ? dataPrefix : 'Data:';
+            //let pfx = dataPrefix ? dataPrefix : 'Data:';
             //console.log(pfx, data);
             return res.json(data);
         }

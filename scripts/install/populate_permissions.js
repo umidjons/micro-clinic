@@ -152,6 +152,10 @@ mongoose.connection.once('open', function () {
             title: 'Администрирование: Параметры системы'
         },
         {
+            _id: 'admin:logs',
+            title: 'Администрирование: Протокол действий'
+        },
+        {
             _id: 'service:list',
             title: 'Услуга: Список'
         },

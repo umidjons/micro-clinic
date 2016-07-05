@@ -5,8 +5,13 @@ var debug = require('debug')('myclinic:router:cash');
 var models = require('../models');
 var Msg = require('../include/Msg');
 var F = require('../include/F');
+var L = require('../include/L');
 
 router
+    .use(function (req, res, next) {
+        L.context = 'cash';
+        next();
+    })
     .post('/pending-patients', function (req, res) {
         debug(F.inspect(req.body.branch, 'Filter pending patients by branch:', true));
 
@@ -153,7 +158,7 @@ router
                     return Msg.sendError(res, err);
                 }
 
-                Msg.sendSuccess(res, '', patientServices, 'List of patient services:');
+                Msg.sendSuccess(res, '', patientServices);
             });
     })
     .post('/pay-all', function (req, res) {

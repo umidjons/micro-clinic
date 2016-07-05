@@ -205,3 +205,8 @@ input[type=checkbox].ng-invalid {
     font-size: 10px;
     line-height: 1.3;
 }
+
+.json-formatter-row .string {
+    white-space: pre-line;
+    word-break: break-all;
+}

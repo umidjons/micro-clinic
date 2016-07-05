@@ -4,8 +4,13 @@ var router = require('express').Router();
 var debug = require('debug')('myclinic:router:service');
 var models = require('../models');
 var Msg = require('../include/Msg');
+var L = require('../include/L');
 
 router
+    .use(function (req, res, next) {
+        L.context = 'service';
+        next();
+    })
     .param('id', function (req, res, next, id) {
         debug(`param(id): ${id}`);
         models.Service.findById(id, function (err, service) {
@@ -50,12 +55,12 @@ router
                 return Msg.sendError(res, err);
             }
 
-            Msg.sendSuccess(res, '', services, 'Services with category');
+            Msg.sendSuccess(res, '', services);
         });
     })
     .get('/:id', function (req, res) {
         //req.service.populate('user', 'username lastName firstName middleName');
-        Msg.sendSuccess(res, '', req.service, 'Service:');
+        Msg.sendSuccess(res, '', req.service);
     })
     .get('/', function (req, res) {
         var light = req.query.light;
@@ -81,7 +86,7 @@ router
                     }
                 }
 
-                Msg.sendSuccess(res, '', services, 'List of services:');
+                Msg.sendSuccess(res, '', services);
             });
     })
     .post('/clone', function (req, res) {

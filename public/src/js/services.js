@@ -124,6 +124,9 @@
                 }
             };
         })
+        .factory('Log', function ($resource) {
+            return $resource('/log/:id', {id: '@_id'});
+        })
         .factory('Fields', function () {
             return {
                 value: function (field) {

@@ -6,8 +6,13 @@ var slug = require('limax');
 var models = require('../models');
 var Msg = require('../include/Msg');
 var F = require('../include/F');
+var L = require('../include/L');
 
 router
+    .use(function (req, res, next) {
+        L.context = 'serviceCategory';
+        next();
+    })
     .param('id', function (req, res, next, id) {
         models.ServiceCategory.findById(id).exec(function (err, category) {
             if (err) {
@@ -39,12 +44,12 @@ router
                 Msg.sendError(res, err.message);
             }
 
-            Msg.sendSuccess(res, '', categories, 'Categories with services:');
+            Msg.sendSuccess(res, '', categories);
         });
     })
     .get('/:id', function (req, res) {
         //req.serviceCategory.populate('user', 'username lastName firstName middleName');
-        Msg.sendSuccess(res, '', req.serviceCategory, 'Service:');
+        Msg.sendSuccess(res, '', req.serviceCategory);
     })
     .get('/', function (req, res) {
         models.ServiceCategory.find()
@@ -55,7 +60,7 @@ router
                     return Msg.sendError(res, err.message);
                 }
 
-                Msg.sendSuccess(res, '', serviceCategories, 'List of service categories:');
+                Msg.sendSuccess(res, '', serviceCategories);
             });
     })
     .post('/', function (req, res) {

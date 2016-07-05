@@ -1,7 +1,7 @@
 (function () {
     angular.module('MyClinic', ['ngAnimate', 'ngSanitize', 'ngMessages', 'ngStorage', 'angular-loading-bar',
             'ui.router', 'ui.router.state.events', 'ngResource', 'mgcrea.ngStrap', 'toaster', 'ui.select',
-            'angularUtils.directives.dirPagination', 'ui.tinymce', 'ui.sortable', 'cfp.hotkeys'])
+            'angularUtils.directives.dirPagination', 'ui.tinymce', 'ui.sortable', 'cfp.hotkeys', 'jsonFormatter'])
         .run(function ($rootScope, $http, $location, $localStorage, Auth) {
             // keep user logged in after page refresh
             if ($localStorage.currentUser) {
@@ -40,10 +40,8 @@
                 if (toState.permission && !Auth.hasAccess(toState.permission)) {
                     event.preventDefault();
                     if (fromState.name == '') {
-                        console.log('To home page!');
                         $state.go('home');
                     } else {
-                        console.log('To the previous page!');
                         $state.transitionTo(fromState, fromParams, {
                             reload: true,
                             inherit: false,
@@ -57,7 +55,7 @@
             cfpLoadingBarProvider.includeSpinner = false;
         })
         .config(function ($httpProvider) {
-            $httpProvider.interceptors.unshift(function ($q, toaster) {
+            $httpProvider.interceptors.unshift(function ($q, toaster, $location) {
                 return {
                     response: function (response) {
                         var hMsg = response.headers('X-MSG');
@@ -83,6 +81,10 @@
                         return response || $q.when(response);
                     },
                     responseError: function (response) {
+                        // if unauthorized error is detected, redirect to the login page
+                        if (response.status == 401)
+                            $location.path('/login');
+
                         return $q.reject(response);
                     }
                 };
@@ -338,6 +340,12 @@
                     templateUrl: 'partials/laboratory/results.html',
                     controller: 'LaboratoryResultsCtrl',
                     permission: 'patient:service:results'
+                })
+                .state('log', {
+                    url: '/log',
+                    templateUrl: 'partials/log/list.html',
+                    controller: 'LogsCtrl',
+                    permission: 'admin:logs'
                 });
             $urlRouterProvider.otherwise('/');
         })

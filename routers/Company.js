@@ -5,8 +5,13 @@ var debug = require('debug')('myclinic:router:company');
 var models = require('../models');
 var Msg = require('../include/Msg');
 var sugar = require('sugar');
+var L = require('../include/L');
 
 router
+    .use(function (req, res, next) {
+        L.context = 'company';
+        next();
+    })
     .param('id', function (req, res, next, id) {
         debug(`id: ${req.params.id}`);
         models.Company.findOne({_id: req.params.id})
@@ -104,7 +109,7 @@ router
         Msg.sendSuccess(res, '', req.company.pays);
     })
     .get('/:id', function (req, res) {
-        Msg.sendSuccess(res, '', req.company, 'Company:');
+        Msg.sendSuccess(res, '', req.company);
     })
     .get('/', function (req, res) {
         var condition = {};
@@ -120,7 +125,7 @@ router
                     return Msg.sendError(res, err.message);
                 }
 
-                Msg.sendSuccess(res, '', companies, 'List of companies:');
+                Msg.sendSuccess(res, '', companies);
             });
     })
     .post('/', function (req, res) {

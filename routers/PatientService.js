@@ -9,8 +9,13 @@ var F = require('../include/F');
 var async = require('async');
 var excel = require('node-excel-export');
 var _ = require('underscore');
+var L = require('../include/L');
 
 router
+    .use(function (req, res, next) {
+        L.context = 'patientService';
+        next();
+    })
     .param('id', function (req, res, next, id) {
         debug(`param(id): ${id}`);
         models.PatientService.findById(id, function (err, patSrv) {
@@ -339,7 +344,7 @@ router
                     return Msg.sendError(res, err);
                 }
 
-                Msg.sendSuccess(res, '', patientServices, 'List of patient services:');
+                Msg.sendSuccess(res, '', patientServices);
             });
     })
     .post('/print/:patientId',
@@ -443,7 +448,7 @@ router
                 if (err) {
                     return Msg.sendError(res, err);
                 }
-                Msg.sendSuccess(res, '', patSrv, 'Patient Service:');
+                Msg.sendSuccess(res, '', patSrv);
             });
     })
     .get('/for/:patientId', function (req, res) {
@@ -458,7 +463,7 @@ router
                     return Msg.sendError(res, err);
                 }
 
-                Msg.sendSuccess(res, '', patientServices, 'List of patient services:');
+                Msg.sendSuccess(res, '', patientServices);
             });
     })
     .post('/',

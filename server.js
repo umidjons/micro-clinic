@@ -14,6 +14,21 @@ var routers = require('./routers');
 var passport = require('passport');
 var models = require('./models');
 var Msg = require('./include/Msg');
+var winston = require('winston');
+require('winston-mongodb').MongoDB;
+var L = require('./include/L');
+
+// configure logger
+winston.add(winston.transports.MongoDB, {
+    db: cfg.logdb,
+    level: 'debug',
+    tryReconnect: true,
+    //handleExceptions: true,
+    //humanReadableUnhandledException: true
+});
+
+// set logger instance
+L.logger = winston;
 
 mongoose.connect(cfg.db);
 mongoose.connection.once('open', function () {
@@ -79,13 +94,20 @@ mongoose.connection.once('open', function () {
                     return Msg.sendError(res, err.message);
                 }
 
-                Msg.sendSuccess(res, '', branches, 'List of active branches:');
+                Msg.sendSuccess(res, '', branches);
             });
     });
 
     routers.Auth(app);
 
     app
+        .use(function (req, res, next) {
+            // do accessible request to the logger
+            L.req = req;
+
+            next();
+        })
+        .use('/log', routers.Log)
         .use('/user', routers.User)
         .use('/permission', routers.Permission)
         .use('/patient-service', routers.PatientService)
@@ -98,6 +120,7 @@ mongoose.connection.once('open', function () {
         .use('/company', routers.Company)
         .use('/setting', routers.Setting)
         .listen(app.get('port'), function () {
+            L.logger.info('Server started.', L.meta('server'));
             console.log(`Listening on http://localhost:${app.get('port')}...`);
         });
 });

@@ -5,8 +5,13 @@ var models = require('../models');
 var Msg = require('../include/Msg');
 var sugar = require('sugar');
 var debug = require('debug')('myclinic:router:patient');
+var L = require('../include/L');
 
 router
+    .use(function (req, res, next) {
+        L.context = 'patient';
+        next();
+    })
     .param('id', function (req, res, next, id) {
         models.Patient.findById(id, function (err, patient) {
             if (err) {
@@ -94,7 +99,7 @@ router
                 if (err) {
                     return Msg.sendError(res, err);
                 }
-                Msg.sendSuccess(res, '', patient, 'Patient:');
+                Msg.sendSuccess(res, '', patient);
             });
     })
     .get('/',
@@ -151,7 +156,7 @@ router
                         }
 
                         req.patients = patients;
-                        return Msg.sendSuccess(res, '', req.patients, 'List of patients:');
+                        return Msg.sendSuccess(res, '', req.patients);
                     });
                 });
         }

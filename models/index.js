@@ -36,3 +36,5 @@ module.exports.CompanySchema = require('./Company').CompanySchema;
 module.exports.Company = require('./Company').Company;
 module.exports.DepositSchema = require('./Company').DepositSchema;
 module.exports.Deposit = require('./Company').Deposit;
+module.exports.LogSchema = require('./Log').LogSchema;
+module.exports.Log = require('./Log').Log;

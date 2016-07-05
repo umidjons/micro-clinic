@@ -4,8 +4,13 @@ var router = require('express').Router();
 var debug = require('debug')('myclinic:router:partner');
 var models = require('../models');
 var Msg = require('../include/Msg');
+var L = require('../include/L');
 
 router
+    .use(function (req, res, next) {
+        L.context = 'partner';
+        next();
+    })
     .param('id', function (req, res, next, id) {
         debug(`param(id): ${id}`);
 
@@ -61,7 +66,7 @@ router
     })
     .get('/:id', function (req, res) {
         req.partner.populate('user', 'username lastName firstName middleName');
-        Msg.sendSuccess(res, '', req.partner, 'Partner:');
+        Msg.sendSuccess(res, '', req.partner);
     })
     .get('/', function (req, res) {
         models.Partner.find()
@@ -72,7 +77,7 @@ router
                     return Msg.sendError(res, err.message);
                 }
 
-                Msg.sendSuccess(res, '', partners, 'List of partners:');
+                Msg.sendSuccess(res, '', partners);
             });
     })
     .post('/', function (req, res) {

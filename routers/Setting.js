@@ -5,8 +5,13 @@ var debug = require('debug')('myclinic:router:setting');
 var models = require('../models');
 var Msg = require('../include/Msg');
 var F = require('../include/F');
+var L = require('../include/L');
 
 router
+    .use(function (req, res, next) {
+        L.context = 'setting';
+        next();
+    })
     .param('id', function (req, res, next, id) {
         debug(`id: ${req.params.id}`);
         models.Setting.findOne({_id: req.params.id})
@@ -20,7 +25,7 @@ router
             });
     })
     .get('/:id', function (req, res) {
-        Msg.sendSuccess(res, '', req.setting, 'Setting:');
+        Msg.sendSuccess(res, '', req.setting);
     })
     .get('/', function (req, res) {
         models.Setting
@@ -33,7 +38,7 @@ router
                 // id-s becomes keys, value-s becomes values
                 let config = F.array2object(settings, '_id', 'value');
 
-                Msg.sendSuccess(res, '', config, 'Settings object:');
+                Msg.sendSuccess(res, '', config);
             });
     })
     .post('/', function (req, res) {

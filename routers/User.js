@@ -5,8 +5,13 @@ var debug = require('debug')('myclinic:router:user');
 var models = require('../models');
 var Msg = require('../include/Msg');
 var F = require('../include/F');
+var L = require('../include/L');
 
 router
+    .use(function (req, res, next) {
+        L.context = 'user';
+        next();
+    })
     .param('id', function (req, res, next, id) {
         debug(`param(id): ${id}`);
         models.User.findById(id).exec(function (err, user) {
@@ -21,7 +26,7 @@ router
     })
     .get('/:id', function (req, res) {
         // req.userObj is populated via param(id) handler
-        Msg.sendSuccess(res, '', req.userObj, 'User:');
+        Msg.sendSuccess(res, '', req.userObj);
     })
     .get('/', function (req, res) {
         models.User.find()
@@ -32,10 +37,12 @@ router
                     return Msg.sendError(res, err.message);
                 }
 
-                Msg.sendSuccess(res, '', users, 'List of users:');
+                Msg.sendSuccess(res, '', users);
             });
     })
     .post('/', function (req, res) {
+        L.logger.info('Create user', L.meta('user'));
+
         if (!models.User.can(req.user, 'user:create')) {
             return Msg.sendError(res, 'Доступ запрещен.');
         }
@@ -59,6 +66,8 @@ router
         });
     })
     .put('/:id', function (req, res) {
+        L.logger.info('Edit user', L.meta('user'));
+
         if (!models.User.can(req.user, 'user:edit')) {
             return Msg.sendError(res, 'Доступ запрещен.');
         }
