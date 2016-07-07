@@ -2,7 +2,9 @@
     'use strict';
 
     angular.module('MyClinic')
-        .controller('LogsCtrl', function ($scope, Modal, Log, Branch) {
+        .controller('LogsCtrl', function ($scope, Modal, Log, Branch, Pager) {
+            $scope.pagination = Pager.new(20);
+
             $scope.filter = {
                 branch: $scope.$localStorage.currentUser.branch,
                 period: {
@@ -38,6 +40,8 @@
 
             $scope.reloadPage = function () {
                 let params = {
+                    p: $scope.pagination.current,
+                    ps: $scope.pagination.pageSize,
                     start: $scope.filter.period.start,
                     end: $scope.filter.period.end,
                     branch: $scope.filter.branch ? $scope.filter.branch._id : undefined,
@@ -47,7 +51,10 @@
                     uid: $scope.filter.userId ? $scope.filter.userId : undefined,
                     login: $scope.filter.username ? $scope.filter.username : undefined
                 };
-                $scope.logs = Log.query(params);
+                Log.query(params, function (logs, headers) {
+                    $scope.logs = logs;
+                    $scope.pagination.total = headers('X-Total-Items');
+                });
             };
 
             $scope.details = function (log) {
