@@ -1,5 +1,109 @@
 <h3>Протокол действий</h3>
 
+<form name="formFilter" class="form-horizontal" novalidate>
+
+    <div class="col-sm-3">
+        <div class="form-group">
+            <label class="control-label col-sm-4 req">с</label>
+            <div class="col-sm-8">
+                <input ng-model="filter.period.start"
+                       bs-datepicker
+                       data-autoclose="true"
+                       data-max-date="{{ filter.period.end }}"
+                       required
+                       class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-4 req">по</label>
+            <div class="col-sm-8">
+                <input ng-model="filter.period.end"
+                       bs-datepicker
+                       data-autoclose="true"
+                       data-min-date="{{ filter.period.start }}"
+                       data-max-date="today"
+                       required
+                       class="form-control">
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-3">
+        <div class="form-group">
+            <label class="control-label col-sm-4">Метод</label>
+            <div class="col-sm-8">
+                <select ng-model="filter.method"
+                        ng-options="m for m in filter.methods"
+                        class="form-control">
+                    <option value="">Все</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-4">Контекст</label>
+            <div class="col-sm-8">
+                <select ng-model="filter.context"
+                        ng-options="ctx for ctx in filter.contexts"
+                        class="form-control">
+                    <option value="">Все</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-3">
+        <div class="form-group">
+            <label class="control-label col-sm-4">ID пользователя</label>
+            <div class="col-sm-8">
+                <input ng-model="filter.userId" class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-4">Логин пользователя</label>
+            <div class="col-sm-8">
+                <input ng-model="filter.username" class="form-control">
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-3">
+        <div class="form-group">
+            <label class="control-label col-sm-4">Филиал</label>
+            <div class="col-sm-8">
+                <select ng-model="filter.branch"
+                        ng-options="b as b.title for b in branches track by b._id"
+                        class="form-control">
+                    <option value="">Все</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-4">Уровен</label>
+            <div class="col-sm-8">
+                <select ng-model="filter.level"
+                        ng-options="lvl for lvl in filter.levels"
+                        class="form-control">
+                    <option value="">Все</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group text-right">
+        <div class="col-sm-12">
+            <button ng-click="reloadPage()"
+                    ng-disabled="formFilter.$invalid"
+                    class="btn btn-success">Показать
+            </button>
+        </div>
+    </div>
+
+</form>
+
 <table class="table table-bordered table-striped table-condensed">
 
     <thead>
@@ -11,6 +115,7 @@
         <th>Метод</th>
         <th>Контекст</th>
         <th>Пользователь</th>
+        <th>Филиал</th>
         <th class="text-center">
             <button ng-click="reloadPage()" class="btn btn-xs btn-info" title="Обновить">
                 <i class="fa fa-fw fa-refresh"></i>
@@ -29,6 +134,7 @@
         <td>{{ log.meta.zMethod }}</td>
         <td>{{ log.meta.zContext }}</td>
         <td>{{ log.meta.zUsername }}</td>
+        <td>{{ log.meta.zBranch }}</td>
         <td class="text-center">
             <button ng-click="details(log)" class="btn btn-xs btn-info" title="Подробно">
                 <i class="fa fa-fw fa-search"></i>
@@ -40,53 +146,57 @@
             <table class="table table-bordered table-condensed table-hover">
                 <tbody>
                 <tr>
-                    <th class="col-sm-1">Message:</th>
+                    <th class="col-sm-1">Сообщение:</th>
                     <td class="col-sm-11">{{ log.meta.message }}</td>
                 </tr>
                 <tr>
-                    <th class="col-sm-1">Data:</th>
+                    <th class="col-sm-1">Дополнительные данные:</th>
                     <td class="col-sm-11">
                         <json-formatter json="log.meta.data" open="2"></json-formatter>
                     </td>
                 </tr>
                 <tr>
-                    <th class="col-sm-1">Context:</th>
+                    <th class="col-sm-1">Контекст:</th>
                     <td class="col-sm-11">{{ log.meta.zContext }}</td>
                 </tr>
                 <tr>
-                    <th class="col-sm-1">Request:</th>
+                    <th class="col-sm-1">Запрос:</th>
                     <td class="col-sm-11">{{ log.meta.zMethod }} {{ log.meta.zOriginalUrl }}</td>
                 </tr>
                 <tr>
-                    <th class="col-sm-1">Request Header:</th>
+                    <th class="col-sm-1">Заголовки запроса:</th>
                     <td class="col-sm-11">
                         <json-formatter json="log.meta.zHeaders" open="2"></json-formatter>
                     </td>
                 </tr>
                 <tr>
-                    <th class="col-sm-1">Request Query:</th>
+                    <th class="col-sm-1">Параметры запроса в URL-е:</th>
                     <td class="col-sm-11">
                         <json-formatter json="log.meta.zReqQuery" open="2"></json-formatter>
                     </td>
                 </tr>
                 <tr>
-                    <th class="col-sm-1">Request Params:</th>
+                    <th class="col-sm-1">Параметры запроса</th>
                     <td class="col-sm-11">
                         <json-formatter json="log.meta.zReqParams" open="2"></json-formatter>
                     </td>
                 </tr>
                 <tr>
-                    <th class="col-sm-1">Body:</th>
+                    <th class="col-sm-1">Тела запроса:</th>
                     <td class="col-sm-11">
                         <json-formatter json="log.meta.zReqBody" open="5"></json-formatter>
                     </td>
                 </tr>
                 <tr>
-                    <th class="col-sm-1">User:</th>
+                    <th class="col-sm-1">Пользователь:</th>
                     <td class="col-sm-11">{{ log.meta.zUsername }} / {{ log.meta.zUserId }}</td>
                 </tr>
                 <tr>
-                    <th class="col-sm-1">Client:</th>
+                    <th class="col-sm-1">Филиал:</th>
+                    <td class="col-sm-11">{{ log.meta.zBranch }} / {{ log.meta.zBranchId }}</td>
+                </tr>
+                <tr>
+                    <th class="col-sm-1">Клиент (компьютер):</th>
                     <td class="col-sm-11">{{ log.meta.zHostname }} / {{ log.meta.zIP }}</td>
                 </tr>
                 </tbody>

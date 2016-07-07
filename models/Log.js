@@ -11,6 +11,8 @@ var LogSchema = mongoose.Schema({
         message: String,
         data: Mixed,
         zContext: String,
+        zBranchId: ObjectId,
+        zBranch: String,
         zUserId: ObjectId,
         zUsername: String,
         zReqBody: Mixed,
@@ -26,6 +28,9 @@ var LogSchema = mongoose.Schema({
 
 LogSchema.index({level: 1});
 LogSchema.index({'meta.zContext': 1});
+LogSchema.index({'meta.zMethod': 1});
+LogSchema.index({'meta.zBranchId': 1});
+LogSchema.index({'meta.zBranch': 1});
 LogSchema.index({'meta.zUserId': 1});
 LogSchema.index({'meta.zUsername': 1});
 

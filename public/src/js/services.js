@@ -125,7 +125,21 @@
             };
         })
         .factory('Log', function ($resource) {
-            return $resource('/log/:id', {id: '@_id'});
+            return $resource(
+                '/log/:id',
+                {id: '@_id'},
+                {
+                    context: {
+                        method: 'GET', url: '/log/context', isArray: true
+                    },
+                    method: {
+                        method: 'GET', url: '/log/method', isArray: true
+                    },
+                    level: {
+                        method: 'GET', url: '/log/level', isArray: true
+                    }
+                }
+            );
         })
         .factory('Fields', function () {
             return {
