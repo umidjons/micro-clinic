@@ -28,6 +28,8 @@ router
             });
     })
     .post('/details/:id', function (req, res) {
+        L.logger.info('Детализация организации', L.meta());
+
         if (!models.User.can(req.user, 'company:details')) {
             return Msg.sendError(res, 'Доступ запрещен.');
         }
@@ -41,10 +43,12 @@ router
                 return Msg.sendError(res, err);
             }
 
-            Msg.sendSuccess(res, '', details);
+            Msg.sendSuccess(res, '', details, {log: false});
         });
     })
     .post('/pay/:id', function (req, res) {
+        L.logger.info('Пополнить счет организации', L.meta());
+
         if (!models.User.can(req.user, 'company:pay')) {
             return Msg.sendError(res, 'Доступ запрещен.');
         }
@@ -83,6 +87,8 @@ router
         });
     })
     .delete('/pay/:id/:payId', function (req, res) {
+        L.logger.info('Отменить оплату организации', L.meta());
+
         if (!models.User.can(req.user, 'company:pay:cancel')) {
             return Msg.sendError(res, 'Доступ запрещен.');
         }
@@ -106,12 +112,16 @@ router
         });
     })
     .get('/pays/:id', function (req, res) {
-        Msg.sendSuccess(res, '', req.company.pays);
+        L.logger.info('Получить информацию об оплатах организации', L.meta());
+        Msg.sendSuccess(res, '', req.company.pays, {log: false});
     })
     .get('/:id', function (req, res) {
-        Msg.sendSuccess(res, '', req.company);
+        L.logger.info('Получить информацию об организации', L.meta());
+        Msg.sendSuccess(res, '', req.company, {log: false});
     })
     .get('/', function (req, res) {
+        L.logger.info('Список организаций', L.meta());
+
         var condition = {};
         if (!req.query.all) {
             condition = {'state._id': 'active'};
@@ -125,10 +135,12 @@ router
                     return Msg.sendError(res, err.message);
                 }
 
-                Msg.sendSuccess(res, '', companies);
+                Msg.sendSuccess(res, '', companies, {log: false});
             });
     })
     .post('/', function (req, res) {
+        L.logger.info('Новая организация', L.meta());
+
         if (!models.User.can(req.user, 'company:create')) {
             return Msg.sendError(res, 'Доступ запрещен.');
         }
@@ -149,6 +161,8 @@ router
         });
     })
     .put('/:id', function (req, res) {
+        L.logger.info('Изменить организацию', L.meta());
+
         if (!models.User.can(req.user, 'company:edit')) {
             return Msg.sendError(res, 'Доступ запрещен.');
         }
@@ -165,6 +179,8 @@ router
     })
     .delete('/:id',
         function (req, res, next) {
+            L.logger.info('Удалить организацию', L.meta());
+
             if (!models.User.can(req.user, 'company:delete')) {
                 return Msg.sendError(res, 'Доступ запрещен.');
             }

@@ -24,6 +24,8 @@ router
         });
     })
     .post('/interests/details/:partnerCode', function (req, res) {
+        L.logger.info('Получить детализацию по партнёру', L.meta());
+
         if (!models.User.can(req.user, 'report:partnerInterests')) {
             return Msg.sendError(res, 'Доступ запрещен.');
         }
@@ -41,11 +43,13 @@ router
                     return Msg.sendError(res, err);
                 }
 
-                Msg.sendSuccess(res, '', records);
+                Msg.sendSuccess(res, '', records, {log: false});
             }
         );
     })
     .post('/interests', function (req, res) {
+        L.logger.info('Получить информацию о доле партнёра', L.meta());
+
         if (!models.User.can(req.user, 'report:partnerInterests')) {
             return Msg.sendError(res, 'Доступ запрещен.');
         }
@@ -61,14 +65,16 @@ router
                 return Msg.sendError(res, err);
             }
 
-            Msg.sendSuccess(res, '', records);
+            Msg.sendSuccess(res, '', records, {log: false});
         });
     })
     .get('/:id', function (req, res) {
+        L.logger.info('Получить информацию о партнёре', L.meta());
         req.partner.populate('user', 'username lastName firstName middleName');
-        Msg.sendSuccess(res, '', req.partner);
+        Msg.sendSuccess(res, '', req.partner, {log: false});
     })
     .get('/', function (req, res) {
+        L.logger.info('Список партнёров', L.meta());
         models.Partner.find()
             .sort({code: 1})
             .populate('user', 'username lastName firstName middleName')
@@ -77,10 +83,12 @@ router
                     return Msg.sendError(res, err.message);
                 }
 
-                Msg.sendSuccess(res, '', partners);
+                Msg.sendSuccess(res, '', partners, {log: false});
             });
     })
     .post('/', function (req, res) {
+        L.logger.info('Новый партнёр', L.meta());
+
         if (!models.User.can(req.user, 'partner:create')) {
             return Msg.sendError(res, 'Доступ запрещен.');
         }
@@ -111,6 +119,8 @@ router
         });
     })
     .put('/:id', function (req, res) {
+        L.logger.info('Изменить партнёра', L.meta());
+
         if (!models.User.can(req.user, 'partner:edit')) {
             return Msg.sendError(res, 'Доступ запрещен.');
         }
@@ -126,6 +136,8 @@ router
     })
     .delete('/:id',
         function (req, res, next) {
+            L.logger.info('Удалить партнёра', L.meta());
+
             if (!models.User.can(req.user, 'partner:delete')) {
                 return Msg.sendError(res, 'Доступ запрещен.');
             }
@@ -136,7 +148,7 @@ router
                 }
 
                 if (count > 0) {
-                    return Msg.sendError(res, 'Партнёр используются, его нельзя удалить.');
+                    return Msg.sendError(res, 'У партнёра существует пациенты, его нельзя удалить.');
                 }
 
                 next();

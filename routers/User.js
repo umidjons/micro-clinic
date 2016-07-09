@@ -25,10 +25,11 @@ router
         });
     })
     .get('/:id', function (req, res) {
-        // req.userObj is populated via param(id) handler
-        Msg.sendSuccess(res, '', req.userObj);
+        L.logger.info('Получить информацию о пользователе', L.meta());
+        Msg.sendSuccess(res, '', req.userObj, {log: false});
     })
     .get('/', function (req, res) {
+        L.logger.info('Список пользователей', L.meta());
         models.User.find()
             .sort({created: 1})
             .populate('user', 'username lastName firstName middleName')
@@ -37,11 +38,11 @@ router
                     return Msg.sendError(res, err.message);
                 }
 
-                Msg.sendSuccess(res, '', users);
+                Msg.sendSuccess(res, '', users, {log: false});
             });
     })
     .post('/', function (req, res) {
-        L.logger.info('Create user', L.meta('user'));
+        L.logger.info('Новый пользователь', L.meta('user'));
 
         if (!models.User.can(req.user, 'user:create')) {
             return Msg.sendError(res, 'Доступ запрещен.');
@@ -66,7 +67,7 @@ router
         });
     })
     .put('/:id', function (req, res) {
-        L.logger.info('Edit user', L.meta('user'));
+        L.logger.info('Изменить пользователя', L.meta('user'));
 
         if (!models.User.can(req.user, 'user:edit')) {
             return Msg.sendError(res, 'Доступ запрещен.');
@@ -94,6 +95,8 @@ router
     })
     .delete('/:id',
         function (req, res, next) {
+            L.logger.info('Удалить пользователя', L.meta());
+
             if (!models.User.can(req.user, 'user:delete')) {
                 return Msg.sendError(res, 'Доступ запрещен.');
             }

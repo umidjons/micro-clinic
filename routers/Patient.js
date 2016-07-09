@@ -24,6 +24,8 @@ router
     })
     .post('/search',
         function (req, res, next) {
+            L.logger.info('Поиск пациента', L.meta());
+
             if (!models.User.can(req.user, 'search')) {
                 return Msg.sendError(res, 'Доступ запрещен.');
             }
@@ -89,21 +91,24 @@ router
                 if (err) {
                     return Msg.sendError(res, err);
                 }
-                Msg.sendSuccess(res, '', results);
+                Msg.sendSuccess(res, '', results, {log: false});
             });
         })
     .get('/:id', function (req, res) {
+        L.logger.info('Получить информацию о пациенте', L.meta());
         req.patient
             .populate('user', 'username lastName firstName middleName')
             .populate('branch', 'shortTitle', function (err, patient) {
                 if (err) {
                     return Msg.sendError(res, err);
                 }
-                Msg.sendSuccess(res, '', patient);
+                Msg.sendSuccess(res, '', patient, {log: false});
             });
     })
     .get('/',
         function (req, res, next) {
+            L.logger.info('Список пациентов', L.meta());
+
             // by default no condition
             req.condition = {};
 
@@ -156,12 +161,14 @@ router
                         }
 
                         req.patients = patients;
-                        return Msg.sendSuccess(res, '', req.patients);
+                        return Msg.sendSuccess(res, '', req.patients, {log: false});
                     });
                 });
         }
     )
     .post('/', function (req, res) {
+        L.logger.info('Новый пациент', L.meta());
+
         if (!models.User.can(req.user, 'patient:create')) {
             return Msg.sendError(res, 'Доступ запрещен.');
         }
@@ -204,6 +211,8 @@ router
         });
     })
     .put('/:id', function (req, res) {
+        L.logger.info('Изменить пациента', L.meta());
+
         if (!models.User.can(req.user, 'patient:edit')) {
             return Msg.sendError(res, 'Доступ запрещен.');
         }
@@ -223,11 +232,16 @@ router
     })
     .delete('/:id',
         function (req, res, next) {
+            L.logger.info('Удалить пациента', L.meta());
+
             if (!models.User.can(req.user, 'patient:delete')) {
                 return Msg.sendError(res, 'Доступ запрещен.');
             }
 
             debug(`Checking patient services before deleting. Patient id: ${req.params.id}`);
+
+            //todo: Check patient services with filled results
+
             models.PatientService.count({patientId: req.params.id, 'pays.0': {$exists: true}})
                 .exec(function (err, srvCount) {
                     if (err) {

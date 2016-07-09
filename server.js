@@ -78,6 +78,13 @@ mongoose.connection.once('open', function () {
     app.use(bodyParser.urlencoded({extended: true, limit: '1mb'}));
     app.use(bodyParser.json({limit: '5mb'}));
 
+    app.use(function (req, res, next) {
+        // clear L.req
+        L.req = undefined;
+
+        next();
+    });
+
     app.get('/', function (req, res) {
         //res.set('Authorization', `JWT ${app.get('jwt_token')}`);
         res.render('index', {year: 1900 + new Date().getYear()});

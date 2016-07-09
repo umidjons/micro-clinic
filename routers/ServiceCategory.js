@@ -23,35 +23,12 @@ router
             next();
         });
     })
-    .get('/with-services', function (req, res) {
-        models.Service.aggregate([
-            {
-                $project: {
-                    _id: 0,
-                    categoryTitle: '$category.title'
-                }
-            },
-            {
-                $group: {
-                    _id: '$categoryTitle'
-                }
-            },
-            {
-                $sort: {categoryTitle: 1}
-            }
-        ], function (err, categories) {
-            if (err) {
-                Msg.sendError(res, err.message);
-            }
-
-            Msg.sendSuccess(res, '', categories);
-        });
-    })
     .get('/:id', function (req, res) {
-        //req.serviceCategory.populate('user', 'username lastName firstName middleName');
-        Msg.sendSuccess(res, '', req.serviceCategory);
+        L.logger.info('Получить информацию о категории', L.meta());
+        Msg.sendSuccess(res, '', req.serviceCategory, {log: false});
     })
     .get('/', function (req, res) {
+        L.logger.info('Список категорий', L.meta());
         models.ServiceCategory.find()
             .sort({title: 1, 'subcategories.title': 1, 'subcategories.subcategories.title': 1})
             .populate('user', 'username lastName firstName middleName')
@@ -60,10 +37,12 @@ router
                     return Msg.sendError(res, err.message);
                 }
 
-                Msg.sendSuccess(res, '', serviceCategories);
+                Msg.sendSuccess(res, '', serviceCategories, {log: false});
             });
     })
     .post('/', function (req, res) {
+        L.logger.info('Новая категория', L.meta());
+
         if (!models.User.can(req.user, 'category:create')) {
             return Msg.sendError(res, 'Доступ запрещен.');
         }
@@ -87,6 +66,8 @@ router
         });
     })
     .put('/:id', function (req, res) {
+        L.logger.info('Изменить категорию', L.meta());
+
         if (!models.User.can(req.user, 'category:edit')) {
             return Msg.sendError(res, 'Доступ запрещен.');
         }
@@ -103,6 +84,8 @@ router
     })
     .delete('/:id',
         function (req, res, next) {
+            L.logger.info('Удалить категорию', L.meta());
+
             if (!models.User.can(req.user, 'category:delete')) {
                 return Msg.sendError(res, 'Доступ запрещен.');
             }

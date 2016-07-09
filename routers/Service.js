@@ -22,47 +22,13 @@ router
             next();
         });
     })
-    .get('/with-category', function (req, res) {
-        models.Service.aggregate([
-            {
-                $match: {
-                    'state._id': 'active'
-                }
-            },
-            {
-                $project: {
-                    categoryId: '$category._id',
-                    categoryTitle: '$category.title',
-                    categoryShortTitle: '$category.shortTitle',
-                    category: 1,
-                    title: 1,
-                    shortTitle: 1,
-                    user: 1,
-                    created: 1,
-                    price: 1,
-                    fields: 1,
-                    __v: 1
-                }
-            },
-            {
-                $sort: {
-                    categoryTitle: 1,
-                    title: 1
-                }
-            }
-        ], function (err, services) {
-            if (err) {
-                return Msg.sendError(res, err);
-            }
-
-            Msg.sendSuccess(res, '', services);
-        });
-    })
     .get('/:id', function (req, res) {
-        //req.service.populate('user', 'username lastName firstName middleName');
-        Msg.sendSuccess(res, '', req.service);
+        L.logger.info('Получить информацию об услуге', L.meta());
+        Msg.sendSuccess(res, '', req.service, {log: false});
     })
     .get('/', function (req, res) {
+        L.logger.info('Список услуг', L.meta());
+
         var light = req.query.light;
         models.Service.find()
             .sort({
@@ -86,10 +52,12 @@ router
                     }
                 }
 
-                Msg.sendSuccess(res, '', services);
+                Msg.sendSuccess(res, '', services, {log: false});
             });
     })
     .post('/clone', function (req, res) {
+        L.logger.info('Дублировать услугу', L.meta());
+
         if (!models.User.can(req.user, 'service:create')) {
             return Msg.sendError(res, 'Доступ запрещен.');
         }
@@ -123,6 +91,8 @@ router
         });
     })
     .post('/', function (req, res) {
+        L.logger.info('Новая услуга', L.meta());
+
         if (!models.User.can(req.user, 'service:create')) {
             return Msg.sendError(res, 'Доступ запрещен.');
         }
@@ -147,6 +117,8 @@ router
         });
     })
     .put('/:id', function (req, res) {
+        L.logger.info('Изменить услугу', L.meta());
+
         if (!models.User.can(req.user, 'service:edit')) {
             return Msg.sendError(res, 'Доступ запрещен.');
         }
@@ -166,6 +138,8 @@ router
     })
     .delete('/:id',
         function (req, res, next) {
+            L.logger.info('Удалить услугу', L.meta());
+
             if (!models.User.can(req.user, 'service:delete')) {
                 return Msg.sendError(res, 'Доступ запрещен.');
             }

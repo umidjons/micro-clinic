@@ -5,6 +5,7 @@ module.exports = function (app) {
     var models = require('../models');
     var Msg = require('../include/Msg');
     var F = require('../include/F');
+    var L = require('../include/L');
     var cfg = require('../include/config');
     var passport = require('passport');
     var jwt = require('jsonwebtoken');
@@ -40,6 +41,16 @@ module.exports = function (app) {
     app
         .use(passport.initialize())
         .post('/authenticate', function (req, res) {
+            if (!L.req) {
+                L.req = req;
+                L.req.user = {
+                    _id: null,
+                    username: req.body.username,
+                    branch: req.body.branch
+                };
+            }
+            L.logger.info('Авторизация', L.meta('auth'));
+
             var username = req.body.username;
             var password = req.body.password;
             var branch = req.body.branch;
@@ -85,7 +96,7 @@ module.exports = function (app) {
                     let token = jwt.sign(userJson, cfg.jwt.secret, {expiresIn: cfg.jwt.expire});
                     let msg = `Добро пожаловать ${user.username}.`;
                     app.set('jwt_token', token);
-                    return Msg.sendSuccess(res, msg, {user: user, token: token});
+                    return Msg.sendSuccess(res, msg, {user: user, token: token}, {log: false});
                 });
             });
         })

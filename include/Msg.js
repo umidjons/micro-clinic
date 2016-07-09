@@ -101,16 +101,30 @@ class Msg {
      * @param res HTTP Response object instance
      * @param {string} message success message text
      * @param data additional data to send
-     * @param {bool} logData true - to log data
+     * @param {object} logOptions logging options
+     * logOptions.data = true - to log response data
+     * logOptions.log = true - to log response
      */
-    static sendSuccess(res, message, data, logData) {
+    static sendSuccess(res, message, data, logOptions) {
         let meta = {message: message};
 
-        if (logData) {
-            meta.data = data;
+        // default logging options
+        let opts = {log: true, data: false};
+
+        // if specified, merge options
+        if (logOptions && typeof logOptions == 'object') {
+            opts = Object.assign(opts, logOptions);
         }
 
-        L.logger.info(message, L.meta(null, meta));
+        // if logging enabled, do it now
+        if (opts.log) {
+            // if logging response data enabled, add it into meta
+            if (opts.data) {
+                meta.data = data;
+            }
+
+            L.logger.info(message, L.meta(null, meta));
+        }
 
         // set content-type to application/json
         res.type('json');

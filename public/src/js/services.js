@@ -175,9 +175,6 @@
                 {
                     update: {
                         method: 'PUT'
-                    },
-                    categoriesWithServices: {
-                        method: 'GET', url: '/service-category/with-services', isArray: true
                     }
                 }
             );
@@ -193,9 +190,6 @@
                     clone: {
                         method: 'POST',
                         url: '/service/clone'
-                    },
-                    servicesWithCategory: {
-                        method: 'GET', url: '/service/with-category', isArray: true
                     }
                 }
             );

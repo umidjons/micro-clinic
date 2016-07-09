@@ -1,7 +1,7 @@
 'use strict';
 
 var router = require('express').Router();
-var debug = require('debug')('myclinic:router:branch');
+var debug = require('debug')('myclinic:router:log');
 var models = require('../models');
 var Msg = require('../include/Msg');
 var L = require('../include/L');
@@ -18,7 +18,7 @@ router
                 return Msg.sendError(res, err);
             }
 
-            Msg.sendSuccess(res, '', contexts)
+            Msg.sendSuccess(res, '', contexts, {log: false})
         });
     })
     .get('/method', function (req, res) {
@@ -27,7 +27,7 @@ router
                 return Msg.sendError(res, err);
             }
 
-            Msg.sendSuccess(res, '', methods)
+            Msg.sendSuccess(res, '', methods, {log: false})
         });
     })
     .get('/level', function (req, res) {
@@ -36,7 +36,7 @@ router
                 return Msg.sendError(res, err);
             }
 
-            Msg.sendSuccess(res, '', levels)
+            Msg.sendSuccess(res, '', levels, {log: false})
         });
     })
     .param('id', function (req, res, next, id) {
@@ -52,7 +52,7 @@ router
             });
     })
     .get('/:id', function (req, res) {
-        Msg.sendSuccess(res, '', req.log);
+        Msg.sendSuccess(res, '', req.log, {log: false});
     })
     .get('/',
         function (req, res, next) {
@@ -125,7 +125,7 @@ router
                         return Msg.sendError(res, err);
                     }
 
-                    Msg.sendSuccess(res, '', logs);
+                    Msg.sendSuccess(res, '', logs, {log: false});
                 });
         }
     );

@@ -21,10 +21,12 @@ class L {
     static meta(context, data) {
         if (context) {
             L.context = context;
+        } else {
+            context = L.context;
         }
 
         data = data || {};
-        data.zContext = context ? context : L.context;
+        data.zContext = context;
         data.zBranchId = L.req && L.req.user ? L.req.user.branch._id : null;
         data.zBranch = L.req && L.req.user ? L.req.user.branch.shortTitle : null;
         data.zUserId = L.req && L.req.user ? L.req.user._id : null;

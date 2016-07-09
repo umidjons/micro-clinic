@@ -25,9 +25,11 @@ router
             });
     })
     .get('/:id', function (req, res) {
-        Msg.sendSuccess(res, '', req.setting);
+        L.logger.info('Получить информацию о параметре системы', L.meta());
+        Msg.sendSuccess(res, '', req.setting, {log: false});
     })
     .get('/', function (req, res) {
+        L.logger.info('Список параметров системы', L.meta());
         models.Setting
             .find()
             .exec(function (err, settings) {
@@ -38,10 +40,12 @@ router
                 // id-s becomes keys, value-s becomes values
                 let config = F.array2object(settings, '_id', 'value');
 
-                Msg.sendSuccess(res, '', config);
+                Msg.sendSuccess(res, '', config, {log: false});
             });
     })
     .post('/', function (req, res) {
+        L.logger.info('Изменить параметров системы', L.meta());
+
         if (!models.User.can(req.user, 'admin:settings')) {
             return Msg.sendError(res, 'Доступ запрещен.');
         }

@@ -13,6 +13,7 @@ router
         next();
     })
     .post('/pending-patients', function (req, res) {
+        L.logger.info('Список услуг ожидающих оплат', L.meta());
         debug(F.inspect(req.body.branch, 'Filter pending patients by branch:', true));
 
         models.PatientService.pendingPatients(req.body.branch, req.body.period, function (err, records) {
@@ -20,10 +21,11 @@ router
                 return Msg.sendError(res, err);
             }
 
-            Msg.sendSuccess(res, '', records);
+            Msg.sendSuccess(res, '', records, {log: false});
         });
     })
     .post('/registry', function (req, res) {
+        L.logger.info('Реестр оплат', L.meta());
         if (!models.User.can(req.user, 'cash:registry')) {
             return Msg.sendError(res, 'Доступ запрещен.');
         }
@@ -40,10 +42,12 @@ router
                     return Msg.sendError(res, err);
                 }
 
-                Msg.sendSuccess(res, '', records);
+                Msg.sendSuccess(res, '', records, {log: false});
             });
     })
     .post('/registry/pay-details/:patientId', function (req, res) {
+        L.logger.info('Получить информацию об оплате', L.meta());
+
         if (!models.User.can(req.user, 'cash:registry')) {
             return Msg.sendError(res, 'Доступ запрещен.');
         }
@@ -57,10 +61,12 @@ router
                 return Msg.sendError(res, err);
             }
 
-            Msg.sendSuccess(res, '', records);
+            Msg.sendSuccess(res, '', records, {log: false});
         });
     })
     .post('/refund', function (req, res) {
+        L.logger.info('Отменить оплату', L.meta());
+
         if (!models.User.can(req.user, 'cash:cancel')) {
             return Msg.sendError(res, 'Доступ запрещен.');
         }
@@ -83,6 +89,7 @@ router
         });
     })
     .get('/registry/print-check/:patientId/:payTime', function (req, res) {
+        L.logger.info('Распечатать чек', L.meta());
         debug(`Print check. Patient id: ${req.params.patientId}. Pay time: ${req.params.payTime}`);
 
         if (!req.params.patientId || !req.params.payTime) {
@@ -140,13 +147,15 @@ router
                         if (err) {
                             return Msg.sendError(res, err);
                         }
-                        Msg.sendSuccess(res, '', {checkContent: html});
+                        Msg.sendSuccess(res, '', {checkContent: html}, {log: false});
                     }
                 );
             });
         });
     })
     .post('/pending-services-of/:patientId', function (req, res) {
+        L.logger.info('Список услуг пациента ожидающих оплат', L.meta());
+
         debug(`patientId: ${req.params.patientId}`);
         debug(`branch: ${req.query.branch}`);
 
@@ -158,10 +167,12 @@ router
                     return Msg.sendError(res, err);
                 }
 
-                Msg.sendSuccess(res, '', patientServices);
+                Msg.sendSuccess(res, '', patientServices, {log: false});
             });
     })
     .post('/pay-all', function (req, res) {
+        L.logger.info('Оплата услуг', L.meta());
+
         if (!models.User.can(req.user, 'cash:pay')) {
             return Msg.sendError(res, 'Доступ запрещен.');
         }
@@ -179,6 +190,8 @@ router
         });
     })
     .post('/', function (req, res, next) {
+        L.logger.info('Оплата за конкретные услуги', L.meta());
+
         if (!models.User.can(req.user, 'cash:pay')) {
             return Msg.sendError(res, 'Доступ запрещен.');
         }

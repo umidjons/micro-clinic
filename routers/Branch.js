@@ -25,9 +25,12 @@ router
             });
     })
     .get('/:id', function (req, res) {
-        Msg.sendSuccess(res, '', req.branch);
+        L.logger.info('Получить информацию о филиале', L.meta());
+        Msg.sendSuccess(res, '', req.branch, {log: false});
     })
     .get('/', function (req, res) {
+        L.logger.info('Список филиалов', L.meta());
+
         var condition = {};
         if (!req.query.all) {
             condition = {'state._id': 'active'};
@@ -41,10 +44,12 @@ router
                     return Msg.sendError(res, err.message);
                 }
 
-                Msg.sendSuccess(res, '', branches);
+                Msg.sendSuccess(res, '', branches, {log: false});
             });
     })
     .post('/', function (req, res) {
+        L.logger.info('Новый филиал', L.meta());
+
         if (!models.User.can(req.user, 'branch:create')) {
             return Msg.sendError(res, 'Доступ запрещен.');
         }
@@ -65,6 +70,8 @@ router
         });
     })
     .put('/:id', function (req, res) {
+        L.logger.info('Изменить филиал', L.meta());
+
         if (!models.User.can(req.user, 'branch:edit')) {
             return Msg.sendError(res, 'Доступ запрещен.');
         }
@@ -81,6 +88,8 @@ router
     })
     .delete('/:id',
         function (req, res, next) {
+            L.logger.info('Удалить филиал', L.meta());
+
             if (!models.User.can(req.user, 'branch:delete')) {
                 return Msg.sendError(res, 'Доступ запрещен.');
             }

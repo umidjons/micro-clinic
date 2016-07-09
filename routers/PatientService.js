@@ -28,6 +28,8 @@ router
         });
     })
     .use(['/laboratory/query', '/laboratory/export'], function (req, res, next) {
+        L.logger.info('Получить данные для лаборатории/экспорта', L.meta('laboratory'));
+
         // filter all patient services for laboratory
         let condition = {
             'category._id': 'laboratory'
@@ -111,6 +113,8 @@ router
         }
     })
     .get('/laboratory/export', function (req, res) {
+        L.logger.info('Экспорт данные в Excel', L.meta('laboratory'));
+
         if (!models.User.can(req.user, 'laboratory:export')) {
             return Msg.sendError(res, 'Доступ запрещен.');
         }
@@ -276,14 +280,18 @@ router
         Msg.sendSuccess(res, 'Данные успешно экспортированы.', {content: report.toString('base64')});
     })
     .get('/laboratory/query', function (req, res) {
+        L.logger.info('Список анализов', L.meta('laboratory'));
+
         if (!models.User.can(req.user, 'laboratory')) {
             return Msg.sendError(res, 'Доступ запрещен.');
         }
 
         // just return results
-        Msg.sendSuccess(res, '', req.records);
+        Msg.sendSuccess(res, '', req.records, {log: false});
     })
     .put('/laboratory/save-result/:id', function (req, res) {
+        L.logger.info('Заполнить/Завершить результаты анализа', L.meta('laboratory'));
+
         if (!models.User.can(req.user, 'patient:service:results:fill')
             && !models.User.can(req.user, 'patient:service:results:complete')) {
             return Msg.sendError(res, 'Доступ запрещен.');
@@ -303,6 +311,8 @@ router
         });
     })
     .get('/laboratory/get-results/:patientId', function (req, res) {
+        L.logger.info('Список результаты анализов пациента', L.meta('laboratory'));
+
         debug(`patientId: ${req.params.patientId}`);
         let condition = {patientId: req.params.patientId};
 
@@ -344,11 +354,13 @@ router
                     return Msg.sendError(res, err);
                 }
 
-                Msg.sendSuccess(res, '', patientServices);
+                Msg.sendSuccess(res, '', patientServices, {log: false});
             });
     })
     .post('/print/:patientId',
         function (req, res, next) {
+            L.logger.info('Печать результаты анализов пациента', L.meta());
+
             if (!models.User.can(req.user, 'patient:service:results:print')) {
                 return Msg.sendError(res, 'Доступ запрещен.');
             }
@@ -437,21 +449,25 @@ router
                     if (err) {
                         return Msg.sendError(res, err);
                     }
-                    Msg.sendSuccess(res, '', {content: html});
+                    Msg.sendSuccess(res, '', {content: html}, {log: false});
                 }
             );
         })
     .get('/:id', function (req, res) {
+        L.logger.info('Получить информацию об услуге пациента', L.meta());
+
         req.patientService
             .populate('user', 'username lastName firstName middleName')
             .populate('branch', 'shortTitle', function (err, patSrv) {
                 if (err) {
                     return Msg.sendError(res, err);
                 }
-                Msg.sendSuccess(res, '', patSrv);
+                Msg.sendSuccess(res, '', patSrv, {log: false});
             });
     })
     .get('/for/:patientId', function (req, res) {
+        L.logger.info('Получить список услуг пациента', L.meta());
+
         debug(`patientId: ${req.params.patientId}`);
         // do not populate user attribute, because it is unnecessary here
         models.PatientService
@@ -463,11 +479,13 @@ router
                     return Msg.sendError(res, err);
                 }
 
-                Msg.sendSuccess(res, '', patientServices);
+                Msg.sendSuccess(res, '', patientServices, {log: false});
             });
     })
     .post('/',
         function (req, res, next) {
+            L.logger.info('Новые услуги пациента', L.meta());
+
             if (!models.User.can(req.user, 'patient:service:add')) {
                 return Msg.sendError(res, 'Доступ запрещен.');
             }
@@ -536,6 +554,8 @@ router
         }
     )
     .put('/:id', function (req, res) {
+        L.logger.info('Изменить услугу пациента', L.meta());
+
         req.patientService = Object.assign(req.patientService, req.body);
         req.patientService.save(function (err) {
             if (err) {
@@ -547,6 +567,8 @@ router
     })
     .post('/delete-bulk',
         function (req, res, next) {
+            L.logger.info('Удалить услуги пациента', L.meta());
+
             if (!models.User.can(req.user, 'patient:service:delete')) {
                 return Msg.sendError(res, 'Доступ запрещен.');
             }
@@ -568,7 +590,7 @@ router
                         srv.removeType = 'remove';
 
                         // is there any completed service
-                        if (srv.state._id == 'completed') {
+                        if (srv.state._id == 'completed' || srv.state._id == 'removed') {
                             return Msg.sendError(res, `Нельзя удалить услугу ${srv.title} в состоянии "${srv.state.title}"`);
                         }
 
@@ -670,6 +692,8 @@ router
     )
     .delete('/:id',
         function (req, res, next) {
+            L.logger.info('Удалить услугу пациента', L.meta());
+
             if (!models.User.can(req.user, 'patient:service:delete')) {
                 return Msg.sendError(res, 'Доступ запрещен.');
             }
@@ -680,7 +704,7 @@ router
             req.patientService.removeType = 'remove';
 
             // is there any completed service
-            if (req.patientService.state._id == 'completed') {
+            if (req.patientService.state._id == 'completed' || req.patientService.state._id == 'removed') {
                 return Msg.sendError(res, `Нельзя удалить услугу ${req.patientService.title} в состоянии "${req.patientService.state.title}"`);
             }
 
