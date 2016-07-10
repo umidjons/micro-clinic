@@ -243,6 +243,12 @@
                     controller: 'UserCtrl',
                     permission: 'user:edit'
                 })
+                .state('userProfile', {
+                    url: '/user/profile/:id',
+                    templateUrl: 'partials/user/profile.html',
+                    controller: 'UserProfileCtrl',
+                    permission: 'user:profile'
+                })
                 .state('cashList', {
                     url: '/cash',
                     templateUrl: 'partials/cash/list.html',

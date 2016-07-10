@@ -75,8 +75,9 @@
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
-                <li>
-                    <a href="#" title="Профиль {{ $localStorage.currentUser.fullName }}">
+                <li access="user:profile">
+                    <a ui-sref="userProfile({id: $localStorage.currentUser.id})"
+                       title="Профиль {{ $localStorage.currentUser.fullName }}">
                         <i class="fa fa-fw fa-user"></i> {{ $localStorage.currentUser.username }}
                     </a>
                 </li>

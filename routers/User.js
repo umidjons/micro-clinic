@@ -16,12 +16,53 @@ router
         debug(`param(id): ${id}`);
         models.User.findById(id).exec(function (err, user) {
             if (err) {
-                return Msg.sendError(res, err.message);
+                return Msg.sendError(res, err);
             }
 
             // populate user object on request
             req.userObj = user;
             next();
+        });
+    })
+    .put('/profile', function (req, res) {
+        L.logger.info('Изменить профиль пользователя', L.meta('user'));
+
+        if (!models.User.can(req.user, 'user:profile')) {
+            return Msg.sendError(res, 'Доступ запрещен.');
+        }
+
+        // received data
+        let data = req.body;
+
+        // change profile of the current user
+        models.User.findById(req.user._id, function (err, user) {
+            if (err) {
+                return Msg.sendError(res, err);
+            }
+
+            // empty password means - DO NOT CHANGE PASSWORD
+            if (data.password == '') {
+                delete data.password;
+            } else {
+                user.password = data.password;
+            }
+
+            // set allowed attributes
+            user.lastName = data.lastName;
+            user.firstName = data.firstName;
+            user.middleName = data.middleName;
+            user.address = data.address;
+            user.cellPhone = data.cellPhone;
+            user.homePhone = data.homePhone;
+            user.email = data.email;
+
+            user.save(function (err) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+
+                Msg.sendSuccess(res, 'Данные успешно сохранены.');
+            });
         });
     })
     .get('/:id', function (req, res) {
@@ -35,7 +76,7 @@ router
             .populate('user', 'username lastName firstName middleName')
             .exec(function (err, users) {
                 if (err) {
-                    return Msg.sendError(res, err.message);
+                    return Msg.sendError(res, err);
                 }
 
                 Msg.sendSuccess(res, '', users, {log: false});
@@ -59,7 +100,7 @@ router
         newUser.save(function (err, user) {
             // if there is error, send it and stop handler with return
             if (err) {
-                return Msg.sendError(res, err.message);
+                return Msg.sendError(res, err);
             }
 
             // all right, show success message
@@ -87,7 +128,7 @@ router
 
         req.userObj.save(function (err) {
             if (err) {
-                return Msg.sendError(res, err.message);
+                return Msg.sendError(res, err);
             }
 
             Msg.sendSuccess(res, 'Данные успешно сохранены.');
@@ -234,7 +275,7 @@ router
             // req.userObj contains user object retrieved via param(id) handler
             req.userObj.remove(function (err) {
                 if (err) {
-                    return Msg.sendError(res, err.message);
+                    return Msg.sendError(res, err);
                 }
 
                 Msg.sendSuccess(res, 'Запись удален!');

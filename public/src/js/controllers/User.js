@@ -84,5 +84,36 @@
             };
 
             $scope.reloadPage();
+        })
+        .controller('UserProfileCtrl', function ($scope, $state, $stateParams, Modal, User, Auth) {
+            $scope.homePages = User.homePages();
+
+            User.get({id: $stateParams.id}, function (user) {
+                // empty password
+                user.password = '';
+                $scope.user = user;
+            });
+
+            $scope.saveUser = function () {
+                Modal.confirm({
+                    okAction: function (modal) {
+                        if (!Auth.hasAccess('user:profile'))
+                            return;
+
+                        User.saveProfile($scope.user, function (resp) {
+                            // close confirmation window
+                            modal.hide();
+
+                            if (resp.code == 'success') {
+                                $state.transitionTo('userProfile', $stateParams, {
+                                    reload: true,
+                                    inherit: false,
+                                    notify: true
+                                });
+                            }
+                        });
+                    }
+                });
+            };
         });
 })();

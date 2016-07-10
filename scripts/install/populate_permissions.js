@@ -16,6 +16,10 @@ mongoose.connection.once('open', function () {
             title: 'Пользователи: Редактирование пользователя'
         },
         {
+            _id: 'user:profile',
+            title: 'Пользователи: Профиль пользователя'
+        },
+        {
             _id: 'user:delete',
             title: 'Пользователи: Удаление пользователя'
         },

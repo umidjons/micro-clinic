@@ -324,6 +324,10 @@
                 {
                     update: {
                         method: 'PUT'
+                    },
+                    saveProfile: {
+                        method: 'PUT',
+                        url: '/user/profile'
                     }
                 }
             );
