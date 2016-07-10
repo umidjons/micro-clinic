@@ -13,9 +13,11 @@
         <th>Фамилия</th>
         <th>Имя</th>
         <th>Отчество</th>
+        <th>Должность</th>
         <th>Адрес</th>
         <th>Мобильный</th>
-        <th>Городской</th>
+        <th>Домашний</th>
+        <th>Рабочий</th>
         <th>Email</th>
         <th>Дата регистрации</th>
         <th>Пользователь</th>
@@ -26,18 +28,44 @@
             </button>
         </th>
     </tr>
+
+    <tr>
+        <th></th>
+        <th><input ng-model="filter.username" class="form-control"></th>
+        <th><input ng-model="filter.lastName" class="form-control"></th>
+        <th><input ng-model="filter.firstName" class="form-control"></th>
+        <th><input ng-model="filter.middleName" class="form-control"></th>
+        <th><input ng-model="filter.position" class="form-control"></th>
+        <th><input ng-model="filter.address" class="form-control"></th>
+        <th><input ng-model="filter.cellPhone" class="form-control"></th>
+        <th><input ng-model="filter.homePhone" class="form-control"></th>
+        <th><input ng-model="filter.workPhone" class="form-control"></th>
+        <th><input ng-model="filter.email" class="form-control"></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th class="text-center">
+            <button class="btn btn-xs btn-default"
+                    ng-click="filter.reset()"
+                    title="Очистить фильтр">
+                <i class="fa fa-fw fa-filter"></i><i class="fa fa-fw fa-remove"></i>
+            </button>
+        </th>
+    </tr>
     </thead>
 
     <tbody>
-    <tr ng-repeat="user in users">
+    <tr ng-repeat="user in users | filter: filter">
         <td class="text-right">{{ $index + 1 }}</td>
         <td>{{ user.username }}</td>
         <td>{{ user.lastName }}</td>
         <td>{{ user.firstName }}</td>
         <td>{{ user.middleName }}</td>
+        <td>{{ user.position }}</td>
         <td>{{ user.address }}</td>
         <td>{{ user.cellPhone }}</td>
         <td>{{ user.homePhone }}</td>
+        <td>{{ user.workPhone }}</td>
         <td>{{ user.email }}</td>
         <td>{{ user.created | date:'medium' }}</td>
         <td title="{{ user.user.fullName }}">{{ user.user.username }}</td>

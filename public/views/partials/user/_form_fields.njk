@@ -41,6 +41,13 @@
     </div>
 
     <div class="form-group">
+        <label class="control-label col-sm-3">Должность</label>
+        <div class="col-sm-3">
+            <input ng-model="user.position" class="form-control" required maxlength="100">
+        </div>
+    </div>
+
+    <div class="form-group">
         <label class="control-label col-sm-3 req">Адрес</label>
         <div class="col-sm-3">
             <input ng-model="user.address" class="form-control" required maxlength="500">
@@ -55,9 +62,16 @@
     </div>
 
     <div class="form-group">
-        <label class="control-label col-sm-3">Городской номер телефона</label>
+        <label class="control-label col-sm-3">Домашний номер телефона</label>
         <div class="col-sm-3">
             <input ng-model="user.homePhone" pattern="\d{5,12}" maxlength="12" class="form-control">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-3">Рабочий номер телефона</label>
+        <div class="col-sm-3">
+            <input ng-model="user.workPhone" pattern="\d{5,12}" maxlength="12" class="form-control">
         </div>
     </div>
 

@@ -56,6 +56,21 @@
 
         })
         .controller('UsersCtrl', function ($scope, Modal, User, Permission, Auth) {
+            $scope.filter = {
+                reset: function () {
+                    this.username = undefined;
+                    this.lastName = undefined;
+                    this.firstName = undefined;
+                    this.middleName = undefined;
+                    this.position = undefined;
+                    this.address = undefined;
+                    this.cellPhone = undefined;
+                    this.homePhone = undefined;
+                    this.workPhone = undefined;
+                    this.email = undefined;
+                }
+            };
+
             $scope.reloadPage = function () {
                 $scope.permissions = Permission.query();
                 $scope.users = User.query();

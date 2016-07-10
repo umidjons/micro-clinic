@@ -51,9 +51,11 @@ router
             user.lastName = data.lastName;
             user.firstName = data.firstName;
             user.middleName = data.middleName;
+            user.position = data.position;
             user.address = data.address;
             user.cellPhone = data.cellPhone;
             user.homePhone = data.homePhone;
+            user.workPhone = data.workPhone;
             user.email = data.email;
 
             user.save(function (err) {

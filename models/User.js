@@ -21,7 +21,9 @@ var UserSchema = mongoose.Schema({
     address: {type: String, maxlength: 500},
     cellPhone: {type: String, required: true, match: /^\d{5,12}$/},
     homePhone: {type: String, match: /^\d{5,12}$/},
+    workPhone: {type: String, match: /^\d{5,12}$/},
     email: {type: mongoose.SchemaTypes.Email, maxlength: 50},
+    position: {type: String, maxlength: 100},
     state: stateSchema,
     // Permission object, attributes are permission names, values are true/false, e.g.: {"user:create":true}
     permissions: {},
