@@ -8,6 +8,10 @@ var branchSchema = require('./Branch').BranchSchema;
 var debug = require('debug')('myclinic:model:user');
 var F = require('../include/F');
 
+var UserPreferencesSchema = mongoose.Schema({
+    homePage: {type: String, maxlength: 500}
+});
+
 var UserSchema = mongoose.Schema({
     username: {type: String, required: true, maxlength: 50},
     password: {type: String, required: true, maxlength: 100},
@@ -21,6 +25,7 @@ var UserSchema = mongoose.Schema({
     state: stateSchema,
     // Permission object, attributes are permission names, values are true/false, e.g.: {"user:create":true}
     permissions: {},
+    preferences: UserPreferencesSchema,
     branch: {type: branchSchema},
     created: {type: Date, required: true, default: new Date()},
     user: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User'}
@@ -114,3 +119,4 @@ var User = mongoose.model('User', UserSchema);
 
 module.exports.User = User;
 module.exports.UserSchema = UserSchema;
+module.exports.UserPreferencesSchema = UserPreferencesSchema;

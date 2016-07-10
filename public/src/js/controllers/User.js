@@ -5,6 +5,7 @@
         .controller('UserCtrl', function ($scope, $state, $stateParams, Modal, User, State, Permission, Auth) {
             $scope.states = State.query();
             $scope.permissions = Permission.query();
+            $scope.homePages = User.homePages();
 
             if ($stateParams.id) {
                 User.get({id: $stateParams.id}, function (user) {

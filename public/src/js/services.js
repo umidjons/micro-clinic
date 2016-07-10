@@ -318,7 +318,7 @@
             );
         })
         .factory('User', function ($resource) {
-            return $resource(
+            var User = $resource(
                 '/user/:id',
                 {id: '@_id'},
                 {
@@ -327,6 +327,19 @@
                     }
                 }
             );
+
+            User.homePages = function () {
+                return [
+                    {sRef: 'home', title: 'Главная'},
+                    {sRef: 'patientSearch', title: 'Поиск'},
+                    {sRef: 'patientList', title: 'Пациенты'},
+                    {sRef: 'laboratory', title: 'Лаборатория'},
+                    {sRef: 'cashList', title: 'Касса'},
+                    {sRef: 'cashRegistry', title: 'Реестр оплат'}
+                ];
+            };
+
+            return User;
         })
         .factory('Permission', function ($resource) {
             return $resource(
