@@ -269,6 +269,12 @@
                         patientService: null
                     }
                 })
+                .state('discountReasonList', {
+                    url: '/discount-reasons',
+                    templateUrl: 'partials/discount-reason/list.html',
+                    controller: 'DiscountReasonListCtrl',
+                    permission: 'cash:discount:reason'
+                })
                 .state('serviceCategoryList', {
                     url: '/service-category/list',
                     templateUrl: 'partials/service-category/list.html',
@@ -367,9 +373,9 @@
                     // by default hide element
                     elem.hide();
 
-                    let key = attrs.access;
+                    let keys = attrs.access;
 
-                    if (!key) {
+                    if (!keys) {
                         // no permission name provided
                         return elem.remove();
                     }
@@ -386,10 +392,16 @@
                         return elem.remove();
                     }
 
-                    if (key in permissions && permissions[key] === true) {
-                        // the current user has enough privilege
-                        return elem.show();
+                    keys = keys.split(',');
+
+                    for (let key of keys) {
+                        key = key.trim();
+                        if (key in permissions && permissions[key] === true) {
+                            // the current user has enough privilege
+                            return elem.show();
+                        }
                     }
+
 
                     // hasn't enough privilege
                     elem.remove();

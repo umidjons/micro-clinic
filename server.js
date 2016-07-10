@@ -125,6 +125,7 @@ mongoose.connection.once('open', function () {
         .use('/cash', routers.Cash)
         .use('/branch', routers.Branch)
         .use('/company', routers.Company)
+        .use('/discount-reason', routers.DiscountReason)
         .use('/setting', routers.Setting)
         .listen(app.get('port'), function () {
             L.logger.info('Server started.', L.meta('server'));

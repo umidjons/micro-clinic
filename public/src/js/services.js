@@ -792,6 +792,17 @@
 
             return CashResource;
         })
+        .factory('DiscountReason', function ($resource) {
+            return $resource(
+                '/discount-reason/:id',
+                {id: '@_id'},
+                {
+                    update: {
+                        method: 'PUT'
+                    }
+                }
+            );
+        })
         .factory('PayType', function () {
             return {
                 query: function () {

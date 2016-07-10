@@ -38,3 +38,5 @@ module.exports.DepositSchema = require('./Company').DepositSchema;
 module.exports.Deposit = require('./Company').Deposit;
 module.exports.LogSchema = require('./Log').LogSchema;
 module.exports.Log = require('./Log').Log;
+module.exports.DiscountReason = require('./DiscountReason').DiscountReason;
+module.exports.DiscountReasonSchema = require('./DiscountReason').DiscountReasonSchema;

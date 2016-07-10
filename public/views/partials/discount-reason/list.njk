@@ -1,0 +1,41 @@
+<h3>Встроенные причины скидки</h3>
+
+<button access="cash:discount:reason:create" ng-click="createReason()" class="btn btn-success">
+    <i class="fa fa-fw fa-plus"></i> Новый
+</button>
+
+<table class="table table-bordered table-striped table-hover table-condensed">
+
+    <thead>
+    <tr>
+        <th>№</th>
+        <th>Текст</th>
+        <th class="text-center">
+            <button ng-click="reloadPage()" class="btn btn-xs btn-info" title="Обновить">
+                <i class="fa fa-fw fa-refresh"></i>
+            </button>
+        </th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr ng-repeat="reason in discountReasons">
+        <td class="text-right">{{ $index + 1 }}</td>
+        <td><input ng-model="reason.text" class="form-control" required></td>
+        <td class="text-center">
+            <button access="cash:discount:reason:edit"
+                    ng-click="saveReason(reason)"
+                    class="btn btn-xs btn-success"
+                    title="Сохранить">
+                <i class="fa fa-fw fa-floppy-o"></i>
+            </button>
+            <button ng-click="deleteReason(reason, $index)"
+                    class="btn btn-xs btn-danger"
+                    title="Удалить">
+                <i class="fa fa-fw fa-trash"></i>
+            </button>
+        </td>
+    </tr>
+    </tbody>
+
+</table>

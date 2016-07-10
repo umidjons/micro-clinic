@@ -68,6 +68,22 @@ mongoose.connection.once('open', function () {
             title: 'Касса: Скидки'
         },
         {
+            _id: 'cash:discount:reason',
+            title: 'Касса: Причины скидки'
+        },
+        {
+            _id: 'cash:discount:reason:create',
+            title: 'Касса: Новая причина скидки'
+        },
+        {
+            _id: 'cash:discount:reason:edit',
+            title: 'Касса: Редактирование причины скидки'
+        },
+        {
+            _id: 'cash:discount:reason:delete',
+            title: 'Касса: Удаление причины скидки'
+        },
+        {
             _id: 'cash:branch:change',
             title: 'Касса: Выбор филиала'
         },

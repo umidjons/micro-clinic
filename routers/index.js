@@ -11,3 +11,4 @@ module.exports.Branch = require('./Branch');
 module.exports.Setting = require('./Setting');
 module.exports.Company = require('./Company');
 module.exports.Log = require('./Log');
+module.exports.DiscountReason = require('./DiscountReason');

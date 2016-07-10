@@ -2,7 +2,9 @@
     'use strict';
 
     angular.module('MyClinic')
-        .controller('CashListCtrl', function ($scope, $aside, $state, Cash, PayType, Modal, Branch, Auth) {
+        .controller('CashListCtrl', function ($scope, $aside, $state, Cash, DiscountReason,
+                                              PayType, Modal, Branch, Auth) {
+            $scope.discountReasons = DiscountReason.query();
             $scope.payTypes = PayType.query();
             $scope.records = [];
             $scope.branches = Branch.query();
@@ -103,6 +105,10 @@
                                 this.discount.max = this.totalDebt; // max = total debt
                             }
                             this.calcDiscount();
+                        };
+
+                        this.setDiscountReason = function (reason) {
+                            this.discount.note = reason.text;
                         };
 
                         this.calcDiscount = function () {

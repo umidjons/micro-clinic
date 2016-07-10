@@ -44,7 +44,26 @@
                         </div>
 
                         <div access="cash:discount" class="form-group">
-                            <label ng-class="{'req': Pay.discount.amount > 0}">Причина</label>
+                            <label ng-class="{'req': Pay.discount.amount > 0}">
+                                <div class="dropdown">
+                                    <button class="btn btn-link dropdown-toggle"
+                                            id="ddReasons"
+                                            data-toggle="dropdown"
+                                            aria-haspopup="true"
+                                            aria-expanded="true"
+                                            style="padding-left:0;"
+                                            title="Встроенные причины">
+                                        Причина
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu"
+                                        aria-labelledby="ddReasons">
+                                        <li ng-repeat="reason in discountReasons">
+                                            <a href ng-click="Pay.setDiscountReason(reason)">{{ reason.text }}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </label>
                             <textarea ng-model="Pay.discount.note" class="form-control" maxlength="200"
                                       ng-required="Pay.discount.amount > 0">
                             </textarea>
