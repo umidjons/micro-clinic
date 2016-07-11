@@ -164,6 +164,10 @@ mongoose.connection.once('open', function () {
             title: 'Отчеты: Доля партнёров за период'
         },
         {
+            _id: 'report:patientsCountByDayForPeriod',
+            title: 'Отчеты: Количество пациентов по дням за период'
+        },
+        {
             _id: 'admin',
             title: 'Администрирование'
         },

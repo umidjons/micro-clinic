@@ -1,0 +1,106 @@
+<h3>Количество пациентов по дням за период</h3>
+
+<div class="col-sm-4">
+    <form name="formFilter" class="form-horizontal" novalidate>
+
+        <div class="form-group">
+            <label class="control-label col-sm-4 req">с</label>
+            <div class="col-sm-8">
+                <input ng-model="period.start"
+                       bs-datepicker
+                       data-autoclose="true"
+                       data-max-date="{{ period.end }}"
+                       class="form-control"
+                       required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-4 req">по</label>
+            <div class="col-sm-8">
+                <input ng-model="period.end"
+                       bs-datepicker
+                       data-autoclose="true"
+                       data-min-date="{{ period.start }}"
+                       class="form-control"
+                       required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-8">
+                <button ng-click="reloadPage()" ng-disabled="formFilter.$invalid"
+                        class="btn btn-default">
+                    Показать
+                </button>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<table class="table table-bordered table-striped table-hover">
+    <thead>
+    <tr>
+        <th rowspan="2" class="text-center">№</th>
+        <th rowspan="2" class="text-center">Дата</th>
+        <th ng-repeat="branch in branches" colspan="2" class="text-center">
+            {{ branch.shortTitle }}
+        </th>
+        <th colspan="2" class="text-center text-info">
+            Всего за день
+        </th>
+    </tr>
+    <tr>
+        <th ng-repeat-start="branch in branches" class="text-center">
+            Посещении
+        </th>
+        <th ng-repeat-end class="text-center">
+            Новых
+        </th>
+        <th class="text-center text-info">
+            Посещении
+        </th>
+        <th class="text-center text-info">
+            Новых
+        </th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr ng-repeat="date in dates">
+        <td class="text-right">{{ $index + 1 }}</td>
+        <td class="text-center">{{ date }}</td>
+        <td ng-repeat-start="branch in branches" class="text-right">
+            {{ records[date][branch.shortTitle].countVisits | number }}
+        </td>
+        <td ng-repeat-end class="text-right">
+            {{ records[date][branch.shortTitle].countNew | number }}
+        </td>
+        <td class="text-right text-bold text-info">
+            {{ records[date]['daily'].countVisits | number }}
+        </td>
+        <td class="text-right text-bold text-info">
+            {{ records[date]['daily'].countNew | number }}
+        </td>
+    </tr>
+    </tbody>
+
+    <tfoot>
+    <tr>
+        <th colspan="2" class="text-right text-success">Всего по филиалам:</th>
+        <th ng-repeat-start="branch in branches" class="text-right text-success">
+            {{ records['branchTotals'][branch.shortTitle].countVisits | number }}
+        </th>
+        <th ng-repeat-end class="text-right text-success">
+            {{ records['branchTotals'][branch.shortTitle].countNew | number }}
+        </th>
+        <th class="text-right text-danger" title="Всего за период по всем филиалам">
+            {{ records['totals'].countVisits | number }}
+        </th>
+        <th class="text-right text-danger" title="Всего за период по всем филиалам">
+            {{ records['totals'].countNew | number }}
+        </th>
+    </tr>
+    </tfoot>
+</table>

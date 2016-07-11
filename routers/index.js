@@ -12,3 +12,4 @@ module.exports.Setting = require('./Setting');
 module.exports.Company = require('./Company');
 module.exports.Log = require('./Log');
 module.exports.DiscountReason = require('./DiscountReason');
+module.exports.Report = require('./Report');

@@ -127,6 +127,7 @@ mongoose.connection.once('open', function () {
         .use('/company', routers.Company)
         .use('/discount-reason', routers.DiscountReason)
         .use('/setting', routers.Setting)
+        .use('/report', routers.Report)
         .listen(app.get('port'), function () {
             L.logger.info('Server started.', L.meta('server'));
             console.log(`Listening on http://localhost:${app.get('port')}...`);

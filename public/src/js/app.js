@@ -358,6 +358,12 @@
                     templateUrl: 'partials/log/list.html',
                     controller: 'LogsCtrl',
                     permission: 'admin:logs'
+                })
+                .state('reportPatientsCountByDayForPeriod', {
+                    url: '/report',
+                    templateUrl: 'partials/report/patients-count-by-day-for-period.html',
+                    controller: 'ReportCtrl',
+                    permission: 'report:patientsCountByDayForPeriod'
                 });
             $urlRouterProvider.otherwise('/');
         })

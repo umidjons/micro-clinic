@@ -46,7 +46,9 @@
                         <i class="fa fa-fw fa-line-chart"></i> Отчеты <span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li><a href="#">Оказываемые услуги</a></li>
-                        <li><a href="#">Регистрация по операторам</a></li>
+                        <li access="report:patientsCountByDayForPeriod">
+                            <a ui-sref="reportPatientsCountByDayForPeriod">Количество пациентов по дням за период</a>
+                        </li>
                         <li role="separator" class="divider"></li>
                         <li access="report:partnerInterests">
                             <a ui-sref="partnerInterests">Доля партнёров за период</a>

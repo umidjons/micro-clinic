@@ -878,5 +878,16 @@
                     };
                 }
             };
+        })
+        .factory('Report', function ($resource) {
+            return $resource(
+                '/report/patients-count-by-day-for-period',
+                {},
+                {
+                    patientsCountByDayForPeriod: {
+                        method: 'GET', url: '/report/patients-count-by-day-for-period'
+                    }
+                }
+            );
         });
 })();
