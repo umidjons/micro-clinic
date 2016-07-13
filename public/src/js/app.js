@@ -1,7 +1,8 @@
 (function () {
     angular.module('MyClinic', ['ngAnimate', 'ngSanitize', 'ngMessages', 'ngStorage', 'angular-loading-bar',
             'ui.router', 'ui.router.state.events', 'ngResource', 'mgcrea.ngStrap', 'toaster', 'ui.select',
-            'angularUtils.directives.dirPagination', 'ui.tinymce', 'ui.sortable', 'cfp.hotkeys', 'jsonFormatter'])
+            'angularUtils.directives.dirPagination', 'ui.tinymce', 'ui.sortable', 'cfp.hotkeys', 'jsonFormatter',
+            'highcharts-ng'])
         .run(function ($rootScope, $http, $location, $localStorage, Auth) {
             // keep user logged in after page refresh
             if ($localStorage.currentUser) {
