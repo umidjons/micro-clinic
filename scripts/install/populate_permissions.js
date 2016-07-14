@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 var models = require('../../models');
 const async = require('async');
 
-mongoose.connect('mongodb://admin:admin@127.0.0.1:27017/starmed');
+mongoose.connect('mongodb://db:27017/starmed');
 mongoose.connection.once('open', function () {
     var docs = [
         {
