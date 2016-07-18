@@ -93,7 +93,12 @@ PatientServiceSchema.set('toObject', {virtuals: true});
 
 PatientServiceSchema.statics.pendingPatients = function (branch, period, cb) {
     let ObjectId = mongoose.Types.ObjectId;
-    let condition = {'state._id': {$in: ['new', 'partlyPayed']}};
+    let condition = {
+        $or: [
+            {'state._id': {$in: ['new', 'partlyPayed']}}, // new or partly payed
+            {'state._id': 'completed', debt: {$gt: 0}} // completed, but has debt (maybe with warranty)
+        ]
+    };
 
     // if branch (branch id) is specified, filter by it
     if (branch) {
@@ -328,7 +333,10 @@ PatientServiceSchema.statics.payDetails = function (patientId, dateTime, isForCh
 PatientServiceSchema.statics.pendingServicesOf = function (branch, patientId, cb) {
     var condition = {
         patientId: patientId,
-        'state._id': {$in: ['new', 'partlyPayed']}
+        $or: [
+            {'state._id': {$in: ['new', 'partlyPayed']}}, // new or partly payed
+            {'state._id': 'completed', debt: {$gt: 0}} // completed, but has debt (maybe with warranty)
+        ]
     };
 
     if (branch) {

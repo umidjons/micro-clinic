@@ -271,11 +271,13 @@ var addDiscountPay = function (user, time, payInfo, patSrv, sumProperty) {
         patSrv.debt -= discount.sum;
         patSrv.payed += discount.sum;
 
-        // change service state
-        if (patSrv.debt > 0) {
-            patSrv.state = {_id: 'partlyPayed', title: 'Частично оплачен'};
-        } else {
-            patSrv.state = {_id: 'payed', title: 'Оплачен'};
+        // change service state, if it isn't completed already
+        if (patSrv.state._id != 'completed') {
+            if (patSrv.debt > 0) {
+                patSrv.state = {_id: 'partlyPayed', title: 'Частично оплачен'};
+            } else {
+                patSrv.state = {_id: 'payed', title: 'Оплачен'};
+            }
         }
 
         gatherPatSrvWithPays(payInfo, patSrv);
@@ -322,11 +324,13 @@ var addPay = function (user, time, payInfo, patSrv, totalProperty, payType) {
     patSrv.debt -= amount;
     patSrv.payed += amount;
 
-    // change service state
-    if (patSrv.debt > 0) {
-        patSrv.state = {_id: 'partlyPayed', title: 'Частично оплачен'};
-    } else {
-        patSrv.state = {_id: 'payed', title: 'Оплачен'};
+    // change service state, if it isn't completed already
+    if (patSrv.state._id != 'completed') {
+        if (patSrv.debt > 0) {
+            patSrv.state = {_id: 'partlyPayed', title: 'Частично оплачен'};
+        } else {
+            patSrv.state = {_id: 'payed', title: 'Оплачен'};
+        }
     }
 
     // decrease left amount

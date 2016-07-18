@@ -57,9 +57,12 @@
                 <button access="patient:service:results:complete"
                         ng-if="patientService.state._id != 'completed'"
                         ng-click="serviceComplete()"
-                        ng-disabled="formResult.$invalid" class="btn btn-primary">
+                        ng-disabled="formResult.$invalid || patientService.debt > 0" class="btn btn-primary">
                     <i class="fa fa-fw fa-check-square-o"></i>
                     Завершить услугу
+                    <span ng-if="patientService.debt > 0" class="label label-danger">
+                        Долг {{ patientService.debt | number: 2 }}
+                    </span>
                 </button>
             </div>
 

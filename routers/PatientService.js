@@ -297,6 +297,11 @@ router
             return Msg.sendError(res, 'Доступ запрещен.');
         }
 
+        // check debt and new state of the service
+        if (req.patientService.debt > 0 && req.body.state._id == 'completed') {
+            return Msg.sendError(res, 'Услугу с долгом завершить нельзя!');
+        }
+
         // only result and state can be changed
         req.patientService.result = req.body.result;
         req.patientService.state = req.body.state;
