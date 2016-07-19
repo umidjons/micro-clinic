@@ -108,15 +108,82 @@
             };
 
         })
-        .controller('PatientsCtrl', function ($scope, Modal, Patient, Pager, Branch) {
+        .controller('PatientsCtrl', function ($scope, Modal, Patient, Pager, Branch, ServiceCategory) {
             $scope.pagination = Pager.new();
             $scope.todaysOnly = 1;
             $scope.branches = Branch.query();
+            $scope.categories = ServiceCategory.query();
+
 
             $scope.filter = {
                 branch: $scope.$localStorage.currentUser.branch,
                 by: function (branch) {
                     $scope.filter.branch = branch;
+                    $scope.reloadPage();
+                }
+            };
+
+            $scope.filterService = {
+                category: undefined,
+                subcategory: undefined,
+                subsubcategory: undefined,
+                reset: function () {
+                    this.category = undefined;
+                    this.subcategory = undefined;
+                    this.subsubcategory = undefined;
+                },
+                onChange: function () {
+                    if (angular.isDefined(this.category) && !this.category.title) {
+                        this.category = undefined;
+                    }
+                    if (angular.isDefined(this.subcategory) && !this.subcategory.title) {
+                        this.subcategory = undefined;
+                    }
+                    if (angular.isDefined(this.subsubcategory) && !this.subsubcategory.title) {
+                        this.subsubcategory = undefined;
+                    }
+                },
+                by: function (category, level) {
+                    switch (level) {
+                        case 'category':
+                            if (angular.isDefined(category)) {
+                                this.category = {title: category.title, _id: category._id};
+                                if (angular.isDefined(category.subcategories) && category.subcategories.length > 0) {
+                                    $scope.subcategories = category.subcategories;
+                                } else {
+                                    $scope.subcategories = [];
+                                }
+                                this.subcategory = undefined;
+                                this.subsubcategory = undefined;
+                            } else {
+                                this.category = undefined;
+                                this.subcategory = undefined;
+                                this.subsubcategory = undefined;
+                                $scope.subcategories = [];
+                            }
+                            break;
+                        case 'subcategory':
+                            if (angular.isDefined(category)) {
+                                this.subcategory = {title: category.title, _id: category._id};
+                                if (angular.isDefined(category.subcategories) && category.subcategories.length > 0) {
+                                    $scope.subsubcategories = category.subcategories;
+                                } else {
+                                    $scope.subsubcategories = [];
+                                }
+                            } else {
+                                this.subcategory = undefined;
+                                $scope.subsubcategories = [];
+                            }
+                            this.subsubcategory = undefined;
+                            break;
+                        case 'subsubcategory':
+                            if (angular.isDefined(category)) {
+                                this.subsubcategory = {title: category.title, _id: category._id};
+                            } else {
+                                this.subsubcategory = undefined;
+                            }
+                            break;
+                    }
                     $scope.reloadPage();
                 }
             };
@@ -134,6 +201,16 @@
 
                 if ($scope.filter.branch) {
                     params.branch = $scope.filter.branch._id;
+                }
+
+                if ($scope.filterService.category) {
+                    params.c = $scope.filterService.category._id;
+                    if ($scope.filterService.subcategory) {
+                        params.sc = $scope.filterService.subcategory._id;
+                        if ($scope.filterService.subsubcategory) {
+                            params.ssc = $scope.filterService.subsubcategory._id;
+                        }
+                    }
                 }
 
                 Patient.query(params,

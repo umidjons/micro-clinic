@@ -6,6 +6,9 @@ var Msg = require('../include/Msg');
 var sugar = require('sugar');
 var debug = require('debug')('myclinic:router:patient');
 var L = require('../include/L');
+var F = require('../include/F');
+var mongoose = require('mongoose');
+var _ = require('underscore');
 
 router
     .use(function (req, res, next) {
@@ -109,6 +112,91 @@ router
         function (req, res, next) {
             L.logger.info('Список пациентов', L.meta());
 
+            if (!req.query.c) {
+                return next();
+            }
+
+            const ObjectId = mongoose.Types.ObjectId;
+            let condition = {};
+
+            // get only patient services created today
+            if (req.query.today == 1) {
+                let beginOfDay = Date.create('today').beginningOfDay();
+                let endOfDay = Date.create('today').endOfDay();
+                condition = {created: {$gte: beginOfDay, $lte: endOfDay}};
+            }
+
+            // filter by branch id
+            if (req.query.branch) {
+                condition.branch = ObjectId(req.query.branch);
+            }
+
+            // if category id is specified, filter by it
+            condition['category._id'] = req.query.c; // string, not object id
+
+            // if sub-category id is specified, filter by it
+            if (req.query.sc) {
+                condition['subcategory._id'] = ObjectId(req.query.sc);
+
+                // if sub-sub-category id is specified, filter by it
+                if (req.query.ssc) {
+                    condition['subsubcategory._id'] = ObjectId(req.query.ssc);
+                }
+            }
+
+            // get count of patients filtered by service categories
+            models.PatientService.aggregate([
+                {
+                    $match: condition
+                },
+                {
+                    $sort: {created: -1}
+                },
+                {
+                    $group: {_id: "$patientId"}
+                }
+            ], function (err, records) {
+                // keep condition for the next queries
+                req.conditionByService = condition;
+                // keep patients count
+                req.count = records.length;
+
+                next();
+            });
+        },
+        function (req, res, next) {
+            if (!req.query.c) {
+                return next();
+            }
+
+            let pageCurrent = 1 * req.query.p || 1;
+            let pageSize = 1 * req.query.ps || 0; // limit=0 means no limit, so default is to retrieve all
+            let skip = (pageCurrent - 1) * pageSize;
+
+            // get patient ids taking into account pagination
+            models.PatientService.aggregate([
+                {
+                    $match: req.conditionByService
+                },
+                {
+                    $sort: {created: -1}
+                },
+                {
+                    $group: {_id: "$patientId"}
+                },
+                {
+                    $skip: skip
+                },
+                {
+                    $limit: pageSize
+                }
+            ], function (err, records) {
+                // array of patient ids
+                req.patientIds = _.pluck(records, '_id');
+                next();
+            });
+        },
+        function (req, res, next) {
             // by default no condition
             req.condition = {};
 
@@ -124,6 +212,13 @@ router
                 req.condition.branch = req.query.branch;
             }
 
+            // if category id is specified, calculating count again is not necessary
+            if (req.query.c) {
+                res.header('X-Total-Items', req.count);
+                return next();
+            }
+
+            // category id is not specified, then calculate count
             // calculate count of patients
             models.Patient.count(req.condition, function (err, count) {
                 if (err) {
@@ -143,10 +238,21 @@ router
 
             debug(`skip=${skip} pageCurrent=${pageCurrent} pageSize=${pageSize}`);
 
-            models.Patient.find(req.condition)
-                .skip(skip)
-                .limit(pageSize)
-                .sort({lastVisit: -1, created: -1})
+            let condition = req.condition;
+
+            // if category id is specified, filter by patient ids found on previous middleware
+            if (req.query.c) {
+                condition = {_id: {$in: req.patientIds}};
+            }
+
+            let cursor = models.Patient.find(condition).sort({lastVisit: -1, created: -1});
+
+            // if category id is not specified, then use default pagination
+            if (!req.query.c) {
+                cursor.skip(skip).limit(pageSize);
+            }
+
+            cursor
                 .populate('user', 'username lastName firstName middleName')
                 .populate('branch', 'shortTitle')
                 .lean()

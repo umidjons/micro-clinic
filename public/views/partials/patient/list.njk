@@ -20,6 +20,47 @@
     {{ b.shortTitle }}
 </button>
 
+<br>
+
+<button ng-click="filterService.by(undefined, 'category')"
+        class="btn btn-xs btn-danger"
+        ng-class="{'active': filterService.category == undefined}">Все
+</button>
+<button ng-repeat="cat in categories"
+        ng-click="filterService.by(cat, 'category')"
+        class="btn btn-xs btn-danger"
+        ng-class="{'active': filterService.category.title == cat.title}">
+    {{ ::cat.title }}
+</button>
+
+<br>
+
+<button ng-click="filterService.by(undefined, 'subcategory')"
+        class="btn btn-xs btn-warning"
+        ng-class="{'active': filterService.subcategory == undefined}">Все
+</button>
+<button ng-if="filterService.category.title"
+        ng-repeat="subcat in subcategories"
+        ng-click="filterService.by(subcat,'subcategory')"
+        class="btn btn-xs btn-warning"
+        ng-class="{'active': filterService.subcategory.title == subcat.title}">
+    {{ ::subcat.title }}
+</button>
+
+<br>
+
+<button ng-click="filterService.by(undefined, 'subsubcategory')"
+        class="btn btn-xs btn-info"
+        ng-class="{'active': filterService.subsubcategory == undefined}">Все
+</button>
+<button ng-if="filterService.subcategory.title"
+        ng-repeat="subsubcat in subsubcategories"
+        ng-click="filterService.by(subsubcat,'subsubcategory')"
+        class="btn btn-xs btn-info"
+        ng-class="{'active': filterService.subsubcategory.title == subsubcat.title}">
+    {{ ::subsubcat.title }}
+</button>
+
 <table class="table table-bordered table-striped table-hover table-condensed">
 
     <thead>
