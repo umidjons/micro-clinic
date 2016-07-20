@@ -109,7 +109,7 @@
 
         })
         .controller('PatientsCtrl', function ($scope, Modal, Patient, Pager, Branch, ServiceCategory) {
-            $scope.pagination = Pager.new();
+            $scope.pagination = Pager.new(50);
             $scope.todaysOnly = 1;
             $scope.branches = Branch.query();
             $scope.categories = ServiceCategory.query();
@@ -189,13 +189,16 @@
             };
 
             $scope.pageChanged = function () {
+                if (!$scope.todaysOnly) {
+                    $scope.quickFilter = undefined;
+                }
                 $scope.reloadPage();
             };
 
             $scope.reloadPage = function () {
                 let params = {
                     p: $scope.pagination.current,
-                    ps: $scope.pagination.pageSize,
+                    ps: $scope.todaysOnly ? 1000 : $scope.pagination.pageSize,
                     today: $scope.todaysOnly
                 };
 

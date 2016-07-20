@@ -85,10 +85,25 @@
             </button>
         </th>
     </tr>
+    <tr>
+        <th colspan="15">
+            <div class="col-sm-12">
+                <div class="input-group">
+                    <input ng-model="quickFilter" class="form-control" maxlength="100"
+                           placeholder="Быстрый поиск в странице...">
+                <span class="input-group-btn">
+                    <button ng-click="quickFilter = undefined" class="btn btn-danger" title="Очистать быстрый поиск">
+                        <i class="fa fa-fw fa-remove"></i>
+                    </button>
+                </span>
+                </div>
+            </div>
+        </th>
+    </tr>
     </thead>
 
     <tbody>
-    <tr dir-paginate="pat in patients | itemsPerPage: pagination.pageSize"
+    <tr dir-paginate="pat in patients | filter: quickFilter | itemsPerPage: pagination.pageSize"
         current-page="pagination.current"
         total-items="pagination.total"
         ng-class="{'danger':pat.debt>0}">
