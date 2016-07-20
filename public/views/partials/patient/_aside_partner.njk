@@ -21,7 +21,7 @@
                                 <ui-select-choices
                                         repeat="part in PartnerSetter.partners | filter:{code:$select.search}">
                                     <span class="label label-success">{{part.code}}</span>
-                                    <span>{{ part.fullName }}</span>
+                                    <span access="patient:service:partner:name">{{ part.fullName }}</span>
                                 </ui-select-choices>
                             </ui-select>
 

@@ -346,8 +346,16 @@
                         } else {
                             var service = angular.copy(srv);
                             service.quantity = 1;
+
+                            // by default select service for later options
+                            // for example, set partner or organization
+                            service.marked = 1;
+
                             this.recalc(service);
                             $scope.patient.services.push(service);
+
+                            // need to call after marked = 1
+                            $scope.ServiceHelper.Marker.onChange();
                         }
                     },
                     addAll: function (categoryTitle) {

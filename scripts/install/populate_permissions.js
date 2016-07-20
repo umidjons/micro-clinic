@@ -124,6 +124,10 @@ mongoose.connection.once('open', function () {
             title: 'Пациент: Прикрепить партнёра к услугу'
         },
         {
+            _id: 'patient:service:partner:name',
+            title: 'Пациент: Прикрепить партнёра к услугу - Показать ФИО партнёра'
+        },
+        {
             _id: 'patient:service:company',
             title: 'Пациент: Прикрепить организацию к услугу'
         },
