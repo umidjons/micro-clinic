@@ -434,5 +434,68 @@
                     }
                 });
             };
+        })
+        .controller('SearchByCodeCtrl', function ($scope, $state, $timeout, hotkeys, Patient) {
+            $scope.loadPatients = function (patCode) {
+                if (patCode)
+                    $scope.patients = Patient.searchByCode({code: patCode});
+            };
+
+            let getPatient = function () {
+                let uiSel = angular.element('#search-by-code');
+                // find highlighted choice & get its scope
+                let choiceScope = uiSel.find('.ui-select-choices-row.active').scope();
+                if (choiceScope && choiceScope.pat) {
+                    return choiceScope.pat;
+                }
+            };
+
+            $scope.onSelect = function (pat) {
+                $state.go('patientView.services', {id: pat._id});
+            };
+
+            hotkeys.bindTo($scope)
+                .add({
+                    combo: 'ctrl+q',
+                    description: 'Быстрый поиск по коду пациента',
+                    callback: function (event) {
+                        //event.preventDefault();
+                        $scope.$broadcast('SetFocus');
+                        $timeout(function () {
+                            let uiSel = angular.element('#search-by-code');
+                            uiSel.find('.ui-select-search').focus();
+                            uiSel.find('.ui-select-search').focus(); // it works second time
+                        }, 100);
+                    }
+                })
+                .add({
+                    combo: 'ctrl+a',
+                    allowIn: ['INPUT'],
+                    description: 'Открыть анкету пациента',
+                    callback: function (event) {
+                        event.preventDefault();
+                        let pat = getPatient();
+                        if (pat) {
+                            $state.go('patientView.services', {id: pat._id});
+                        }
+                    }
+                })
+                .add({
+                    combo: 'ctrl+m',
+                    allowIn: ['INPUT'],
+                    description: 'Открыть результаты анализов пациента',
+                    callback: function (event) {
+                        event.preventDefault();
+                        let pat = getPatient();
+                        if (pat) {
+                            // close ui-select & clear focus from it
+                            let uiSel = angular.element('#search-by-code').controller('uiSelect');
+                            uiSel.close(true);
+
+                            // open results
+                            $state.go('laboratoryAllResults', {id: pat._id});
+                        }
+                    }
+                });
         });
 })();

@@ -79,6 +79,27 @@
 
             </ul>
 
+            <form ng-controller="SearchByCodeCtrl" class="navbar-form navbar-left">
+                <div class="form-group">
+                    <ui-select id="search-by-code"
+                               ng-model="code"
+                               title="{{ pat.fullName }}"
+                               focus-on='SetFocus'
+                               on-select="onSelect($item, $model)"
+                               allow-clear>
+                        <ui-select-match placeholder="Код пациента...">
+                            {{$select.selected.code}}
+                        </ui-select-match>
+                        <ui-select-choices repeat="pat in patients | filter: {code: $select.search}"
+                                           refresh="loadPatients($select.search)"
+                                           refresh-delay="200">
+                            <span class="label label-success">{{pat.code}}</span>
+                            <span>{{ pat.lastName }} {{ pat.firstName }} {{ pat.middleName }}</span>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </form>
+
             <ul class="nav navbar-nav navbar-right">
                 <li access="user:profile">
                     <a ui-sref="userProfile({id: $localStorage.currentUser.id})"

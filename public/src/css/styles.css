@@ -210,3 +210,17 @@ input[type=checkbox].ng-invalid {
     white-space: pre-line;
     word-break: break-all;
 }
+
+#search-by-code ul.ui-select-choices {
+    width: 300px;
+}
+
+#search-by-code .ui-select-placeholder {
+    width: 100px;
+    display: inline-block;
+}
+
+#search-by-code .ui-select-search,
+#search-by-code .ui-select-match-text {
+    width: 115px;
+}

@@ -25,6 +25,19 @@ router
             next();
         });
     })
+    .post('/load-by-code/:code', function (req, res) {
+        let condition = {code: new RegExp(req.params.code)};
+        models.Patient.find(condition)
+            .limit(20)
+            .sort({code: 1})
+            .exec(function (err, patients) {
+                if (err) {
+                    return Msg.sendError(res, err);
+                }
+
+                Msg.sendSuccess(res, '', patients);
+            });
+    })
     .post('/search',
         function (req, res, next) {
             L.logger.info('Поиск пациента', L.meta());

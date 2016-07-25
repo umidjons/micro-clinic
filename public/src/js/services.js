@@ -164,6 +164,12 @@
                     },
                     search: {
                         method: 'POST', url: '/patient/search', isArray: true
+                    },
+                    searchByCode: {
+                        method: 'POST',
+                        url: '/patient/load-by-code/:code',
+                        isArray: true,
+                        params: {code: '@code'}
                     }
                 }
             );
