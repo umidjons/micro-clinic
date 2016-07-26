@@ -1,63 +1,95 @@
-<div class="row">
-    <div class="form-group col-sm-3">
-        <label class="req">Код</label>
-        <input ng-model="partner.code" class="form-control" maxlength="50" required disabled>
+<div>
+    <div class="form-group">
+        <label class="control-label col-sm-2 req">Код</label>
+        <div class="col-sm-2">
+            <input ng-model="partner.code" class="form-control" maxlength="50" required disabled>
+        </div>
     </div>
 
-    <div class="form-group col-sm-3">
-        <label class="req">Фамилия</label>
-        <input ng-model="partner.lastName" class="form-control" maxlength="50" required>
+    <div class="form-group">
+        <label class="control-label col-sm-2 req">Фамилия</label>
+        <div class="col-sm-3">
+            <input ng-model="partner.lastName" class="form-control" maxlength="50" required>
+        </div>
     </div>
 
-    <div class="form-group col-sm-3">
-        <label class="req">Имя</label>
-        <input ng-model="partner.firstName" class="form-control" maxlength="50" required>
+    <div class="form-group">
+        <label class="control-label col-sm-2 req">Имя</label>
+        <div class="col-sm-3">
+            <input ng-model="partner.firstName" class="form-control" maxlength="50" required>
+        </div>
     </div>
 
-    <div class="form-group col-sm-3">
-        <label>Отчество</label>
-        <input ng-model="partner.middleName" class="form-control" maxlength="50">
-    </div>
-</div>
-
-<div class="row">
-    <div class="form-group col-sm-2">
-        <label class="req">Процент</label>
-        <input ng-model="partner.percent" type="number" class="form-control" min="0" max="100" required>
+    <div class="form-group">
+        <label class="control-label col-sm-2">Отчество</label>
+        <div class="col-sm-3">
+            <input ng-model="partner.middleName" class="form-control" maxlength="50">
+        </div>
     </div>
 
-    <div class="form-group col-sm-2">
-        <label class="req">Состояние</label>
-        <select ng-model="partner.state" class="form-control" required
-                ng-options="s.title for s in states track by s._id">
-            <option value="">-</option>
-        </select>
+    <div class="form-group">
+        <label class="control-label col-sm-2">Должность</label>
+        <div class="col-sm-3">
+            <input ng-model="partner.position" class="form-control" maxlength="200">
+        </div>
     </div>
 
-    <div class="form-group col-sm-8">
-        <label class="req">Адрес</label>
-        <input ng-model="partner.address" class="form-control" required maxlength="500">
-    </div>
-</div>
-
-<div class="row">
-    <div class="form-group col-sm-3">
-        <label class="req">Мобильный номер телефона</label>
-        <input ng-model="partner.cellPhone" class="form-control" pattern="\d{5,12}" maxlength="12" required>
+    <div class="form-group">
+        <label class="control-label col-sm-2 req">Процент</label>
+        <div class="col-sm-2">
+            <input ng-model="partner.percent" type="number" class="form-control" min="0" max="100" required>
+        </div>
     </div>
 
-    <div class="form-group col-sm-3">
-        <label>Городской номер телефона</label>
-        <input ng-model="partner.homePhone" pattern="\d{5,12}" maxlength="12" class="form-control">
+    <div class="form-group">
+        <label class="control-label col-sm-2 req">Мобильный номер телефона</label>
+        <div class="col-sm-2">
+            <input ng-model="partner.cellPhone" class="form-control" pattern="\d{5,12}" maxlength="12" required>
+        </div>
     </div>
 
-    <div class="form-group col-sm-3">
-        <label>Email</label>
-        <input ng-model="partner.email" type="email" class="form-control" maxlength="50">
+    <div class="form-group">
+        <label class="control-label col-sm-2">Городской номер телефона</label>
+        <div class="col-sm-2">
+            <input ng-model="partner.homePhone" pattern="\d{5,12}" maxlength="12" class="form-control">
+        </div>
     </div>
 
-    <div class="form-group col-sm-3">
-        <label>Организация</label>
-        <input ng-model="partner.company" class="form-control" maxlength="200">
+    <div class="form-group">
+        <label class="control-label col-sm-2">Email</label>
+        <div class="col-sm-2">
+            <input ng-model="partner.email" type="email" class="form-control" maxlength="50">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2">Организация</label>
+        <div class="col-sm-3">
+            <input ng-model="partner.company" class="form-control" maxlength="200">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2 req">Адрес</label>
+        <div class="col-sm-4">
+            <input ng-model="partner.address" class="form-control" required maxlength="500">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2">Комментарий</label>
+        <div class="col-sm-4">
+            <textarea ng-model="partner.comment" class="form-control" maxlength="1000" rows="5"></textarea>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2 req">Состояние</label>
+        <div class="col-sm-2">
+            <select ng-model="partner.state" class="form-control" required
+                    ng-options="s.title for s in states track by s._id">
+                <option value="">-</option>
+            </select>
+        </div>
     </div>
 </div>

@@ -1,4 +1,12 @@
-<h1>Доля партнёров</h1>
+<ol class="breadcrumb">
+    <li><a ui-sref="partnerList">Партнёры</a></li>
+    <li ng-if="partner"><a ui-sref="partnerEdit({id: partner._id})">Изменить реквизиты</a></li>
+</ol>
+
+<h1 ng-if="!partner">Доля партнёров</h1>
+<h1 ng-if="partner">
+    Доля партнёра: [{{ partner.code }}] {{ partner.lastName }} {{ partner.firstName }} {{ partner.middleName }}
+</h1>
 
 <div class="col-sm-4">
     <form class="form-horizontal" novalidate>

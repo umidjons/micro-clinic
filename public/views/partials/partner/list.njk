@@ -28,10 +28,16 @@
             </button>
         </th>
     </tr>
+
+    <tr>
+        <th colspan="15">
+            <input ng-model="filter" class="form-control" maxlength="100" placeholder="Поиск...">
+        </th>
+    </tr>
     </thead>
 
     <tbody>
-    <tr ng-repeat="partner in partners">
+    <tr ng-repeat="partner in partners | filter: filter">
         <td class="text-right">{{ $index + 1 }}</td>
         <td>{{ partner.code }}</td>
         <td class="text-right">{{ partner.percent | number }}</td>

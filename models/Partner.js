@@ -19,6 +19,8 @@ var PartnerSchema = mongoose.Schema({
     homePhone: {type: String, match: /^\d{5,12}$/},
     email: {type: mongoose.SchemaTypes.Email, maxlength: 50},
     company: {type: String, maxlength: 200},
+    position: {type: String, maxlength: 200},
+    comment: {type: String, maxlength: 1000},
     state: stateSchema,
     created: {type: Date, required: true, default: new Date()},
     user: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User'}

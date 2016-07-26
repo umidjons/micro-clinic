@@ -91,6 +91,13 @@
                 end: Date.create('the end of this month')
             };
 
+            // if partner id is specified, then load its requisites
+            if ($stateParams.id) {
+                Partner.get({id: $stateParams.id}, function (partner) {
+                    $scope.partner = partner;
+                });
+            }
+
             $scope.refresh = function () {
                 let params = {period: $scope.period};
                 if ($stateParams.id) {
