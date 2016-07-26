@@ -18,6 +18,18 @@
                 $scope.user = new User();
             }
 
+            $scope.toggleAll = function (state) {
+                // initialize permissions object
+                if (!$scope.user.permissions) {
+                    $scope.user.permissions = {};
+                }
+
+                // toggle all permissions
+                for (let perm of $scope.permissions) {
+                    $scope.user.permissions[perm._id] = state;
+                }
+            };
+
             $scope.saveUser = function () {
                 Modal.confirm({
                     okAction: function (modal) {

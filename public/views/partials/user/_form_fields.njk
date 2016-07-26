@@ -104,7 +104,22 @@
 
     <div class="col-sm-12">
         <label>Привилегии</label>
-        <div ng-repeat="perm in permissions" class="checkbox">
+
+        <a ng-click="toggleAll(true)" href class="btn btn-link">
+            <i class="fa fa-fw fa-check-square-o"></i> Выделить все
+        </a>
+
+        <a ng-click="toggleAll(false)" href class="btn btn-link">
+            <i class="fa fa-fw fa-square-o"></i> Снять все
+        </a>
+
+        <div class="form-group">
+            <div class="col-sm-2">
+                <input ng-model="filter" class="form-control" placeholder="Поиск...">
+            </div>
+        </div>
+
+        <div ng-repeat="perm in permissions | filter: filter" class="checkbox">
             <label>
                 <input ng-model="user.permissions[perm._id]" type="checkbox"> {{ perm.title }}
             </label>
